@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/develowl/pdi-client/94cd1890b0f692be11acc3edf921baf812474d83/public/img/logo-sl-brasil-pdi.svg" width=350 />
+  <img src="https://raw.githubusercontent.com/develowl/pdi-client/cbfe05100bcb32ecc9f038cd671924bcabaf4da2/public/img/logo-sl-brasil-pdi.svg" width=350 />
 </p>
 
 ## Programa de Desenvolvimento Individual (PDI) - SL BRASIL
