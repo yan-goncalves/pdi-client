@@ -20,12 +20,7 @@ export default NextAuth({
         const { jwt } = await axios
           .post<{ jwt: string; user: User }>(
             `${process.env.NEXT_PUBLIC_API_URL}/api/auth/local`,
-            process.env.NODE_ENV === 'production'
-              ? credentials
-              : {
-                  identifier: process.env.NEXT_MASTER_USERNAME,
-                  password: process.env.NEXT_MASTER_PASSWORD
-                }
+            credentials
           )
           .then((response) => response.data)
 

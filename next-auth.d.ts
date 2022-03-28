@@ -17,12 +17,7 @@ declare module 'next-auth' {
     confirmed: boolean
     created_at: Date
     updated_at: Date
-    role?: {
-      description: string
-      id: number
-      name: string
-      type: string
-    }
+    role?: 'Administrator' | 'Authenticated'
     picture: string
     department: DepartmentProps
     info: UserInfoProps

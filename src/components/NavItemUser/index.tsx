@@ -34,10 +34,22 @@ const NavItemUser = ({ direction = 'column' }: NavItemUserProps) => {
           justify={'flex-start'}
           className={classes.userDescriptionContainer}
         >
-          <Text size={direction === 'row' ? 'xs' : 'sm'} weight={500} mt={15}>
-            {session?.user?.info.name}
-          </Text>
-          <Text size={'xs'}>{session?.user?.info.lastname}</Text>
+          {session?.user.role === 'Administrator' ? (
+            <Text size={direction === 'row' ? 'xs' : 'sm'} weight={500} mt={15}>
+              Administrador
+            </Text>
+          ) : (
+            <>
+              <Text
+                size={direction === 'row' ? 'xs' : 'sm'}
+                weight={500}
+                mt={15}
+              >
+                {session?.user?.info.name}
+              </Text>
+              <Text size={'xs'}>{session?.user?.info.lastname}</Text>
+            </>
+          )}
         </Grid.Container>
       </Grid.Container>
       {direction === 'row' && <Divider className={classes.divider} />}
