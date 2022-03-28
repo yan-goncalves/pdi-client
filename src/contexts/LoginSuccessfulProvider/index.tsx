@@ -16,7 +16,13 @@ const LoginSuccessfulProvider: React.FC = ({ children }) => {
       notification.showNotification({
         message: (
           <Text style={{ padding: 2 }}>
-            Olá, <b>{session.user?.info?.name}</b>. Bem-vindo(a) de volta! 😎
+            Olá,{' '}
+            <b>
+              {session.user.role === 'Administrator'
+                ? 'Admin'
+                : session.user?.info?.name}
+            </b>
+            . Bem-vindo(a) de volta! 😎
           </Text>
         ),
         color: 'green',

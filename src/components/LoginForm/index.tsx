@@ -15,7 +15,7 @@ type Inputs = {
 }
 
 const LoginForm = () => {
-  const { asPath } = useRouter()
+  const { push, query } = useRouter()
   const [loading, setLoading] = useState(false)
   const { classes } = useStyles({ loading })
   const notifications = useNotifications()
@@ -41,17 +41,8 @@ const LoginForm = () => {
     }
   }, [username, password, errors])
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    setLoading(true)
-
-    await signIn('credentials', {
-      identifier: data.username,
-      password: data.password,
-      redirect: true,
-      callbackUrl: asPath
-    }).catch((err) => {
-      console.log('ERROR CALLBACK', err)
-
+  useEffect(() => {
+    if (query?.error) {
       setLoading(false)
 
       setError('username', { type: 'access_denied' })
@@ -59,11 +50,26 @@ const LoginForm = () => {
 
       notifications.showNotification({
         title: 'Não foi possível realizar o login',
-        message: err?.code === 'access_denied' && 'Usuário ou senha incorretos',
+        message: 'Usuário ou senha incorretos',
         color: 'red',
         radius: 'md',
         autoClose: 3000
       })
+    }
+  }, [query])
+
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    setLoading(true)
+
+    await signIn('credentials', {
+      identifier: data.username,
+      password: data.password,
+      redirect: false,
+      callbackUrl: process.env.NEXT_PUBLIC_CLIENT_URL?.concat(
+        (query.callbackUrl as string) || '/'
+      )
+    }).then(async (res) => {
+      await push(res!.callbackUrl)
     })
   }
 

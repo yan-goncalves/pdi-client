@@ -7,6 +7,7 @@ export default NextAuth({
 
   pages: {
     signIn: '/signin'
+    // error: '/signin'
   },
 
   providers: [
@@ -61,14 +62,14 @@ export default NextAuth({
       return token
     },
 
-    redirect: ({ url, baseUrl }) => {
+    redirect: async ({ url, baseUrl }) => {
       if (url.startsWith(baseUrl)) {
         const newUrl = new URL(url)
         const callbackUrl = newUrl.searchParams.get('callbackUrl')
 
-        return decodeURIComponent(callbackUrl || newUrl.toString())
+        return Promise.resolve(callbackUrl || newUrl.toString())
       }
-      return decodeURIComponent(url)
+      return Promise.resolve(url)
     }
   }
 })

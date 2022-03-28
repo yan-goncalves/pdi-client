@@ -14,10 +14,10 @@ const LandingInfo = () => {
 
   const handleClick = async () => {
     if (status === 'authenticated') {
-      push('/teste')
+      push('/dashboard')
     } else {
       dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: true }))
-      await signIn(undefined, { callbackUrl: '/dashboard' })
+      await signIn(undefined, { callbackUrl: encodeURIComponent('/dashboard') })
     }
   }
 
