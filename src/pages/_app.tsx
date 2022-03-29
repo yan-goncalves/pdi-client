@@ -6,7 +6,6 @@ import { store } from 'app/store'
 import AppShell from 'components/AppShell'
 import Footer from 'components/Footer'
 import LoadingOverlay from 'components/LoadingOverlay'
-import LoginStatusProvider from 'contexts/LoginStatusProvider'
 import RoutesCheckerProvider from 'contexts/RoutesCheckerProvider'
 import { useApollo } from 'graphql/apollo'
 import { SessionProvider } from 'next-auth/react'
@@ -50,19 +49,17 @@ export default function _App({
               <ReduxProvider store={store}>
                 <NotificationsProvider>
                   <RoutesCheckerProvider>
-                    <LoginStatusProvider>
-                      {/* <Header /> */}
-                      <GlobalStyles />
-                      <LoadingOverlay />
-                      {pathname.includes('404') ? (
-                        <Page404 />
-                      ) : (
-                        <AppShell>
-                          <Component {...pageProps} />
-                        </AppShell>
-                      )}
-                      <Footer />
-                    </LoginStatusProvider>
+                    {/* <Header /> */}
+                    <GlobalStyles />
+                    <LoadingOverlay />
+                    {pathname.includes('404') ? (
+                      <Page404 />
+                    ) : (
+                      <AppShell>
+                        <Component {...pageProps} />
+                      </AppShell>
+                    )}
+                    <Footer />
                   </RoutesCheckerProvider>
                 </NotificationsProvider>
               </ReduxProvider>

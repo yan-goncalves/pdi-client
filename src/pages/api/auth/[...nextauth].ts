@@ -42,15 +42,6 @@ export default NextAuth({
     updateAge: 60 * 60
   },
 
-  events: {
-    signIn: () => {
-      console.log('LOGOU')
-    },
-    signOut: () => {
-      console.log('SAIU')
-    }
-  },
-
   callbacks: {
     session: async ({ session, token }) => {
       session.jwt = token.jwt

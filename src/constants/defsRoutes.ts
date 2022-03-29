@@ -52,7 +52,7 @@ export const managerNavItemLinks: NavItemLinkProps[] = [
     icon: IconStars
   },
   {
-    title: 'Objetivos',
+    title: 'Objetivos do Time',
     href: '/manager/goals',
     icon: IconTarget
   },

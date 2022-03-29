@@ -1,9 +1,9 @@
-import { Button, Space } from '@mantine/core'
+import { Button, Space, Text } from '@mantine/core'
 import { useNotifications } from '@mantine/notifications'
 import { Grid, Input } from '@nextui-org/react'
 import { IconLock, IconUser } from '@tabler/icons'
 import ErrorLabelInput from 'components/ErrorLabelInput'
-import { signIn } from 'next-auth/react'
+import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -66,7 +66,23 @@ const LoginForm = () => {
           autoClose: 3000
         })
       } else if (res?.url) {
-        await push(res.url)
+        await push(res.url).then(async () => {
+          const session = await getSession()
+          const user = session?.user
+          const info = user?.info
+          const name = user?.role === 'Administrator' ? 'Admin' : info?.name
+
+          notifications.showNotification({
+            message: (
+              <Text style={{ padding: 2 }}>
+                Olá, <b>{name}</b>. Bem-vindo(a) de volta! 😎
+              </Text>
+            ),
+            color: 'green',
+            radius: 'md',
+            autoClose: 3000
+          })
+        })
       }
     })
   }

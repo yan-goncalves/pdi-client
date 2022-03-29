@@ -24,20 +24,7 @@ export async function middleware(req: NextApiRequest & NextRequest) {
     // like role === "admin" or name === "John Doe", etc.
     if (!session) {
       const callbackUrl = encodeURIComponent(req.nextUrl.pathname)
-
-      const res = NextResponse.redirect(`/signin?callbackUrl=${callbackUrl}`)
-
-      // res.clearCookie('next-auth.callback-url')
-      // res.cookie('next-auth.callback-url', callbackUrl)
-
-      return res
+      return NextResponse.redirect(`/signin?callbackUrl=${callbackUrl}`)
     }
   }
-
-  // if (req.nextUrl.pathname.includes('/api/auth/callback')) {
-  //   const res = NextResponse.next()
-  //   res.cookie('next-auth.login-status', 'ok')
-
-  //   return res
-  // }
 }
