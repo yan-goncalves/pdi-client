@@ -6,7 +6,7 @@ import { store } from 'app/store'
 import AppShell from 'components/AppShell'
 import Footer from 'components/Footer'
 import LoadingOverlay from 'components/LoadingOverlay'
-import LoginSuccessfulProvider from 'contexts/LoginSuccessfulProvider'
+import LoginStatusProvider from 'contexts/LoginStatusProvider'
 import RoutesCheckerProvider from 'contexts/RoutesCheckerProvider'
 import { useApollo } from 'graphql/apollo'
 import { SessionProvider } from 'next-auth/react'
@@ -50,7 +50,7 @@ export default function _App({
               <ReduxProvider store={store}>
                 <NotificationsProvider>
                   <RoutesCheckerProvider>
-                    <LoginSuccessfulProvider>
+                    <LoginStatusProvider>
                       {/* <Header /> */}
                       <GlobalStyles />
                       <LoadingOverlay />
@@ -62,7 +62,7 @@ export default function _App({
                         </AppShell>
                       )}
                       <Footer />
-                    </LoginSuccessfulProvider>
+                    </LoginStatusProvider>
                   </RoutesCheckerProvider>
                 </NotificationsProvider>
               </ReduxProvider>

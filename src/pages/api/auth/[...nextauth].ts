@@ -7,7 +7,6 @@ export default NextAuth({
 
   pages: {
     signIn: '/signin'
-    // error: '/signin'
   },
 
   providers: [
@@ -41,6 +40,15 @@ export default NextAuth({
   session: {
     maxAge: 24 * 60 * 60,
     updateAge: 60 * 60
+  },
+
+  events: {
+    signIn: () => {
+      console.log('LOGOU')
+    },
+    signOut: () => {
+      console.log('SAIU')
+    }
   },
 
   callbacks: {

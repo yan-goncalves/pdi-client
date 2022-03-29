@@ -27,19 +27,17 @@ export async function middleware(req: NextApiRequest & NextRequest) {
 
       const res = NextResponse.redirect(`/signin?callbackUrl=${callbackUrl}`)
 
-      res.clearCookie('next-auth.callback-url')
-      res.cookie('next-auth.callback-url', callbackUrl)
+      // res.clearCookie('next-auth.callback-url')
+      // res.cookie('next-auth.callback-url', callbackUrl)
 
       return res
     }
   }
 
-  if (req.nextUrl.pathname.includes('/api/auth/callback')) {
-    const res = NextResponse.next()
+  // if (req.nextUrl.pathname.includes('/api/auth/callback')) {
+  //   const res = NextResponse.next()
+  //   res.cookie('next-auth.login-status', 'ok')
 
-    res.clearCookie('next-auth.callback-url')
-    res.cookie('next-auth.login-successfully', 'ok')
-
-    return res
-  }
+  //   return res
+  // }
 }

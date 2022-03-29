@@ -41,27 +41,10 @@ const LoginForm = () => {
     }
   }, [username, password, errors])
 
-  useEffect(() => {
-    if (query?.error) {
-      setLoading(false)
-
-      setError('username', { type: 'access_denied' })
-      setError('password', { type: 'access_denied' })
-
-      notifications.showNotification({
-        title: 'Não foi possível realizar o login',
-        message: 'Usuário ou senha incorretos',
-        color: 'red',
-        radius: 'md',
-        autoClose: 3000
-      })
-    }
-  }, [query])
-
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setLoading(true)
 
-    await signIn('credentials', {
+    await signIn<'credentials'>('credentials', {
       identifier: data.username,
       password: data.password,
       redirect: false,
@@ -69,7 +52,22 @@ const LoginForm = () => {
         (query.callbackUrl as string) || '/'
       )
     }).then(async (res) => {
-      await push(res!.callbackUrl)
+      if (res?.error) {
+        setLoading(false)
+
+        setError('username', { type: 'access_denied' })
+        setError('password', { type: 'access_denied' })
+
+        notifications.showNotification({
+          title: 'Não foi possível realizar o login',
+          message: 'Usuário ou senha incorretos',
+          color: 'red',
+          radius: 'md',
+          autoClose: 3000
+        })
+      } else if (res?.url) {
+        await push(res.url)
+      }
     })
   }
 

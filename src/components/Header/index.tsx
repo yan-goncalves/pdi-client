@@ -3,8 +3,10 @@ import {
   Anchor,
   Header as MantineHeader,
   MediaQuery,
+  Text,
   Tooltip
 } from '@mantine/core'
+import { useNotifications } from '@mantine/notifications'
 import { IconMenu2, IconPower } from '@tabler/icons'
 import { useAppDispatch } from 'app/hooks'
 import LogoPdi from 'components/Logo/LogoPdi'
@@ -17,21 +19,38 @@ import { useStyles } from './styles'
 
 const Header = () => {
   const { classes, cx } = useStyles()
+  const { data: session } = useSession()
   const { push, pathname } = useRouter()
   const { status } = useSession()
   const { isPublic } = useRoutesCheckerProvider()
   const dispatch = useAppDispatch()
+  const notifications = useNotifications()
 
   const handleClick = async () => {
+    const user = session?.user
+    const name = user?.role === 'Administrator' ? 'Admin' : user?.info.name
     dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: true }))
 
     await push('/').then(
       async () =>
-        await signOut({ redirect: false }).then(() =>
-          dispatch(
-            setLoadingOverlayVisibility({ loadingOverlayVisible: false })
+        await signOut({ redirect: false })
+          .then(() =>
+            dispatch(
+              setLoadingOverlayVisibility({ loadingOverlayVisible: false })
+            )
           )
-        )
+          .finally(() => {
+            notifications.showNotification({
+              message: (
+                <Text style={{ padding: 2 }}>
+                  Até mais, <b>{name}</b>! 👋`
+                </Text>
+              ),
+              color: 'primary',
+              radius: 'md',
+              autoClose: 1500
+            })
+          })
     )
   }
 
