@@ -1,18 +1,20 @@
 import { AppShell as MantineAppShell } from '@mantine/core'
 import Drawer from 'components/Drawer'
+import Footer from 'components/Footer'
 import Header from 'components/Header'
 import Navbar from 'components/Navbar'
-import { useRoutesCheckerProvider } from 'contexts/RoutesCheckerProvider'
+import { useRoutesManagerProvider } from 'contexts/RoutesManagerProvider'
 import { useStyles } from './styles'
 
 const AppShell: React.FC = ({ children }) => {
   const { classes } = useStyles()
-  const { isPublic } = useRoutesCheckerProvider()
+  const { isPublic } = useRoutesManagerProvider()
 
   return (
     <MantineAppShell
       header={<Header />}
       navbar={isPublic ? undefined : <Navbar />}
+      footer={<Footer />}
       classNames={{
         root: classes.root,
         body: classes.body,

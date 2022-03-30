@@ -4,13 +4,14 @@ import {
   Header as MantineHeader,
   MediaQuery,
   Text,
-  Tooltip
+  Tooltip,
+  useMantineTheme
 } from '@mantine/core'
 import { useNotifications } from '@mantine/notifications'
 import { IconMenu2, IconPower } from '@tabler/icons'
 import { useAppDispatch } from 'app/hooks'
 import LogoPdi from 'components/Logo/LogoPdi'
-import { useRoutesCheckerProvider } from 'contexts/RoutesCheckerProvider'
+import { useRoutesManagerProvider } from 'contexts/RoutesManagerProvider'
 import { setDrawerOpened } from 'features/Drawer/drawer-slice'
 import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
 import { signOut, useSession } from 'next-auth/react'
@@ -18,11 +19,12 @@ import { useRouter } from 'next/router'
 import { useStyles } from './styles'
 
 const Header = () => {
+  const theme = useMantineTheme()
   const { classes, cx } = useStyles()
   const { data: session } = useSession()
   const { push, pathname } = useRouter()
   const { status } = useSession()
-  const { isPublic } = useRoutesCheckerProvider()
+  const { isPublic } = useRoutesManagerProvider()
   const dispatch = useAppDispatch()
   const notifications = useNotifications()
 
@@ -42,20 +44,35 @@ const Header = () => {
           .finally(() => {
             notifications.showNotification({
               message: (
-                <Text style={{ padding: 2 }}>
+                <Text style={{ padding: 2, color: theme.colors.blue[9] }}>
                   Até mais, <b>{name}</b>! 👋`
                 </Text>
               ),
               color: 'primary',
               radius: 'md',
-              autoClose: 1500
+              autoClose: 1500,
+              styles: {
+                root: {
+                  backgroundColor: theme.colors.blue[1],
+                  borderColor: theme.colors.blue[1],
+
+                  '&::before': { backgroundColor: theme.colors.blue[9] }
+                },
+                description: {
+                  color: theme.colors.blue[7]
+                },
+                closeButton: {
+                  color: theme.colors.blue[7],
+                  '&:hover': { backgroundColor: theme.colors.blue[2] }
+                }
+              }
             })
           })
     )
   }
 
   return (
-    <MantineHeader height={50} padding={'xs'}>
+    <MantineHeader height={50} p={'xs'}>
       <div className={cx(classes.headerBase, classes.headerLeft)}>
         <div className={classes.headerBase}>
           {!isPublic && (

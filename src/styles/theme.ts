@@ -1,6 +1,7 @@
-import { MantineTheme } from '@mantine/core'
+import { MantineThemeOverride } from '@mantine/core'
 
-export const theme: Pick<MantineTheme, 'black' | 'other'> = {
+export const theme: MantineThemeOverride = {
+  fontFamily: 'Roboto, sans-serif',
   black: '#333',
   other: {
     images: {

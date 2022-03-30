@@ -2,9 +2,9 @@ import { PUBLIC_ROUTES } from 'constants/defsRoutes'
 import { useRouter } from 'next/router'
 import { createContext, useContext, useEffect, useState } from 'react'
 
-const RoutesCheckerContext = createContext({ isPublic: true })
+const RoutesManagerContext = createContext({ isPublic: true })
 
-const RoutesCheckerProvider: React.FC = ({ children }) => {
+const RoutesManagerProvider: React.FC = ({ children }) => {
   const home = '/'
   const { pathname } = useRouter()
   const [isPublic, setIsPublic] = useState(true)
@@ -24,13 +24,13 @@ const RoutesCheckerProvider: React.FC = ({ children }) => {
   }, [pathname])
 
   return (
-    <RoutesCheckerContext.Provider value={{ isPublic }}>
+    <RoutesManagerContext.Provider value={{ isPublic }}>
       {children}
-    </RoutesCheckerContext.Provider>
+    </RoutesManagerContext.Provider>
   )
 }
 
-export const useRoutesCheckerProvider = () => {
-  return useContext(RoutesCheckerContext)
+export const useRoutesManagerProvider = () => {
+  return useContext(RoutesManagerContext)
 }
-export default RoutesCheckerProvider
+export default RoutesManagerProvider

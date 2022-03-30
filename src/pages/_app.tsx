@@ -1,12 +1,12 @@
 import { ApolloProvider } from '@apollo/client'
 import { MantineProvider } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import { NotificationsProvider } from '@mantine/notifications'
 import { NextUIProvider } from '@nextui-org/react'
 import { store } from 'app/store'
 import AppShell from 'components/AppShell'
-import Footer from 'components/Footer'
 import LoadingOverlay from 'components/LoadingOverlay'
-import RoutesCheckerProvider from 'contexts/RoutesCheckerProvider'
+import RoutesManagerProvider from 'contexts/RoutesManagerProvider'
 import { useApollo } from 'graphql/apollo'
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
@@ -24,6 +24,7 @@ export default function _App({
 }: AppProps) {
   const client = useApollo(pageProps.initialApolloState)
   const { pathname } = useRouter()
+  const match = useMediaQuery(`(max-width: 992px)`)
 
   useEffect(() => {
     // Remove the server-side injected CSS.
@@ -47,8 +48,10 @@ export default function _App({
           <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
             <NextUIProvider>
               <ReduxProvider store={store}>
-                <NotificationsProvider>
-                  <RoutesCheckerProvider>
+                <NotificationsProvider
+                  position={match ? 'bottom-center' : 'bottom-right'}
+                >
+                  <RoutesManagerProvider>
                     {/* <Header /> */}
                     <GlobalStyles />
                     <LoadingOverlay />
@@ -59,8 +62,8 @@ export default function _App({
                         <Component {...pageProps} />
                       </AppShell>
                     )}
-                    <Footer />
-                  </RoutesCheckerProvider>
+                    {/* <Footer /> */}
+                  </RoutesManagerProvider>
                 </NotificationsProvider>
               </ReduxProvider>
             </NextUIProvider>

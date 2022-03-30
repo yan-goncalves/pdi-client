@@ -1,4 +1,4 @@
-import { Button, Space, Text } from '@mantine/core'
+import { Button, Space, Text, useMantineTheme } from '@mantine/core'
 import { useNotifications } from '@mantine/notifications'
 import { Grid, Input } from '@nextui-org/react'
 import { IconLock, IconUser } from '@tabler/icons'
@@ -15,6 +15,7 @@ type Inputs = {
 }
 
 const LoginForm = () => {
+  const theme = useMantineTheme()
   const { push, query } = useRouter()
   const [loading, setLoading] = useState(false)
   const { classes } = useStyles({ loading })
@@ -59,11 +60,30 @@ const LoginForm = () => {
         setError('password', { type: 'access_denied' })
 
         notifications.showNotification({
-          title: 'Não foi possível realizar o login',
+          title: (
+            <Text style={{ padding: 2, color: theme.colors.red[9] }}>
+              Não foi possível realizar o login 😢
+            </Text>
+          ),
           message: 'Usuário ou senha incorretos',
           color: 'red',
           radius: 'md',
-          autoClose: 3000
+          autoClose: 3000,
+          styles: {
+            root: {
+              backgroundColor: theme.colors.red[1],
+              borderColor: theme.colors.red[1],
+
+              '&::before': { backgroundColor: theme.colors.red[9] }
+            },
+            description: {
+              color: theme.colors.red[7]
+            },
+            closeButton: {
+              color: theme.colors.red[7],
+              '&:hover': { backgroundColor: theme.colors.red[2] }
+            }
+          }
         })
       } else if (res?.url) {
         await push(res.url).then(async () => {
@@ -74,13 +94,28 @@ const LoginForm = () => {
 
           notifications.showNotification({
             message: (
-              <Text style={{ padding: 2 }}>
+              <Text style={{ padding: 2, color: theme.colors.green[9] }}>
                 Olá, <b>{name}</b>. Bem-vindo(a) de volta! 😎
               </Text>
             ),
             color: 'green',
             radius: 'md',
-            autoClose: 3000
+            autoClose: 3000,
+            styles: (theme) => ({
+              root: {
+                backgroundColor: theme.colors.green[1],
+                borderColor: theme.colors.green[1],
+
+                '&::before': { backgroundColor: theme.colors.green[9] }
+              },
+              description: {
+                color: theme.colors.green[7]
+              },
+              closeButton: {
+                color: theme.colors.green[7],
+                '&:hover': { backgroundColor: theme.colors.green[2] }
+              }
+            })
           })
         })
       }

@@ -10,7 +10,7 @@ const Login = () => {
   return (
     <Container className={classes.container}>
       <Paper
-        padding={'xl'}
+        p={'xl'}
         shadow={'xl'}
         radius={'lg'}
         withBorder

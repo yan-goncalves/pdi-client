@@ -7,14 +7,12 @@ export const useStyles = createStyles((theme) => ({
     paddingRight: 10,
 
     [`@media(max-width: ${theme.breakpoints.md}px)`]: {
-      paddingBottom: 100
+      paddingBottom: 70
     },
 
     '.mantine-ScrollArea-scrollbar': {
-      height: 'calc(100vh - 68px)',
-
       [`@media(max-width: ${theme.breakpoints.md}px)`]: {
-        height: 'calc(100vh - 120px)'
+        height: 'calc(100vh - 100px)'
       }
     }
   }
