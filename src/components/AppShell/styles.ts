@@ -1,16 +1,23 @@
 import { createStyles } from '@mantine/core'
 
-export const useStyles = createStyles(() => ({
-  root: {
-    height: 'calc(100% - 40px)'
-  },
+type StylesProps = {
+  isPublic: boolean
+}
 
-  body: {
-    height: 'calc(100% - 50px)',
-    minHeight: 'fit-content'
-  },
+export const useStyles = createStyles(
+  (_, { isPublic = false }: StylesProps) => ({
+    root: {
+      height: 'calc(100% - 40px)'
+    },
 
-  main: {
-    display: 'flex'
-  }
-}))
+    body: {
+      height: 'calc(100% - 60px)',
+      minHeight: 'fit-content'
+    },
+
+    main: {
+      display: 'flex',
+      backgroundColor: isPublic ? 'transparent' : '#f3f4f9'
+    }
+  })
+)

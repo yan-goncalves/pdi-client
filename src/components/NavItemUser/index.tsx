@@ -1,4 +1,4 @@
-import { Divider, Navbar as MantineNavbar, Text } from '@mantine/core'
+import { Navbar as MantineNavbar, Text } from '@mantine/core'
 import { Grid } from '@nextui-org/react'
 import UserPicture from 'components/UserPicture'
 import { useSession } from 'next-auth/react'
@@ -52,7 +52,6 @@ const NavItemUser = ({ direction = 'column' }: NavItemUserProps) => {
           )}
         </Grid.Container>
       </Grid.Container>
-      {direction === 'row' && <Divider className={classes.divider} />}
     </MantineNavbar.Section>
   )
 }

@@ -1,11 +1,11 @@
 import { createStyles } from '@mantine/core'
 
-type useStylesProps = {
+type StylesProps = {
   inError: boolean
 }
 
 export const useStyles = createStyles(
-  (_, { inError = false }: useStylesProps) => ({
+  (_, { inError = false }: StylesProps) => ({
     root: {
       visibility: inError ? 'visible' : 'hidden'
     }

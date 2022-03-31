@@ -7,8 +7,8 @@ import { useRoutesManagerProvider } from 'contexts/RoutesManagerProvider'
 import { useStyles } from './styles'
 
 const AppShell: React.FC = ({ children }) => {
-  const { classes } = useStyles()
   const { isPublic } = useRoutesManagerProvider()
+  const { classes } = useStyles({ isPublic })
 
   return (
     <MantineAppShell

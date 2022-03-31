@@ -1,11 +1,11 @@
 import { createStyles } from '@mantine/core'
 
-type useStylesProps = {
+type StylesProps = {
   active: boolean
 }
 
 export const useStyles = createStyles(
-  (theme, { active = false }: useStylesProps) => ({
+  (theme, { active = false }: StylesProps) => ({
     root: {
       minHeight: 34,
       margin: '7.5px auto',
@@ -21,7 +21,7 @@ export const useStyles = createStyles(
     },
 
     link: {
-      color: active ? theme.colors.cyan[9] : theme.black,
+      color: active ? theme.colors.blue[9] : theme.black,
       display: 'flex',
       textDecoration: 'none !important',
       width: '100%',

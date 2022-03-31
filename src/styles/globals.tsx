@@ -4,6 +4,18 @@ const GlobalStyles = () => {
   return (
     <Global
       styles={(theme) => ({
+        '&::-webkit-scrollbar': {
+          width: '1rem'
+        },
+
+        '&::-webkit-scrollbar-thumb': {
+          width: '1rem',
+          borderRadius: '2rem',
+          backgroundClip: 'padding-box',
+          border: '0.2rem solid transparent',
+          boxShadow: 'inset 0 0 0 10px #ccc'
+        },
+
         'html, body, #__next': {
           height: '100%',
           minHeight: '38rem'

@@ -10,7 +10,9 @@ const NavItemText = ({ title }: NavItemTextProps) => {
 
   return (
     <MantineNavbar.Section className={classes.root}>
-      <Text className={classes.title}>{title}</Text>
+      <Text className={classes.title} size={'sm'}>
+        {title}
+      </Text>
     </MantineNavbar.Section>
   )
 }

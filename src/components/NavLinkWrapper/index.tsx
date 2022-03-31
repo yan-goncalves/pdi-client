@@ -1,4 +1,4 @@
-import { Divider, Navbar as MantineNavbar } from '@mantine/core'
+import { Navbar as MantineNavbar } from '@mantine/core'
 import NavItemSection from 'components/NavItemSection'
 import { managerNavItemLinks, userNavItemLinks } from 'constants/defsRoutes'
 
@@ -9,7 +9,6 @@ const NavLinkWrapper = () => {
         sectionTitle={'Área do Usuário'}
         items={userNavItemLinks}
       />
-      <Divider />
       <NavItemSection
         sectionTitle={'Área do Gestor'}
         items={managerNavItemLinks}

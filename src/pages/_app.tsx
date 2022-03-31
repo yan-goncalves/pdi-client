@@ -45,7 +45,18 @@ export default function _App({
       </Head>
       <SessionProvider session={session}>
         <ApolloProvider client={client}>
-          <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
+          <MantineProvider
+            withGlobalStyles
+            withNormalizeCSS
+            theme={theme}
+            styles={{
+              Title: () => ({
+                root: {
+                  fontFamily: 'Public Sans, Roboto, sans-serif'
+                }
+              })
+            }}
+          >
             <NextUIProvider>
               <ReduxProvider store={store}>
                 <NotificationsProvider

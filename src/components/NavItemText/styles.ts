@@ -9,9 +9,7 @@ export const useStyles = createStyles((theme) => ({
   },
 
   title: {
-    fontSize: '0.875rem',
-    padding: 7.5,
-    color: theme.colors.gray[6],
+    color: theme.black,
     fontWeight: 'bold'
   }
 }))

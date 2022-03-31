@@ -1,12 +1,12 @@
 import { createStyles } from '@mantine/core'
 
-type useStylesProps = {
+type StylesProps = {
   width: number
   height: number
 }
 
 export const useStyles = createStyles(
-  (theme, { width, height }: useStylesProps) => ({
+  (theme, { width, height }: StylesProps) => ({
     container: {
       display: 'flex',
       justifyContent: 'center',
