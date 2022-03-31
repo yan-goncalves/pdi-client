@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import drawerReducer from 'features/Drawer/drawer-slice'
 import loadingOverlayReducer from 'features/LoadingOverlay/loading-overlay-slice'
+import localeReducer from 'features/Locale/locale-slice'
 
 // Import the previously created search slice
 
@@ -8,7 +9,8 @@ import loadingOverlayReducer from 'features/LoadingOverlay/loading-overlay-slice
 export const store = configureStore({
   reducer: {
     drawerOpened: drawerReducer,
-    loadingOverlay: loadingOverlayReducer
+    loadingOverlay: loadingOverlayReducer,
+    locale: localeReducer
   }
 })
 

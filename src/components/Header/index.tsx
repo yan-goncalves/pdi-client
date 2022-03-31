@@ -10,6 +10,7 @@ import {
 import { useNotifications } from '@mantine/notifications'
 import { IconMenu2, IconPower } from '@tabler/icons'
 import { useAppDispatch } from 'app/hooks'
+import LocaleSwitcher from 'components/LocaleSwitcher'
 import LogoPdi from 'components/Logo/LogoPdi'
 import { useRoutesManagerProvider } from 'contexts/RoutesManagerProvider'
 import { setDrawerOpened } from 'features/Drawer/drawer-slice'
@@ -94,6 +95,7 @@ const Header = () => {
             <LogoPdi />
           </Anchor>
         </div>
+        <LocaleSwitcher />
         {status === 'authenticated' && pathname !== '/' && (
           <Tooltip label={'Sair'} position={'left'} transition={'fade'}>
             <ActionIcon
