@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Anchor,
+  Group,
   Header as MantineHeader,
   MediaQuery,
   Text,
@@ -95,19 +96,22 @@ const Header = () => {
             <LogoPdi />
           </Anchor>
         </div>
-        <LocaleSwitcher />
-        {status === 'authenticated' && pathname !== '/' && (
-          <Tooltip label={'Sair'} position={'left'} transition={'fade'}>
-            <ActionIcon
-              onClick={handleClick}
-              variant={'light'}
-              color={'red'}
-              radius={'md'}
-            >
-              <IconPower size={20} />
-            </ActionIcon>
-          </Tooltip>
-        )}
+        <Group>
+          <LocaleSwitcher />
+
+          {status === 'authenticated' && pathname !== '/' && (
+            <Tooltip label={'Sair'} position={'left'} transition={'fade'}>
+              <ActionIcon
+                onClick={handleClick}
+                variant={'light'}
+                color={'red'}
+                radius={'md'}
+              >
+                <IconPower size={20} />
+              </ActionIcon>
+            </Tooltip>
+          )}
+        </Group>
       </div>
     </MantineHeader>
   )

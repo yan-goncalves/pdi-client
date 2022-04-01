@@ -5,7 +5,6 @@ import {
   IconTrendingUp
 } from '@tabler/icons'
 import { NavItemLinkProps } from 'components/NavItemLink'
-import { theme } from 'styles/theme'
 
 export const PUBLIC_ROUTES = [
   '/api/.well-known/openid-configuration',
@@ -14,7 +13,7 @@ export const PUBLIC_ROUTES = [
   '/auth/login',
   '/signin',
   '/favicon',
-  ...Object.values<string>(theme.other.images)
+  '/img/'
 ]
 
 export const userNavItemLinks: NavItemLinkProps[] = [

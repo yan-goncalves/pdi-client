@@ -30,7 +30,7 @@ export default class _Document extends Document {
 
   render() {
     return (
-      <Html lang={'pt-br'}>
+      <Html>
         <Head>{CssBaseline.flush()}</Head>
         <body>
           <Main />

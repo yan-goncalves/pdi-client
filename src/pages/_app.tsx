@@ -6,6 +6,7 @@ import { NextUIProvider } from '@nextui-org/react'
 import { store } from 'app/store'
 import AppShell from 'components/AppShell'
 import LoadingOverlay from 'components/LoadingOverlay'
+import LocaleProvider, { LocaleType } from 'contexts/LocaleProvider'
 import RoutesManagerProvider from 'contexts/RoutesManagerProvider'
 import { useApollo } from 'graphql/apollo'
 import { SessionProvider } from 'next-auth/react'
@@ -22,6 +23,7 @@ export default function _App({
   Component,
   pageProps: { session, ...pageProps }
 }: AppProps) {
+  const { locale } = useRouter()
   const client = useApollo(pageProps.initialApolloState)
   const { pathname } = useRouter()
   const match = useMediaQuery(`(max-width: 992px)`)
@@ -43,44 +45,46 @@ export default function _App({
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
-      <SessionProvider session={session}>
-        <ApolloProvider client={client}>
-          <MantineProvider
-            withGlobalStyles
-            withNormalizeCSS
-            theme={theme}
-            styles={{
-              Title: () => ({
-                root: {
-                  fontFamily: 'Public Sans, Roboto, sans-serif'
-                }
-              })
-            }}
-          >
-            <NextUIProvider>
-              <ReduxProvider store={store}>
-                <NotificationsProvider
-                  position={match ? 'bottom-center' : 'bottom-right'}
-                >
-                  <RoutesManagerProvider>
-                    {/* <Header /> */}
-                    <GlobalStyles />
-                    <LoadingOverlay />
-                    {pathname.includes('404') ? (
-                      <Page404 />
-                    ) : (
-                      <AppShell>
-                        <Component {...pageProps} />
-                      </AppShell>
-                    )}
-                    {/* <Footer /> */}
-                  </RoutesManagerProvider>
-                </NotificationsProvider>
-              </ReduxProvider>
-            </NextUIProvider>
-          </MantineProvider>
-        </ApolloProvider>
-      </SessionProvider>
+      <LocaleProvider localeIni={locale as LocaleType}>
+        <SessionProvider session={session}>
+          <ApolloProvider client={client}>
+            <MantineProvider
+              withGlobalStyles
+              withNormalizeCSS
+              theme={theme}
+              styles={{
+                Title: () => ({
+                  root: {
+                    fontFamily: 'Public Sans, Roboto, sans-serif'
+                  }
+                })
+              }}
+            >
+              <NextUIProvider>
+                <ReduxProvider store={store}>
+                  <NotificationsProvider
+                    position={match ? 'bottom-center' : 'bottom-right'}
+                  >
+                    <RoutesManagerProvider>
+                      {/* <Header /> */}
+                      <GlobalStyles />
+                      <LoadingOverlay />
+                      {pathname.includes('404') ? (
+                        <Page404 />
+                      ) : (
+                        <AppShell>
+                          <Component {...pageProps} />
+                        </AppShell>
+                      )}
+                      {/* <Footer /> */}
+                    </RoutesManagerProvider>
+                  </NotificationsProvider>
+                </ReduxProvider>
+              </NextUIProvider>
+            </MantineProvider>
+          </ApolloProvider>
+        </SessionProvider>
+      </LocaleProvider>
     </>
   )
 }

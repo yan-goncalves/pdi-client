@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { useStyles } from './styles'
 
 const LandingInfo = () => {
-  const { push } = useRouter()
+  const { push, asPath, locale } = useRouter()
   const { status } = useSession()
   const { classes, cx } = useStyles()
   const dispatch = useAppDispatch()
@@ -17,7 +17,9 @@ const LandingInfo = () => {
       push('/dashboard')
     } else {
       dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: true }))
-      await signIn(undefined, { callbackUrl: encodeURIComponent('/dashboard') })
+      await signIn(undefined, {
+        callbackUrl: encodeURIComponent(`/${locale}/dashboard`)
+      })
     }
   }
 
