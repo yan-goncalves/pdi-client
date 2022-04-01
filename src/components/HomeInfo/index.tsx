@@ -6,7 +6,12 @@ import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useStyles } from './styles'
 
-const LandingInfo = () => {
+export type HomeInfoProps = {
+  title: string
+  description: string
+}
+
+const HomeInfo = ({ title, description }: HomeInfoProps) => {
   const { push, asPath, locale } = useRouter()
   const { status } = useSession()
   const { classes, cx } = useStyles()
@@ -73,4 +78,4 @@ const LandingInfo = () => {
   )
 }
 
-export default LandingInfo
+export default HomeInfo

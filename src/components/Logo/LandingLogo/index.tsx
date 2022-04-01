@@ -1,11 +1,15 @@
-import { Image, useMantineTheme } from '@mantine/core'
+import { Image } from '@mantine/core'
 import { useStyles } from './styles'
 
-const LandingLogo = () => {
-  const theme = useMantineTheme()
-  const { classes } = useStyles()
-
-  return <Image className={classes.image} src={theme.other.images.landing} />
+export type HomeLogoProps = {
+  url: string
+  alternativeText: string
 }
 
-export default LandingLogo
+const HomeLogo = ({ url, alternativeText }: HomeLogoProps) => {
+  const { classes } = useStyles()
+
+  return <Image className={classes.image} src={url} alt={alternativeText} />
+}
+
+export default HomeLogo
