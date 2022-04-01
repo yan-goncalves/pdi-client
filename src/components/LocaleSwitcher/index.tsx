@@ -43,10 +43,10 @@ const LocaleSwitcher = () => {
         </UnstyledButton>
       }
     >
-      <Link href={{ pathname, query }} as={asPath} locale={'br'} passHref>
+      <Link href={{ pathname, query }} as={asPath} locale={'pt-BR'} passHref>
         <Menu.Item
           icon={<Avatar size={'xs'} src={'/img/brasil.svg'} />}
-          onClick={() => changeLocale('br')}
+          onClick={() => changeLocale('pt-BR')}
         >
           Português
         </Menu.Item>

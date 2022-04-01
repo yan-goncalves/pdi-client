@@ -8,7 +8,7 @@ import {
 } from 'react'
 import useCookie from 'react-use-cookie'
 
-export type LocaleType = 'br' | 'en'
+export type LocaleType = 'pt-BR' | 'en'
 
 export type LocaleDataType = {
   flag: 'brasil' | 'usa'
@@ -19,8 +19,8 @@ export type Locales = {
   [key in LocaleType]: LocaleDataType
 }
 
-const locales: Locales = {
-  br: {
+export const LOCALES: Locales = {
+  'pt-BR': {
     label: 'Português',
     flag: 'brasil'
   },
@@ -52,12 +52,12 @@ const LocaleProvider = ({ localeIni, children }: LocaleProviderProps) => {
     LocaleType,
     Dispatch<SetStateAction<LocaleType>>
   ]
-  const [label, setLabel] = useState(locales[localeIni].label)
-  const [flag, setFlag] = useState(locales[localeIni].flag)
+  const [label, setLabel] = useState(LOCALES[localeIni].label)
+  const [flag, setFlag] = useState(LOCALES[localeIni].flag)
 
   useEffect(() => {
-    setLabel(locales[locale].label)
-    setFlag(locales[locale].flag)
+    setLabel(LOCALES[locale].label)
+    setFlag(LOCALES[locale].flag)
   }, [locale])
 
   return (

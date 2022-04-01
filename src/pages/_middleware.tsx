@@ -4,7 +4,7 @@ import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
 
 const stripDefaultLocale = (str: string): string => {
-  const stripped = str.replace('/br', '')
+  const stripped = str.replace('/pt-BR', '')
   return stripped
 }
 
@@ -33,9 +33,9 @@ export async function middleware(req: NextApiRequest & NextRequest) {
     // You could also check for any property on the session object,
     // like role === "admin" or name === "John Doe", etc.
     if (!session) {
-      const url = stripDefaultLocale(`/${locale}${pathname}`)
-      const callbackUrl = encodeURIComponent(url)
-      const res = NextResponse.redirect(`/signin?callbackUrl=${callbackUrl}`)
+      const callbackUrl = encodeURIComponent(pathname)
+      const redirect = stripDefaultLocale(`/${locale}/signin?callbackUrl=`)
+      const res = NextResponse.redirect(`${redirect}${callbackUrl}`)
       res.cookie('NEXT_LOCALE', locale)
 
       return res
@@ -47,15 +47,4 @@ export async function middleware(req: NextApiRequest & NextRequest) {
 
     return res
   }
-
-  // const shouldHandleLocale =
-  //   !PUBLIC_FILE.test(req.nextUrl.pathname) &&
-  //   !req.nextUrl.pathname.includes('/api/') &&
-  //   req.nextUrl.locale === 'br'
-
-  // return shouldHandleLocale
-  //   ? NextResponse.redirect(
-  //       `/${stripDefaultLocale(req.nextUrl.pathname)}${req.nextUrl.search}`
-  //     )
-  //   : undefined
 }
