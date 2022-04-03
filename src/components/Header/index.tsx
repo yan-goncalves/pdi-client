@@ -1,6 +1,5 @@
 import {
   ActionIcon,
-  Anchor,
   Group,
   Header as MantineHeader,
   MediaQuery,
@@ -12,11 +11,12 @@ import { useNotifications } from '@mantine/notifications'
 import { IconMenu2, IconPower } from '@tabler/icons'
 import { useAppDispatch } from 'app/hooks'
 import LocaleSwitcher from 'components/LocaleSwitcher'
-import LogoPdi from 'components/Logo/LogoPdi'
+import LogoPdi from 'components/LogoPdi'
 import { useRoutesManagerProvider } from 'contexts/RoutesManagerProvider'
 import { setDrawerOpened } from 'features/Drawer/drawer-slice'
 import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
 import { signOut, useSession } from 'next-auth/react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useStyles } from './styles'
 
@@ -92,9 +92,11 @@ const Header = () => {
               </ActionIcon>
             </MediaQuery>
           )}
-          <Anchor href={'/'}>
-            <LogoPdi />
-          </Anchor>
+          <Link href={'/'}>
+            <a>
+              <LogoPdi />
+            </a>
+          </Link>
         </div>
         <Group>
           <LocaleSwitcher />

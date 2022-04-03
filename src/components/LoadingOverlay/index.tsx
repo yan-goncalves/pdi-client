@@ -5,7 +5,7 @@ import {
 } from '@mantine/core'
 import { Grid } from '@nextui-org/react'
 import { useAppSelector } from 'app/hooks'
-import LogoPdi from 'components/Logo/LogoPdi'
+import LogoPdi from 'components/LogoPdi'
 import { selectLoadingOverlay } from 'features/LoadingOverlay/loading-overlay-slice'
 
 type LoadginOverlayProps = {

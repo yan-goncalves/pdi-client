@@ -5,6 +5,7 @@ import {
   IconTrendingUp
 } from '@tabler/icons'
 import { NavItemLinkProps } from 'components/NavItemLink'
+import { NavLinkWrapperProps } from 'components/NavLinkWrapper'
 
 export const PUBLIC_ROUTES = [
   '/api/.well-known/openid-configuration',
@@ -16,24 +17,48 @@ export const PUBLIC_ROUTES = [
   '/img/'
 ]
 
+export const navLinkWrapperTitles: NavLinkWrapperProps = {
+  userSectionTitle: {
+    'pt-BR': 'Área do Usuário',
+    en: 'User Area'
+  },
+
+  managerSectionTitle: {
+    'pt-BR': 'Área do Gestor',
+    en: 'Manager Area'
+  }
+}
+
 export const userNavItemLinks: NavItemLinkProps[] = [
   {
-    title: 'Visão Geral',
+    title: {
+      'pt-BR': 'Visão Geral',
+      en: 'Dashboard'
+    },
     href: '/dashboard',
     icon: IconChartInfographic
   },
   {
-    title: 'Minhas Avaliações',
+    title: {
+      'pt-BR': 'Minhas Avaliações',
+      en: 'My Evaluations'
+    },
     href: '/evaluation',
     icon: IconStars
   },
   {
-    title: 'Meus Objetivos',
+    title: {
+      'pt-BR': 'Meus Objetivos',
+      en: 'My Goals'
+    },
     href: '/goals',
     icon: IconTarget
   },
   {
-    title: 'Desenvolvimento Pessoal',
+    title: {
+      'pt-BR': 'Desenvolvimento Pessoal',
+      en: 'Personal Development'
+    },
     href: '/pdi',
     icon: IconTrendingUp
   }
@@ -41,22 +66,34 @@ export const userNavItemLinks: NavItemLinkProps[] = [
 
 export const managerNavItemLinks: NavItemLinkProps[] = [
   {
-    title: 'Visão Geral do Time',
+    title: {
+      'pt-BR': 'Visão Geral do Time',
+      en: 'Team Dashboard'
+    },
     href: '/manager/teste',
     icon: IconChartInfographic
   },
   {
-    title: 'Avaliações do Time',
+    title: {
+      'pt-BR': 'Avaliações do Time',
+      en: 'Team Evaluations'
+    },
     href: '/manager/evaluation',
     icon: IconStars
   },
   {
-    title: 'Objetivos do Time',
+    title: {
+      'pt-BR': 'Objetivos do Time',
+      en: 'Team Goals'
+    },
     href: '/manager/goals',
     icon: IconTarget
   },
   {
-    title: 'Desenvolvimento Pessoal do Time',
+    title: {
+      'pt-BR': 'Desenvolvimento Pessoal do Time',
+      en: 'Team Personal Development'
+    },
     href: '/manager/pdi',
     icon: IconTrendingUp
   }

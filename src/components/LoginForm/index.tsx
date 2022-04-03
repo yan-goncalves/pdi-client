@@ -7,6 +7,7 @@ import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { ButtonProps } from 'types/common'
 import { useStyles } from './styles'
 
 type Inputs = {
@@ -14,7 +15,17 @@ type Inputs = {
   password: string
 }
 
-const LoginForm = () => {
+type LoginFormProps = {
+  usernameLabel: string
+  passwordLabel: string
+  button: ButtonProps
+}
+
+const LoginForm = ({
+  usernameLabel,
+  passwordLabel,
+  button
+}: LoginFormProps) => {
   const theme = useMantineTheme()
   const { push, query } = useRouter()
   const [loading, setLoading] = useState(false)
@@ -136,7 +147,7 @@ const LoginForm = () => {
             required
             disabled={loading}
             contentLeft={<IconUser />}
-            labelPlaceholder={'Usuário'}
+            labelPlaceholder={usernameLabel}
             color={errors.username ? 'error' : 'default'}
             status={errors.username ? 'error' : 'default'}
             size={'lg'}
@@ -154,7 +165,7 @@ const LoginForm = () => {
             required
             disabled={loading}
             contentLeft={<IconLock />}
-            labelPlaceholder={'Senha'}
+            labelPlaceholder={passwordLabel}
             color={errors.password ? 'error' : 'default'}
             status={errors.password ? 'error' : 'default'}
             size={'lg'}
@@ -172,7 +183,7 @@ const LoginForm = () => {
               loaderPosition={'right'}
               fullWidth
             >
-              {loading ? 'Autenticando...' : 'LOGIN'}
+              {loading ? button.loadingLabel : button.label}
             </Button>
           </div>
         </Grid>

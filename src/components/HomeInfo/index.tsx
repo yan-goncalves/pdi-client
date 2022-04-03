@@ -2,28 +2,42 @@ import { Button, Text, Title } from '@mantine/core'
 import { Grid } from '@nextui-org/react'
 import { useAppDispatch } from 'app/hooks'
 import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
-import { signIn, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { ButtonProps } from 'types/common'
 import { useStyles } from './styles'
 
 export type HomeInfoProps = {
   title: string
   description: string
+  button: ButtonProps
 }
 
-const HomeInfo = ({ title, description }: HomeInfoProps) => {
-  const { push, asPath, locale } = useRouter()
+const HomeInfo = ({ title, description, button }: HomeInfoProps) => {
+  const { push, locale } = useRouter()
   const { status } = useSession()
   const { classes, cx } = useStyles()
   const dispatch = useAppDispatch()
+  const splitDescription = description
+    .split(/<[^>]*>/g)
+    .filter((p) => p.trim() !== '')
 
   const handleClick = async () => {
     if (status === 'authenticated') {
       push('/dashboard')
     } else {
-      dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: true }))
-      await signIn(undefined, {
-        callbackUrl: encodeURIComponent(`/${locale}/dashboard`)
+      dispatch(
+        setLoadingOverlayVisibility({
+          loadingOverlayVisible: true
+        })
+      )
+
+      await push('/dashboard', undefined, { locale }).then(() => {
+        dispatch(
+          setLoadingOverlayVisibility({
+            loadingOverlayVisible: false
+          })
+        )
       })
     }
   }
@@ -31,47 +45,52 @@ const HomeInfo = ({ title, description }: HomeInfoProps) => {
   return (
     <Grid.Container direction={'column'} gap={3}>
       <Grid>
-        <Title order={1} className={classes.title}>
-          Plano de{' '}
-          <Text
-            variant={'gradient'}
-            gradient={{
-              from: 'dark',
-              to: 'blue'
-            }}
-            className={classes.title}
-          >
-            Desenvolvimento{' '}
-          </Text>
-          Individual
-        </Title>
+        {title.split(/^[a-z]*/).map((text) =>
+          text.includes('Development') || text.includes('Desenvolvimento') ? (
+            <Text
+              key={text}
+              variant={'gradient'}
+              gradient={{
+                from: 'dark',
+                to: 'blue'
+              }}
+              className={classes.title}
+            >
+              {text}
+            </Text>
+          ) : (
+            <Title key={text} order={1} className={classes.title}>
+              {text}
+            </Title>
+          )
+        )}
       </Grid>
       <Grid>
-        <Text size={'xs'} className={classes.description}>
-          Seja bem-vindo(a) ao portal de avaliação de performance da SL do
-          Brasil.
-        </Text>
-        <Text size={'xs'} className={classes.description}>
-          Esta ferramenta é valiosa para o desenvolvimento pessoal e
-          profissional de nossos colaboradores.
-        </Text>
-
-        <Text
-          size={'sm'}
-          variant={'gradient'}
-          gradient={{
-            from: 'blue',
-            to: 'dark',
-            deg: 135
-          }}
-          className={cx(classes.description, classes.footerDescription)}
-        >
-          Utilize-a sempre que necessário.
-        </Text>
+        {splitDescription.map((paragraph, index) =>
+          index === splitDescription.length - 1 ? (
+            <Text
+              key={paragraph}
+              size={'md'}
+              variant={'gradient'}
+              gradient={{
+                from: 'blue',
+                to: 'dark',
+                deg: 135
+              }}
+              className={cx(classes.description, classes.footerDescription)}
+            >
+              {paragraph}
+            </Text>
+          ) : (
+            <Text key={paragraph} size={'sm'} className={classes.description}>
+              {paragraph}
+            </Text>
+          )
+        )}
       </Grid>
       <Grid>
         <Button radius={'md'} className={classes.button} onClick={handleClick}>
-          Acessar o portal
+          {button.label}
         </Button>
       </Grid>
     </Grid.Container>

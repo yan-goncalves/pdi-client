@@ -2,6 +2,7 @@ import { MediaQuery, Navbar as MantineNavbar } from '@mantine/core'
 import NavItemUser from 'components/NavItemUser'
 import NavLinkWrapper from 'components/NavLinkWrapper'
 import ScrollArea from 'components/ScrollArea'
+import { navLinkWrapperTitles } from 'constants/defsRoutes'
 
 const Navbar = () => {
   return (
@@ -9,7 +10,7 @@ const Navbar = () => {
       <MantineNavbar height={'100%'} width={{ base: 220 }} p={10}>
         <ScrollArea>
           <NavItemUser />
-          <NavLinkWrapper />
+          <NavLinkWrapper {...navLinkWrapperTitles} />
         </ScrollArea>
       </MantineNavbar>
     </MediaQuery>

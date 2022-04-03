@@ -1,7 +1,7 @@
 import { createStyles } from '@mantine/core'
 
 export const useStyles = createStyles((theme) => ({
-  image: {
+  hideOnMobile: {
     img: {
       [`@media(max-width: ${theme.breakpoints.sm}px)`]: {
         display: 'none'

@@ -18,7 +18,8 @@ function createApolloClient(session?: Session | null) {
   const authLink = setContext((_, { headers, session: clientSession }) => {
     const jwt = session?.jwt || clientSession?.jwt || ''
     const authorization = jwt ? `Bearer ${jwt}` : ''
-    return { headers: { ...headers, authorization } }
+    const normalize = true
+    return { headers: { ...headers, authorization, normalize } }
   })
 
   return new ApolloClient({
@@ -54,5 +55,6 @@ export function useApollo(initialState = null, session?: Session) {
     () => initializeApollo(initialState, session),
     [initialState, session]
   )
+
   return store
 }

@@ -1,26 +1,24 @@
 import { Container, Grid } from '@mantine/core'
 import HomeInfo, { HomeInfoProps } from 'components/HomeInfo'
-import HomeLogo, { HomeLogoProps } from 'components/Logo/LandingLogo'
+import Image, { ImageProps } from 'components/Image'
 import { useStyles } from './styles'
 
 export type HomeTemplateProps = {
   info: HomeInfoProps
-  logo: HomeLogoProps
+  hero: ImageProps
 }
 
-const HomeTemplate = ({ info, logo }: HomeTemplateProps) => {
+const HomeTemplate = ({ info, hero }: HomeTemplateProps) => {
   const { classes } = useStyles()
-  const { title, description } = info
-  const { url, alternativeText } = logo
 
   return (
     <Container fluid className={classes.container}>
       <Grid justify={'center'} align={'center'} gutter={100}>
         <Grid.Col xl={6} lg={6} md={6} sm={6} xs={12}>
-          <HomeInfo title={title} description={description} />
+          <HomeInfo {...info} />
         </Grid.Col>
         <Grid.Col xl={6} lg={6} md={6} sm={6} xs={12}>
-          <HomeLogo url={url} alternativeText={alternativeText} />
+          <Image hideOnMobile {...hero} />
         </Grid.Col>
       </Grid>
     </Container>

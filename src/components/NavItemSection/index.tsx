@@ -1,6 +1,7 @@
 import { Navbar as MantineNavbar } from '@mantine/core'
 import NavItemLink, { NavItemLinkProps } from 'components/NavItemLink'
 import NavItemText from 'components/NavItemText'
+import { useLocale } from 'contexts/LocaleProvider'
 
 type NavItemSectionProps = {
   sectionTitle: string
@@ -8,11 +9,13 @@ type NavItemSectionProps = {
 }
 
 const NavItemSection = ({ sectionTitle, items }: NavItemSectionProps) => {
+  const { locale } = useLocale()
+
   return (
     <MantineNavbar.Section>
       <NavItemText title={sectionTitle} />
       {items.map((item) => (
-        <NavItemLink key={item.title} {...item} />
+        <NavItemLink key={item.title[locale]} {...item} />
       ))}
     </MantineNavbar.Section>
   )

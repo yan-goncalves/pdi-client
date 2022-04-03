@@ -10,6 +10,11 @@ const stripDefaultLocale = (str: string): string => {
 
 /** @param {import("next/server").NextRequest} req */
 export async function middleware(req: NextApiRequest & NextRequest) {
+  const session = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET!
+  })
+
   const pathname = req.nextUrl.pathname
   const cookieLocale = req.cookies['NEXT_LOCALE']
   const nextLocale = req.nextUrl.locale
@@ -26,12 +31,6 @@ export async function middleware(req: NextApiRequest & NextRequest) {
   }
 
   if (isNotPublic() && req.nextUrl.pathname !== '/') {
-    const session = await getToken({
-      req,
-      secret: process.env.NEXTAUTH_SECRET!
-    })
-    // You could also check for any property on the session object,
-    // like role === "admin" or name === "John Doe", etc.
     if (!session) {
       const callbackUrl = encodeURIComponent(pathname)
       const redirect = stripDefaultLocale(`/${locale}/signin?callbackUrl=`)
@@ -41,6 +40,15 @@ export async function middleware(req: NextApiRequest & NextRequest) {
       return res
     }
   }
+
+  if (!!session && pathname.includes('/signin')) {
+    const redirect = stripDefaultLocale(`/${locale}/dashboard`)
+    const res = NextResponse.redirect(redirect)
+    res.cookie('NEXT_LOCALE', locale)
+
+    return res
+  }
+
   if (pathname.includes('/signin') || isNotPublic()) {
     const res = NextResponse.next()
     res.cookie('NEXT_LOCALE', locale)
