@@ -7,15 +7,7 @@ import {
 import { NavItemLinkProps } from 'components/NavItemLink'
 import { NavLinkWrapperProps } from 'components/NavLinkWrapper'
 
-export const PUBLIC_ROUTES = [
-  '/api/.well-known/openid-configuration',
-  '/authorize',
-  '/api/auth',
-  '/auth/login',
-  '/signin',
-  '/favicon',
-  '/img/'
-]
+export const PUBLIC_ROUTES = ['/api/auth', '/signin', '/favicon', '/img/']
 
 export const navLinkWrapperTitles: NavLinkWrapperProps = {
   userSectionTitle: {

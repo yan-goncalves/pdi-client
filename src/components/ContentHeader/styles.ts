@@ -7,6 +7,7 @@ type StylesProps = {
 export const useStyles = createStyles(
   (theme, { scroll = false }: StylesProps) => ({
     root: {
+      zIndex: 1,
       position: 'sticky',
       top: 3,
       borderRadius: theme.radius.md,

@@ -45,25 +45,28 @@ const HomeInfo = ({ title, description, button }: HomeInfoProps) => {
   return (
     <Grid.Container direction={'column'} gap={3}>
       <Grid>
-        {title.split(/^[a-z]*/).map((text) =>
-          text.includes('Development') || text.includes('Desenvolvimento') ? (
-            <Text
-              key={text}
-              variant={'gradient'}
-              gradient={{
-                from: 'dark',
-                to: 'blue'
-              }}
-              className={classes.title}
-            >
-              {text}
-            </Text>
-          ) : (
-            <Title key={text} order={1} className={classes.title}>
-              {text}
-            </Title>
-          )
-        )}
+        {title
+          .split(/([A-Z]\w+\s[a-z]{0,})/)
+          .filter((t) => t.trim() !== '')
+          .map((text) =>
+            text.includes('Development') || text.includes('Desenvolvimento') ? (
+              <Text
+                key={text}
+                variant={'gradient'}
+                gradient={{
+                  from: 'dark',
+                  to: 'blue'
+                }}
+                className={classes.title}
+              >
+                {text.trim()}
+              </Text>
+            ) : (
+              <Title key={text} order={1} className={classes.title}>
+                {text.trim()}
+              </Title>
+            )
+          )}
       </Grid>
       <Grid>
         {splitDescription.map((paragraph, index) =>
