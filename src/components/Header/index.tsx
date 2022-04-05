@@ -102,7 +102,7 @@ const Header = () => {
           <LocaleSwitcher />
 
           {status === 'authenticated' && pathname !== '/' && (
-            <Tooltip label={'Sair'} position={'left'} transition={'fade'}>
+            <Tooltip label={'Sair'} position={'left'}>
               <ActionIcon
                 onClick={handleClick}
                 variant={'light'}

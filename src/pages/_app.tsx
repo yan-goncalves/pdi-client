@@ -52,12 +52,21 @@ export default function _App({
               withGlobalStyles
               withNormalizeCSS
               theme={theme}
+              defaultProps={{
+                Tooltip: {
+                  withArrow: true,
+                  radius: 'md'
+                },
+                Badge: { radius: 'md' },
+                ActionIcon: { radius: 'md' },
+                Card: { radius: 'md' }
+              }}
               styles={{
-                Title: () => ({
+                Title: {
                   root: {
                     fontFamily: 'Public Sans, Roboto, sans-serif'
                   }
-                })
+                }
               }}
             >
               <NextUIProvider>

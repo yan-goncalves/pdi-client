@@ -1,7 +1,12 @@
 import { Navbar as MantineNavbar } from '@mantine/core'
 import NavItemSection from 'components/NavItemSection'
-import { managerNavItemLinks, userNavItemLinks } from 'constants/defsRoutes'
+import {
+  managerNavItemLinks,
+  navLinkWrapperTitles,
+  userNavItemLinks
+} from 'constants/defsRoutes'
 import { LocaleType, useLocale } from 'contexts/LocaleProvider'
+import { useSession } from 'next-auth/react'
 
 export type NavLinkWrapperProps = {
   userSectionTitle: {
@@ -12,21 +17,23 @@ export type NavLinkWrapperProps = {
   }
 }
 
-const NavLinkWrapper = ({
-  userSectionTitle,
-  managerSectionTitle
-}: NavLinkWrapperProps) => {
+const NavLinkWrapper = () => {
   const { locale } = useLocale()
+  const { data: session } = useSession()
+  const { userSectionTitle, managerSectionTitle } = navLinkWrapperTitles
+
   return (
     <MantineNavbar.Section grow style={{ paddingBottom: 10 }}>
       <NavItemSection
         sectionTitle={userSectionTitle[locale]}
         items={userNavItemLinks}
       />
-      <NavItemSection
-        sectionTitle={managerSectionTitle[locale]}
-        items={managerNavItemLinks}
-      />
+      {session?.user.info?.access_role !== 'User' && (
+        <NavItemSection
+          sectionTitle={managerSectionTitle[locale]}
+          items={managerNavItemLinks}
+        />
+      )}
     </MantineNavbar.Section>
   )
 }

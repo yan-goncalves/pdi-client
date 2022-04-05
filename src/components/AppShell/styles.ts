@@ -5,16 +5,18 @@ type StylesProps = {
 }
 
 export const useStyles = createStyles(
-  (_, { isPublic = false }: StylesProps) => ({
+  (theme, { isPublic = false }: StylesProps) => ({
     root: {
-      height: 'calc(100% - 100px)'
-      // minHeight: 'fit-content'
+      [`@media (min-width: ${theme.breakpoints.lg}px)`]: {
+        height: 'calc(100% - 40px)'
+      }
     },
 
     body: {
-      // height: 'calc(100% - 60px)',
-      minHeight: '100%'
-      // minHeight: 'fit-content'
+      height: 'calc(100% - 60px)',
+      [`@media (max-width: ${theme.breakpoints.md}px)`]: {
+        minHeight: '100%'
+      }
     },
 
     main: {

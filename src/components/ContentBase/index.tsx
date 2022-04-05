@@ -1,3 +1,4 @@
+import ContentHeader from 'components/ContentHeader'
 import { useStyles } from './styles'
 
 type ContentBaseProps = {
@@ -7,7 +8,12 @@ type ContentBaseProps = {
 const ContentBase = ({ children }: ContentBaseProps) => {
   const { classes } = useStyles()
 
-  return <div className={classes.root}>{children}</div>
+  return (
+    <div className={classes.root}>
+      <ContentHeader />
+      {children}
+    </div>
+  )
 }
 
 export default ContentBase
