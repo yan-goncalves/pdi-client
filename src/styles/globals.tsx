@@ -17,8 +17,8 @@ const GlobalStyles = () => {
         },
 
         'html, body, #__next': {
-          height: '100%',
-          minHeight: '38rem'
+          height: '100%'
+          // minHeight: '38rem'
         },
 
         [`* > .nextui-input-wrapper--normal,

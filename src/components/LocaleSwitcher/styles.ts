@@ -7,7 +7,7 @@ type StylesProps = {
 export const useStyles = createStyles(
   (theme, { opened = false }: StylesProps) => ({
     menu: {
-      width: '160px',
+      width: '155px',
       backgroundColor: opened ? theme.colors.blue[0] : 'inherit',
       borderRadius: theme.radius.md,
       transition: 'background-color 0.3s ease-in',

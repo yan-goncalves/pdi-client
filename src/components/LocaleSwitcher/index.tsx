@@ -1,5 +1,5 @@
 import { Avatar, Group, Menu, Text, UnstyledButton } from '@mantine/core'
-import { IconChevronDown } from '@tabler/icons'
+import { IconChevronLeft } from '@tabler/icons'
 import { LocaleType, useLocale } from 'contexts/LocaleProvider'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -27,18 +27,17 @@ const LocaleSwitcher = () => {
       onOpen={() => setOpened(true)}
       onClose={() => setOpened(false)}
       className={classes.menu}
-      style={{ width: '160px' }}
       radius={'md'}
       control={
         <UnstyledButton color={'dark'} className={classes.button}>
           <Group style={{ justifyContent: 'space-between' }}>
+            <IconChevronLeft size={16} />
             <Group>
               <Avatar size={'xs'} src={`/img/${flag}.svg`} />
               <Text size={'sm'} style={{ marginLeft: -7 }}>
                 {label}
               </Text>
             </Group>
-            <IconChevronDown size={16} />
           </Group>
         </UnstyledButton>
       }
