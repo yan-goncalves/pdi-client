@@ -177,7 +177,6 @@ const LoginForm = ({
           <div className={classes.buttonContainer}>
             <Button
               type={'submit'}
-              radius={'md'}
               size={'md'}
               loading={loading}
               loaderPosition={'right'}

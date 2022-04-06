@@ -103,12 +103,7 @@ const Header = () => {
 
           {status === 'authenticated' && pathname !== '/' && (
             <Tooltip label={'Sair'} position={'left'}>
-              <ActionIcon
-                onClick={handleClick}
-                variant={'light'}
-                color={'red'}
-                radius={'md'}
-              >
+              <ActionIcon onClick={handleClick} variant={'light'} color={'red'}>
                 <IconPower size={20} />
               </ActionIcon>
             </Tooltip>

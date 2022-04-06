@@ -57,6 +57,7 @@ export default function _App({
                   withArrow: true,
                   radius: 'md'
                 },
+                Button: { radius: 'md' },
                 Badge: { radius: 'md' },
                 ActionIcon: { radius: 'md' },
                 Card: { radius: 'md' }

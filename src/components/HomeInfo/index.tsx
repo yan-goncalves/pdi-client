@@ -92,7 +92,7 @@ const HomeInfo = ({ title, description, button }: HomeInfoProps) => {
         )}
       </Grid>
       <Grid>
-        <Button radius={'md'} className={classes.button} onClick={handleClick}>
+        <Button className={classes.button} onClick={handleClick}>
           {button.label}
         </Button>
       </Grid>

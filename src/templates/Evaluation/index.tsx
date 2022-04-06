@@ -1,8 +1,7 @@
-import { SimpleGrid, useMantineTheme } from '@mantine/core'
-import ContentBase from 'components/ContentBase'
-import EvaluationCardItem, {
-  EvaluationCardItemProps
-} from 'components/EvaluationCardItem'
+import { useMantineTheme } from '@mantine/core'
+import { EvaluationCardItemProps } from 'components/EvaluationCardItem'
+import Stepper from 'components/Stepper'
+import { useState } from 'react'
 import { useStyles } from './styles'
 
 export type EvaluationListTemplateProps = {
@@ -12,37 +11,47 @@ export type EvaluationListTemplateProps = {
 const EvaluationListTemplate = ({ items }: EvaluationListTemplateProps) => {
   const theme = useMantineTheme()
   const { classes } = useStyles()
+  const [step, setStep] = useState(0)
 
   return (
-    <ContentBase>
-      <SimpleGrid
-        pt={20}
-        spacing={30}
-        breakpoints={[
-          {
-            cols: 1,
-            maxWidth: 'xs'
-          },
-          {
-            cols: 2,
-            minWidth: 'sm',
-            maxWidth: 'lg'
-          },
-          {
-            cols: 3,
-            minWidth: 'lg'
-          },
-          {
-            cols: 4,
-            minWidth: 'xl'
-          }
-        ]}
-      >
-        {items.map((props) => (
-          <EvaluationCardItem key={props.year} {...props} />
-        ))}
-      </SimpleGrid>
-    </ContentBase>
+    <Stepper>
+      {[0, 1, 2].map((item) => (
+        <Stepper.Step key={item}>
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((item) => (
+            <div key={item}>item {item}</div>
+          ))}
+        </Stepper.Step>
+      ))}
+    </Stepper>
+    // <ContentBase>
+    //   <SimpleGrid
+    //     pt={20}
+    //     spacing={30}
+    //     breakpoints={[
+    //       {
+    //         cols: 1,
+    //         maxWidth: 'xs'
+    //       },
+    //       {
+    //         cols: 2,
+    //         minWidth: 'sm',
+    //         maxWidth: 'lg'
+    //       },
+    //       {
+    //         cols: 3,
+    //         minWidth: 'lg'
+    //       },
+    //       {
+    //         cols: 4,
+    //         minWidth: 'xl'
+    //       }
+    //     ]}
+    //   >
+    //     {items.map((props) => (
+    //       <EvaluationCardItem key={props.year} {...props} />
+    //     ))}
+    //   </SimpleGrid>
+    // </ContentBase>
   )
 }
 
