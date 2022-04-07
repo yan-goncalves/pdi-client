@@ -1,6 +1,6 @@
 import { useMantineTheme } from '@mantine/core'
 import { EvaluationCardItemProps } from 'components/EvaluationCardItem'
-import Stepper from 'components/Stepper'
+import Stepper from 'components/StepperProgress'
 import { useState } from 'react'
 import { useStyles } from './styles'
 
@@ -14,15 +14,17 @@ const EvaluationListTemplate = ({ items }: EvaluationListTemplateProps) => {
   const [step, setStep] = useState(0)
 
   return (
-    <Stepper>
-      {[0, 1, 2].map((item) => (
-        <Stepper.Step key={item}>
-          {[0, 1, 2, 3, 4].map((item) => (
-            <div key={item}>item {item}</div>
-          ))}
-        </Stepper.Step>
-      ))}
-    </Stepper>
+    <>
+      <Stepper active={0}>
+        {[0, 1, 2, 3, 4].map((item) => (
+          <Stepper.Step key={item}>
+            {[0, 1, 2].map((item) => (
+              <div key={item}>item {item}</div>
+            ))}
+          </Stepper.Step>
+        ))}
+      </Stepper>
+    </>
     // <ContentBase>
     //   <SimpleGrid
     //     pt={20}

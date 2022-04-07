@@ -3,21 +3,35 @@ import {
   Button,
   filterChildrenByType,
   Group,
-  Progress
+  Progress,
+  Step as MantineStep,
+  StepperProps,
+  useMantineDefaultProps
 } from '@mantine/core'
 import React, { Children, useState } from 'react'
 import Step from './Step'
 import createStyles from './styles'
 
-export type StepperProps = {
-  children: React.ReactNode
-}
+// export type StepperProps = {
+//   children: React.ReactNode
+// }
 
 type StepperComponent = ((props: StepperProps) => React.ReactElement) & {
   Step: typeof Step
 }
 
-const Stepper: StepperComponent = ({ children }: StepperProps) => {
+const defaultProps: Partial<StepperProps> = {
+  contentPadding: 'md',
+  size: 'md',
+  radius: 'md',
+  orientation: 'horizontal',
+  iconPosition: 'left'
+}
+
+const StepperProgress: StepperComponent = ({
+  children,
+  ...props
+}: StepperProps) => {
   const { classes } = createStyles()
   const [active, setActive] = useState(0)
   const [current, setCurrent] = useState(0)
@@ -50,26 +64,65 @@ const Stepper: StepperComponent = ({ children }: StepperProps) => {
     })
   }
 
+  const {
+    className,
+    onStepClick,
+    completedIcon,
+    progressIcon,
+    color,
+    iconSize,
+    contentPadding,
+    size,
+    radius,
+    orientation,
+    breakpoint,
+    iconPosition,
+    classNames,
+    styles,
+    ...others
+  } = useMantineDefaultProps('Stepper', defaultProps, props)
+
   const items = steps.reduce<React.ReactNode[]>((acc, item, index, array) => {
     const activeStep = Children.toArray(steps[index].props.children)
 
-    const status = index === active ? '' : index > active ? 'empty' : 'filled'
+    const status =
+      active > index || nextDisabled
+        ? 'stepCompleted'
+        : active === index
+        ? 'stepProgress'
+        : 'stepInactive'
     const value =
-      status === 'empty'
+      status === 'stepInactive'
         ? 0
-        : status === 'filled'
+        : status === 'stepCompleted'
         ? 100
         : (100 / activeStep.length) * current
 
     acc.push(
-      <Step {...item.props} key={`step-${index}`} label={`STEP ${index + 1}`} />
+      <MantineStep
+        {...item.props}
+        __staticSelector="Stepper"
+        icon={item.props.icon || index + 1}
+        state={status}
+        completedIcon={item.props.completedIcon || completedIcon}
+        progressIcon={item.props.progressIcon || progressIcon}
+        color={item.props.color || color}
+        iconSize={iconSize}
+        size={size}
+        radius={radius}
+        classNames={classNames}
+        styles={styles}
+        iconPosition={item.props.iconPosition || iconPosition}
+        key={`step-${index}`}
+      />
     )
 
     if (index < array.length) {
       acc.push(
         <Progress
           key={`progress-${index}`}
-          style={{ width: '100%' }}
+          style={{ width: '100%', height: 2 }}
+          radius={'xs'}
           value={value}
         />
       )
@@ -79,8 +132,6 @@ const Stepper: StepperComponent = ({ children }: StepperProps) => {
   }, [])
 
   const stepChildren = steps[active].props?.children
-  console.log('STEP CHILDREN', stepChildren)
-  const content = filterChildrenByType(stepChildren, Step)
 
   return (
     <Group direction={'column'} style={{ width: '100%' }}>
@@ -105,6 +156,6 @@ const Stepper: StepperComponent = ({ children }: StepperProps) => {
   )
 }
 
-Stepper.Step = Step
+StepperProgress.Step = Step
 
-export default Stepper
+export default StepperProgress
