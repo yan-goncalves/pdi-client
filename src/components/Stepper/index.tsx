@@ -5,7 +5,7 @@ import {
   Group,
   Progress
 } from '@mantine/core'
-import React, { Children, useEffect, useState } from 'react'
+import React, { Children, useState } from 'react'
 import Step from './Step'
 import createStyles from './styles'
 
@@ -23,7 +23,7 @@ const Stepper: StepperComponent = ({ children }: StepperProps) => {
   const [current, setCurrent] = useState(0)
   const steps = filterChildrenByType(children, Step)
   const activeStep = Children.toArray(steps[active].props?.children).length
-  const nextDisabled = active + 1 === steps.length && current + 1 === activeStep
+  const nextDisabled = active + 1 === steps.length && current === activeStep
   const backDisabled = active - 1 === -1 && current - 1 === -1
 
   const handleNext = () => {
@@ -31,7 +31,7 @@ const Stepper: StepperComponent = ({ children }: StepperProps) => {
       const currentStep = Children.toArray(steps[active].props?.children)
       if (state + 1 === currentStep.length) {
         setActive((step) => (active + 1 === steps.length ? step : step + 1))
-        return 0
+        return active + 1 === steps.length ? currentStep.length : 0
       }
 
       return state + 1
@@ -50,37 +50,47 @@ const Stepper: StepperComponent = ({ children }: StepperProps) => {
     })
   }
 
-  useEffect(() => {
-    console.log('ACTIVE INDEX', (100 / steps.length) * current)
-  }, [current])
-
   const items = steps.reduce<React.ReactNode[]>((acc, item, index, array) => {
     const activeStep = Children.toArray(steps[index].props.children)
 
-    const status =
-      index === active ? 'doing' : index < active ? 'empty' : 'filled'
+    const status = index === active ? '' : index > active ? 'empty' : 'filled'
     const value =
       status === 'empty'
         ? 0
         : status === 'filled'
         ? 100
-        : 100 / activeStep.length + current
+        : (100 / activeStep.length) * current
 
     acc.push(
       <Step {...item.props} key={`step-${index}`} label={`STEP ${index + 1}`} />
     )
 
-    if (index !== array.length - 1) {
-      acc.push(<Progress style={{ width: '100%' }} value={value} />)
+    if (index < array.length) {
+      acc.push(
+        <Progress
+          key={`progress-${index}`}
+          style={{ width: '100%' }}
+          value={value}
+        />
+      )
     }
 
     return acc
   }, [])
 
+  const stepChildren = steps[active].props?.children
+  console.log('STEP CHILDREN', stepChildren)
+  const content = filterChildrenByType(stepChildren, Step)
+
   return (
     <Group direction={'column'} style={{ width: '100%' }}>
       <Box style={{ width: '100%' }}>
         <div className={classes.steps}>{items}</div>
+        {stepChildren[current] ? (
+          <div className={classes.content}>{stepChildren[current]}</div>
+        ) : (
+          <div>COMPLETED</div>
+        )}
       </Box>
 
       <Group>

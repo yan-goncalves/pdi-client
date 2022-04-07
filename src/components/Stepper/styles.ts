@@ -35,5 +35,10 @@ export default createStyles((theme) => ({
         : theme.colors.gray[2],
     marginLeft: theme.spacing.md,
     marginRight: theme.spacing.md
+  },
+
+  content: {
+    ...theme.fn.fontStyles(),
+    paddingTop: theme.fn.size({ size: theme.spacing.md, sizes: theme.spacing })
   }
 }))
