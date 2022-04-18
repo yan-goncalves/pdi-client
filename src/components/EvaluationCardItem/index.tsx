@@ -35,7 +35,11 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
       <Card.Section p={15}>
         <Grid justify={'space-between'} align={'center'}>
           <Grid.Col span={2} lg={2}>
-            <Badge size={'xl'} color={STATUS_EVALUATION[period].color}>
+            <Badge
+              size={'xl'}
+              color={STATUS_EVALUATION[period].color}
+              variant={period !== 'out' ? 'filled' : undefined}
+            >
               <strong>{year}</strong>
             </Badge>
           </Grid.Col>

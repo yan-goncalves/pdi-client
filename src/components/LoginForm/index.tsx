@@ -72,7 +72,7 @@ const LoginForm = ({
 
         notifications.showNotification({
           title: (
-            <Text style={{ padding: 2, color: theme.colors.red[9] }}>
+            <Text style={{ padding: 2 }}>
               Não foi possível realizar o login 😢
             </Text>
           ),
@@ -86,9 +86,6 @@ const LoginForm = ({
               borderColor: theme.colors.red[1],
 
               '&::before': { backgroundColor: theme.colors.red[9] }
-            },
-            description: {
-              color: theme.colors.red[7]
             },
             closeButton: {
               color: theme.colors.red[7],
@@ -105,7 +102,7 @@ const LoginForm = ({
 
           notifications.showNotification({
             message: (
-              <Text style={{ padding: 2, color: theme.colors.green[9] }}>
+              <Text style={{ padding: 2 }}>
                 Olá, <b>{name}</b>. Bem-vindo(a) de volta! 😎
               </Text>
             ),
@@ -118,9 +115,6 @@ const LoginForm = ({
                 borderColor: theme.colors.green[1],
 
                 '&::before': { backgroundColor: theme.colors.green[9] }
-              },
-              description: {
-                color: theme.colors.green[7]
               },
               closeButton: {
                 color: theme.colors.green[7],

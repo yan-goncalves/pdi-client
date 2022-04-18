@@ -46,7 +46,7 @@ const Header = () => {
           .finally(() => {
             notifications.showNotification({
               message: (
-                <Text style={{ padding: 2, color: theme.colors.blue[9] }}>
+                <Text>
                   Até mais, <b>{name}</b>! 👋`
                 </Text>
               ),
@@ -59,9 +59,6 @@ const Header = () => {
                   borderColor: theme.colors.blue[1],
 
                   '&::before': { backgroundColor: theme.colors.blue[9] }
-                },
-                description: {
-                  color: theme.colors.blue[7]
                 },
                 closeButton: {
                   color: theme.colors.blue[7],
