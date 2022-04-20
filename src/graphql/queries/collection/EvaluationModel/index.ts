@@ -15,12 +15,8 @@ export const GET_ALL_EVALUATION_MODEL = gql`
 `
 
 export const GET_EVALUATION_MODEL = gql`
-  query GetEvaluationModel($year: String, $locale: I18NLocaleCode) {
-    evaluationModels(
-      filters: { year: { eq: $year } }
-      locale: $locale
-      sort: ["sections.order_list"]
-    ) {
+  query GetEvaluationModel($year: String!, $locale: I18NLocaleCode) {
+    evaluationModels(filters: { year: { eq: $year } }, locale: $locale) {
       data {
         id
         attributes {

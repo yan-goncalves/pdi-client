@@ -17,6 +17,7 @@ import {
 } from 'constants/evaluation'
 import { useLocale } from 'contexts/LocaleProvider'
 import Countdown from 'react-countdown'
+import LoadingOverlay from 'components/LoadingOverlay'
 
 export type EvaluationCardItemProps = {
   year: string
@@ -30,6 +31,17 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
 
   const validPeriods = (periods: string[]) => {
     return periods.includes(period)
+  }
+
+  const handleClick = (
+    periodType: EVALUATION_MODEL_PERIOD,
+    action: 'edit' | 'view'
+  ) => {
+    console.log('PERIOD', periodType, 'ACTION', action, 'YEAR', year)
+  }
+
+  if (!year || !period || !locale) {
+    return <LoadingOverlay />
   }
 
   return (
@@ -99,54 +111,105 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
       </Card.Section>
       <Divider m={5} style={{ borderTopColor: theme.colors.gray[2] }} />
       <Card.Section p={20}>
-        <Group mb={15} style={{ justifyContent: 'space-between' }}>
-          <Text style={{ fontWeight: 500 }}>
-            {STATUS_EVALUATION['midYear'].name[locale]}
-          </Text>
-          <Group>
-            {validPeriods(['free', 'midYear']) && (
-              <Tooltip color={'cyan'} label={CommonConstants.edit[locale]}>
-                <ActionIcon variant={'light'} color={'cyan'}>
-                  <IconEdit size={20} />
-                </ActionIcon>
-              </Tooltip>
-            )}
+        {validPeriods(['out']) ? (
+          <Group mb={15} style={{ justifyContent: 'space-between' }}>
+            <Text color={'gray'} style={{ fontWeight: 500 }}>
+              {locale === 'en'
+                ? 'Evaluation completed'
+                : 'Avaliação finalizada'}
+            </Text>
             <Tooltip color={'violet'} label={CommonConstants.view[locale]}>
-              <ActionIcon variant={'light'} color={'violet'}>
+              <ActionIcon
+                variant={'light'}
+                color={'violet'}
+                onClick={() => handleClick(EVALUATION_MODEL_PERIOD.out, 'view')}
+              >
                 <IconSearch size={20} />
               </ActionIcon>
             </Tooltip>
           </Group>
-        </Group>
-        <Group style={{ justifyContent: 'space-between' }}>
-          <Text style={{ fontWeight: 500 }}>
-            {STATUS_EVALUATION['endYear'].name[locale]}
-          </Text>
-          <Group>
-            {validPeriods(['midYear']) ? (
-              <Tooltip color={'gray'} label={CommonConstants.soon[locale]}>
-                <Badge color={'gray'}>
-                  <Countdown date={Date.now() + Math.random() * 99999999} />
-                </Badge>
-              </Tooltip>
-            ) : (
-              <>
-                {validPeriods(['free', 'endYear']) && (
+        ) : (
+          <>
+            <Group mb={15} style={{ justifyContent: 'space-between' }}>
+              <Text style={{ fontWeight: 500 }}>
+                {STATUS_EVALUATION['midYear'].name[locale]}
+              </Text>
+              <Group>
+                {validPeriods(['free', 'midYear']) && (
                   <Tooltip color={'cyan'} label={CommonConstants.edit[locale]}>
-                    <ActionIcon variant={'light'} color={'cyan'}>
+                    <ActionIcon
+                      variant={'light'}
+                      color={'cyan'}
+                      onClick={() =>
+                        handleClick(EVALUATION_MODEL_PERIOD.midYear, 'edit')
+                      }
+                    >
                       <IconEdit size={20} />
                     </ActionIcon>
                   </Tooltip>
                 )}
                 <Tooltip color={'violet'} label={CommonConstants.view[locale]}>
-                  <ActionIcon variant={'light'} color={'violet'}>
+                  <ActionIcon
+                    variant={'light'}
+                    color={'violet'}
+                    onClick={() =>
+                      handleClick(EVALUATION_MODEL_PERIOD.midYear, 'view')
+                    }
+                  >
                     <IconSearch size={20} />
                   </ActionIcon>
                 </Tooltip>
-              </>
-            )}
-          </Group>
-        </Group>
+              </Group>
+            </Group>
+            <Group style={{ justifyContent: 'space-between' }}>
+              <Text style={{ fontWeight: 500 }}>
+                {STATUS_EVALUATION['endYear'].name[locale]}
+              </Text>
+              <Group>
+                {validPeriods(['midYear']) ? (
+                  <Tooltip color={'gray'} label={CommonConstants.soon[locale]}>
+                    <Badge color={'gray'}>
+                      <Countdown date={Date.now() + Math.random() * 99999999} />
+                    </Badge>
+                  </Tooltip>
+                ) : (
+                  <>
+                    {validPeriods(['free', 'endYear']) && (
+                      <Tooltip
+                        color={'cyan'}
+                        label={CommonConstants.edit[locale]}
+                      >
+                        <ActionIcon
+                          variant={'light'}
+                          color={'cyan'}
+                          onClick={() =>
+                            handleClick(EVALUATION_MODEL_PERIOD.endYear, 'edit')
+                          }
+                        >
+                          <IconEdit size={20} />
+                        </ActionIcon>
+                      </Tooltip>
+                    )}
+                    <Tooltip
+                      color={'violet'}
+                      label={CommonConstants.view[locale]}
+                    >
+                      <ActionIcon
+                        variant={'light'}
+                        color={'violet'}
+                        onClick={() =>
+                          handleClick(EVALUATION_MODEL_PERIOD.endYear, 'view')
+                        }
+                      >
+                        <IconSearch size={20} />
+                      </ActionIcon>
+                    </Tooltip>
+                  </>
+                )}
+              </Group>
+            </Group>
+          </>
+        )}
       </Card.Section>
     </Card>
   )

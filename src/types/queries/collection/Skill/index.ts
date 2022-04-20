@@ -1,6 +1,7 @@
+import { BaseType } from 'types/common'
 import { SectionType } from 'types/queries/collection/Section'
 
-export type SkillType = {
+export interface SkillType extends BaseType {
   title: string
   description: string
   section: SectionType

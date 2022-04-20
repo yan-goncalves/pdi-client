@@ -1,3 +1,9 @@
+export type BaseType = {
+  id: number
+  createdAt: Date
+  updatedAt: Date
+}
+
 export type ButtonApiProps = {
   label: string
   loadingLabel?: string | null

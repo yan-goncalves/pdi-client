@@ -1,3 +1,4 @@
+import { BaseType } from 'types/common'
 import { SkillType } from 'types/queries/collection/Skill'
 
 export type VisibilitySectionType = {
@@ -7,7 +8,7 @@ export type VisibilitySectionType = {
   director: boolean
 }
 
-export type SectionType = {
+export interface SectionType extends BaseType {
   title: string
   visibility: VisibilitySectionType
   order_list: number

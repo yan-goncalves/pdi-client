@@ -22,10 +22,15 @@ export const useStyles = createStyles(
       transition: 'opacity 0.3s ease-out',
       '&:hover': {
         cursor: 'pointer',
-        opacity: '0.7'
+        opacity: '0.7',
+
+        img: {
+          transform: 'scale(0.95)'
+        }
       },
 
       img: {
+        transition: 'transform 0.3s ease-out',
         borderRadius: theme.radius.md
       }
     },

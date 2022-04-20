@@ -1,10 +1,19 @@
-type BaseProps = {
-  id: number
-  createdAt: string
-  updatedAt: string
+import { BaseType } from 'types/common'
+
+export interface UserType extends BaseType {
+  username: string
+  email: string
+  provider: 'local'
+  blocked: boolean | null
+  confirmed: boolean
+  role?: 'Administrator' | 'Authenticated'
+  picture: string
+  department: DepartmentType
+  info: UserInfoType
+  manager: Pick<UserType, 'id' | 'username'>
 }
 
-export interface UserInfoProps extends BaseProps {
+export interface UserInfoType extends BaseType {
   name: string
   lastname: string
   access_role: 'User' | 'Manager' | 'Coordinator' | 'Director'
@@ -14,7 +23,7 @@ export interface UserInfoProps extends BaseProps {
   cost_center: number
 }
 
-export interface DepartmentProps extends BaseProps {
+export interface DepartmentType extends BaseType {
   key: string
   name: string
 }

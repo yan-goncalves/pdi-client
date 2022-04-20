@@ -15,8 +15,8 @@ export const STATUS_EVALUATION = {
   },
   [EVALUATION_MODEL_PERIOD.out]: {
     name: {
-      'pt-BR': 'concluída',
-      en: 'completed'
+      'pt-BR': 'Concluída',
+      en: 'Completed'
     },
     color: 'gray'
   },

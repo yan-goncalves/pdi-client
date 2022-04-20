@@ -1,6 +1,6 @@
 import 'next-auth'
 import 'next-auth/jwt'
-import { DepartmentProps, UserInfoProps } from 'types/auth'
+import { UserType } from 'types/auth'
 
 declare module 'next-auth' {
   interface Session {
@@ -8,20 +8,8 @@ declare module 'next-auth' {
     user: User
   }
 
-  interface User {
-    id: number
-    username: string
-    email: string
-    provider: 'local'
-    blocked: boolean | null
-    confirmed: boolean
-    created_at: Date
-    updated_at: Date
-    role?: 'Administrator' | 'Authenticated'
-    picture: string
-    department: DepartmentProps
-    info: UserInfoProps
-  }
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface User extends UserType {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export interface CallbacksOptions<P = Profile, A = Account> {

@@ -4,6 +4,12 @@ const GlobalStyles = () => {
   return (
     <Global
       styles={(theme) => ({
+        div: {
+          '&.mantine-Text-gradient': {
+            fontFamily: 'Open Sans, Roboto, sans-serif'
+          }
+        },
+
         '&::-webkit-scrollbar': {
           width: '1rem'
         },

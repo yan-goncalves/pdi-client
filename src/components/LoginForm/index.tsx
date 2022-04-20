@@ -7,7 +7,7 @@ import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { ButtonProps } from 'types/common'
+import { ButtonApiProps } from 'types/common'
 import { useStyles } from './styles'
 
 type Inputs = {
@@ -18,7 +18,7 @@ type Inputs = {
 type LoginFormProps = {
   usernameLabel: string
   passwordLabel: string
-  button: ButtonProps
+  button: ButtonApiProps
 }
 
 const LoginForm = ({

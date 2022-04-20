@@ -20,8 +20,7 @@ export const getServerSideProps: GetServerSideProps<
   const {
     data: { evaluationModels }
   } = await apolloClient.query<GetAllEvaluationModelProps>({
-    query: GET_ALL_EVALUATION_MODEL,
-    fetchPolicy: 'no-cache'
+    query: GET_ALL_EVALUATION_MODEL
   })
 
   if (!evaluationModels) {

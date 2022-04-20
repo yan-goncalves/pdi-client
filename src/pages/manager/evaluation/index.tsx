@@ -1,13 +1,11 @@
 import { initializeApollo } from 'graphql/client'
-import {
-  GetAllEvaluationModel,
-  GET_ALL_EVALUATION_MODEL
-} from 'graphql/queries/collection/EvaluationModel'
+import { GET_ALL_EVALUATION_MODEL } from 'graphql/queries/collection/EvaluationModel'
 import { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
 import EvaluationListTemplate, {
   EvaluationListTemplateProps
 } from 'templates/Evaluation'
+import { GetAllEvaluationModelProps } from 'types/queries/collection/EvaluationModel'
 
 const PageEvaluationList = ({ items }: EvaluationListTemplateProps) => {
   return <EvaluationListTemplate items={items} />
@@ -21,9 +19,8 @@ export const getServerSideProps: GetServerSideProps<
 
   const {
     data: { evaluationModels }
-  } = await apolloClient.query<GetAllEvaluationModel>({
-    query: GET_ALL_EVALUATION_MODEL,
-    fetchPolicy: 'no-cache'
+  } = await apolloClient.query<GetAllEvaluationModelProps>({
+    query: GET_ALL_EVALUATION_MODEL
   })
 
   if (!evaluationModels) {

@@ -19,8 +19,7 @@ export const getStaticProps: GetStaticProps<HomeTemplateProps> = async ({
     query: GET_HOME_PAGE,
     variables: {
       locale
-    },
-    fetchPolicy: 'no-cache'
+    }
   })
 
   if (!homePage) {

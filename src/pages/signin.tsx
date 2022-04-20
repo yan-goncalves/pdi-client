@@ -19,8 +19,7 @@ export const getStaticProps: GetStaticProps<SignInTemplateProps> = async ({
     query: GET_SIGNIN_PAGE,
     variables: {
       locale
-    },
-    fetchPolicy: 'no-cache'
+    }
   })
 
   if (!signInPage) {

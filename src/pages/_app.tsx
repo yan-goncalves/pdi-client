@@ -65,7 +65,7 @@ export default function _App({
               styles={{
                 Title: {
                   root: {
-                    fontFamily: 'Public Sans, Roboto, sans-serif'
+                    fontFamily: 'Open Sans, Roboto, sans-serif'
                   }
                 }
               }}
