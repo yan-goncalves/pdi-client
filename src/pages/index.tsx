@@ -1,7 +1,8 @@
 import { initializeApollo } from 'graphql/client'
-import { GetHomePage, GET_HOME_PAGE } from 'graphql/queries/HomePage'
+import { GET_HOME_PAGE } from 'graphql/queries/pages/Home'
 import { GetStaticProps } from 'next'
 import HomeTemplate, { HomeTemplateProps } from 'templates/Home'
+import { HomePageProps } from 'types/queries/pages'
 
 const Home = (props: HomeTemplateProps) => {
   return <HomeTemplate {...props} />
@@ -14,7 +15,7 @@ export const getStaticProps: GetStaticProps<HomeTemplateProps> = async ({
 
   const {
     data: { homePage }
-  } = await apolloClient.query<GetHomePage>({
+  } = await apolloClient.query<HomePageProps>({
     query: GET_HOME_PAGE,
     variables: {
       locale

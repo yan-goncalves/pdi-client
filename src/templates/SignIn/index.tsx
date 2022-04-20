@@ -2,16 +2,16 @@ import { Container, Paper, Space, Text, Title } from '@mantine/core'
 import { Grid } from '@nextui-org/react'
 import Image, { ImageProps } from 'components/Image'
 import LoginForm from 'components/LoginForm'
-import { ButtonProps, TextFieldProps } from 'types/common'
+import { ButtonApiProps, TextFieldApiProps } from 'types/common'
 import { useStyles } from './styles'
 
 export type SignInTemplateProps = {
   title: string
   caption: string
   logo: ImageProps
-  usernameTextField: TextFieldProps
-  passwordTextField: TextFieldProps
-  button: ButtonProps
+  usernameTextField: TextFieldApiProps
+  passwordTextField: TextFieldApiProps
+  button: ButtonApiProps
 }
 
 const SignInTemplate = ({

@@ -25,5 +25,3 @@ export const GET_HOME_PAGE = gql`
     }
   }
 `
-
-export * from './__generated__/GetHomePage'

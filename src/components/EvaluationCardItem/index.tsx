@@ -11,14 +11,16 @@ import {
 } from '@mantine/core'
 import { IconEdit, IconSearch } from '@tabler/icons'
 import { CommonConstants } from 'constants/common'
-import { STATUS_EVALUATION } from 'constants/evaluation'
+import {
+  EVALUATION_MODEL_PERIOD,
+  STATUS_EVALUATION
+} from 'constants/evaluation'
 import { useLocale } from 'contexts/LocaleProvider'
 import Countdown from 'react-countdown'
-import { ENUM_EVALUATIONMODEL_PERIOD } from '../../../__generated__/globalTypes'
 
 export type EvaluationCardItemProps = {
   year: string
-  period: ENUM_EVALUATIONMODEL_PERIOD
+  period: EVALUATION_MODEL_PERIOD
   finished: boolean
 }
 

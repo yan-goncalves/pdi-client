@@ -4,13 +4,13 @@ import { useAppDispatch } from 'app/hooks'
 import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import { ButtonProps } from 'types/common'
+import { ButtonApiProps } from 'types/common'
 import { useStyles } from './styles'
 
 export type HomeInfoProps = {
   title: string
   description: string
-  button: ButtonProps
+  button: ButtonApiProps
 }
 
 const HomeInfo = ({ title, description, button }: HomeInfoProps) => {

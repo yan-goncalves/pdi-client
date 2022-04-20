@@ -46,36 +46,6 @@ export const GET_EVALUATION_MODEL = gql`
               }
             }
           }
-          goals {
-            data {
-              id
-              attributes {
-                goal {
-                  data {
-                    attributes {
-                      name
-                    }
-                  }
-                }
-                evaluation_goal_kpis {
-                  data {
-                    id
-                    attributes {
-                      kpi {
-                        data {
-                          attributes {
-                            name
-                          }
-                        }
-                      }
-                      target
-                      weight
-                    }
-                  }
-                }
-              }
-            }
-          }
           feedbacks {
             data {
               id
@@ -90,5 +60,3 @@ export const GET_EVALUATION_MODEL = gql`
     }
   }
 `
-
-export * from './__generated__/GetAllEvaluationModel'

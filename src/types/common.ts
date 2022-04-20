@@ -1,8 +1,13 @@
-export type ButtonProps = {
+export type ButtonApiProps = {
   label: string
   loadingLabel?: string | null
 }
 
-export type TextFieldProps = {
+export type TextFieldApiProps = {
   labelPlaceholder: string
+}
+
+export type ImageApiProps = {
+  url: string
+  alternativeText: string
 }

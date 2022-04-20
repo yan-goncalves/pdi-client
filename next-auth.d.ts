@@ -1,6 +1,6 @@
 import 'next-auth'
 import 'next-auth/jwt'
-import { DepartmentProps, UserInfoProps } from 'types/api'
+import { DepartmentProps, UserInfoProps } from 'types/auth'
 
 declare module 'next-auth' {
   interface Session {

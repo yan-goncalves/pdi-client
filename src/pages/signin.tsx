@@ -1,8 +1,8 @@
 import { initializeApollo } from 'graphql/client'
-import { GET_SIGNIN_PAGE } from 'graphql/queries/SignInPage'
-import { GetSignInPage } from 'graphql/queries/SignInPage/__generated__/GetSignInPage'
+import { GET_SIGNIN_PAGE } from 'graphql/queries/pages/SignIn'
 import { GetStaticProps } from 'next'
 import SignInTemplate, { SignInTemplateProps } from 'templates/SignIn'
+import { SignInProps } from 'types/queries/pages'
 
 const SignIn = (props: SignInTemplateProps) => {
   return <SignInTemplate {...props} />
@@ -15,7 +15,7 @@ export const getStaticProps: GetStaticProps<SignInTemplateProps> = async ({
 
   const {
     data: { signInPage }
-  } = await apolloClient.query<GetSignInPage>({
+  } = await apolloClient.query<SignInProps>({
     query: GET_SIGNIN_PAGE,
     variables: {
       locale

@@ -2,7 +2,7 @@ import { initializeApollo } from 'graphql/client'
 import {
   GetAllEvaluationModel,
   GET_ALL_EVALUATION_MODEL
-} from 'graphql/queries/EvaluationModel'
+} from 'graphql/queries/collection/EvaluationModel'
 import { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
 import EvaluationListTemplate, {
