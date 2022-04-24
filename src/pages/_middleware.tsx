@@ -1,4 +1,4 @@
-import { PUBLIC_ROUTES } from 'constants/defsRoutes'
+import { PUBLIC_ROUTES } from 'constants/ROUTES'
 import { NextApiRequest } from 'next'
 import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'

@@ -62,17 +62,51 @@ export default createStyles(
 
     return {
       root: {
-        width: '100%'
+        width: '100%',
+
+        [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
+          '& .mantine-StepperProgress-stepCompletedIcon': {
+            svg: {
+              width: 12,
+              height: 12
+            }
+          }
+        }
       },
 
       steps: {
         display: 'flex',
         boxSizing: 'border-box',
         alignItems: 'center',
-        ...(orientation === 'vertical'
-          ? verticalOrientationStyles.steps
-          : null),
-        ...(shouldBeResponsive ? responsiveStyles.steps : null)
+
+        [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
+          '& .mantine-StepperProgress-stepBody': {
+            margin: 0
+          },
+
+          '& .mantine-StepperProgress-stepLabel': {
+            fontSize: 11
+          },
+
+          '& .mantine-StepperProgress-stepIcon': {
+            fontSize: 11
+          },
+
+          button: {
+            '&:not(:last-child)': {
+              display: 'flex',
+              gap: 5,
+              minWidth: 80,
+              flexDirection: 'column',
+              alignContent: 'center'
+            }
+          }
+        }
+
+        // ...(orientation === 'vertical'
+        //   ? verticalOrientationStyles.steps
+        //   : null),
+        // ...(shouldBeResponsive ? responsiveStyles.steps : null)
       },
 
       separator: {
@@ -81,10 +115,15 @@ export default createStyles(
         height: 2,
         marginLeft: theme.spacing.md,
         marginRight: theme.spacing.md,
-        ...(orientation === 'vertical'
-          ? verticalOrientationStyles.separator
-          : null),
-        ...(shouldBeResponsive ? responsiveStyles.separator : null)
+
+        [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
+          marginLeft: 5,
+          marginRight: 5
+        }
+        // ...(orientation === 'vertical'
+        //   ? verticalOrientationStyles.separator
+        //   : null),
+        // ...(shouldBeResponsive ? responsiveStyles.separator : null)
       },
 
       content: {

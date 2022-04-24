@@ -1,4 +1,4 @@
-import { PUBLIC_ROUTES } from 'constants/defsRoutes'
+import { PUBLIC_ROUTES } from 'constants/ROUTES'
 import { useRouter } from 'next/router'
 import { createContext, useContext, useEffect, useState } from 'react'
 
@@ -33,4 +33,5 @@ const RoutesManagerProvider: React.FC = ({ children }) => {
 export const useRoutesManagerProvider = () => {
   return useContext(RoutesManagerContext)
 }
+
 export default RoutesManagerProvider

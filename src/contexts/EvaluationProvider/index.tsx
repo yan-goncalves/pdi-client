@@ -1,21 +1,23 @@
+import { EvaluationPeriod } from 'constants/evaluation'
 import {
   createContext,
   Dispatch,
   SetStateAction,
   useContext,
-  useEffect,
   useState
 } from 'react'
 import useCookie from 'react-use-cookie'
 import { EvaluationModelType } from 'types/queries/collection/EvaluationModel'
 
-type EvaluationModeType = 'edit' | 'view'
+export type EvaluationModeType = 'edit' | 'view'
 
 type ContextType = {
   evaluationModel: EvaluationModelType
   setEvaluationModel: Dispatch<SetStateAction<EvaluationModelType>>
-  mode: 'edit' | 'view'
+  mode: EvaluationModeType
   setMode: Dispatch<SetStateAction<EvaluationModeType>>
+  periodMode: EvaluationPeriod
+  setPeriodMode: Dispatch<SetStateAction<EvaluationPeriod>>
 }
 
 const EvaluationContext = createContext<ContextType>({} as ContextType)
@@ -32,10 +34,20 @@ const EvaluationProvider = ({ children }: EvaluationProviderProps) => {
     EvaluationModeType,
     Dispatch<SetStateAction<EvaluationModeType>>
   ]
+  const [periodMode, setPeriodMode] = useCookie(
+    'pdi:evaluation-period-mode'
+  ) as [EvaluationPeriod, Dispatch<SetStateAction<EvaluationPeriod>>]
 
   return (
     <EvaluationContext.Provider
-      value={{ mode, setMode, evaluationModel, setEvaluationModel }}
+      value={{
+        evaluationModel,
+        setEvaluationModel,
+        mode,
+        setMode,
+        periodMode,
+        setPeriodMode
+      }}
     >
       {children}
     </EvaluationContext.Provider>
@@ -45,4 +57,5 @@ const EvaluationProvider = ({ children }: EvaluationProviderProps) => {
 export const useEvaluation = () => {
   return useContext(EvaluationContext)
 }
+
 export default EvaluationProvider

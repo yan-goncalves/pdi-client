@@ -72,4 +72,5 @@ const LocaleProvider = ({ localeIni, children }: LocaleProviderProps) => {
 export const useLocale = () => {
   return useContext(LocaleContext)
 }
+
 export default LocaleProvider

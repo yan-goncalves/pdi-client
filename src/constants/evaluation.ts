@@ -1,37 +1,64 @@
-export enum EVALUATION_MODEL_PERIOD {
+export enum EvaluationPeriod {
   endYear = 'endYear',
   free = 'free',
   midYear = 'midYear',
   out = 'out'
 }
 
-export const STATUS_EVALUATION = {
-  [EVALUATION_MODEL_PERIOD.free]: {
+export const EvaluationStatus = {
+  [EvaluationPeriod.free]: {
     name: {
       'pt-BR': 'admin',
       en: 'admin'
     },
     color: 'red'
   },
-  [EVALUATION_MODEL_PERIOD.out]: {
+  [EvaluationPeriod.out]: {
     name: {
       'pt-BR': 'Concluída',
       en: 'Completed'
     },
     color: 'gray'
   },
-  [EVALUATION_MODEL_PERIOD.midYear]: {
+  [EvaluationPeriod.midYear]: {
     name: {
       'pt-BR': 'Meio de Ano',
       en: 'Mid-Year'
     },
     color: 'indigo'
   },
-  [EVALUATION_MODEL_PERIOD.endYear]: {
+  [EvaluationPeriod.endYear]: {
     name: {
       'pt-BR': 'Fechamento de Ano',
       en: 'End-Year'
     },
     color: 'yellow'
+  }
+}
+
+export const EvaluationSteps = {
+  questions: {
+    'pt-BR': 'Questões Iniciais',
+    en: 'Opening Questions'
+  },
+
+  skills: {
+    'pt-BR': 'Competências',
+    en: 'Skills'
+  },
+
+  goals: {
+    'pt-BR': 'Objetivos',
+    en: 'Goals'
+  },
+
+  feedbacks: {
+    'pt-BR': 'Feedbacks',
+    en: 'Feedbacks'
+  },
+
+  pdi: {
+    'pt-BR': 'PDI',
+    en: 'IDP'
   }
 }

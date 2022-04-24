@@ -11,33 +11,43 @@ import {
 } from '@mantine/core'
 import { IconEdit, IconSearch } from '@tabler/icons'
 import { CommonConstants } from 'constants/common'
-import {
-  EVALUATION_MODEL_PERIOD,
-  STATUS_EVALUATION
-} from 'constants/evaluation'
+import { EvaluationPeriod, EvaluationStatus } from 'constants/evaluation'
 import { useLocale } from 'contexts/LocaleProvider'
 import Countdown from 'react-countdown'
 import LoadingOverlay from 'components/LoadingOverlay'
+import { EvaluationModeType, useEvaluation } from 'contexts/EvaluationProvider'
+import { useRouter } from 'next/router'
+import { useAppDispatch } from 'app/hooks'
+import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
 
 export type EvaluationCardItemProps = {
   year: string
-  period: EVALUATION_MODEL_PERIOD
+  period: EvaluationPeriod
   finished: boolean
 }
 
 const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
   const theme = useMantineTheme()
+  const { push, pathname } = useRouter()
   const { locale } = useLocale()
+  const { setMode, setPeriodMode } = useEvaluation()
+  const dispatch = useAppDispatch()
 
   const validPeriods = (periods: string[]) => {
     return periods.includes(period)
   }
 
-  const handleClick = (
-    periodType: EVALUATION_MODEL_PERIOD,
-    action: 'edit' | 'view'
+  const handleClick = async (
+    periodMode: EvaluationPeriod,
+    action: EvaluationModeType
   ) => {
-    console.log('PERIOD', periodType, 'ACTION', action, 'YEAR', year)
+    setMode(action)
+    setPeriodMode(periodMode)
+
+    dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: true }))
+    await push(`${pathname}/${year}`, undefined, { locale }).then(() => {
+      dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: false }))
+    })
   }
 
   if (!year || !period || !locale) {
@@ -51,7 +61,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
           <Grid.Col span={2} lg={2}>
             <Badge
               size={'xl'}
-              color={STATUS_EVALUATION[period].color}
+              color={EvaluationStatus[period].color}
               variant={period !== 'out' ? 'filled' : undefined}
             >
               <strong>{year}</strong>
@@ -68,13 +78,13 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
               justifyContent: 'flex-end'
             }}
           >
-            <Tooltip label={'status'} color={STATUS_EVALUATION[period].color}>
+            <Tooltip label={'status'} color={EvaluationStatus[period].color}>
               <Badge
                 size={'md'}
                 variant={'dot'}
-                color={STATUS_EVALUATION[period].color}
+                color={EvaluationStatus[period].color}
               >
-                {STATUS_EVALUATION[period].name[locale]}
+                {EvaluationStatus[period].name[locale]}
               </Badge>
             </Tooltip>
           </Grid.Col>
@@ -122,7 +132,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
               <ActionIcon
                 variant={'light'}
                 color={'violet'}
-                onClick={() => handleClick(EVALUATION_MODEL_PERIOD.out, 'view')}
+                onClick={() => handleClick(EvaluationPeriod.out, 'view')}
               >
                 <IconSearch size={20} />
               </ActionIcon>
@@ -132,7 +142,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
           <>
             <Group mb={15} style={{ justifyContent: 'space-between' }}>
               <Text style={{ fontWeight: 500 }}>
-                {STATUS_EVALUATION['midYear'].name[locale]}
+                {EvaluationStatus['midYear'].name[locale]}
               </Text>
               <Group>
                 {validPeriods(['free', 'midYear']) && (
@@ -141,7 +151,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
                       variant={'light'}
                       color={'cyan'}
                       onClick={() =>
-                        handleClick(EVALUATION_MODEL_PERIOD.midYear, 'edit')
+                        handleClick(EvaluationPeriod.midYear, 'edit')
                       }
                     >
                       <IconEdit size={20} />
@@ -153,7 +163,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
                     variant={'light'}
                     color={'violet'}
                     onClick={() =>
-                      handleClick(EVALUATION_MODEL_PERIOD.midYear, 'view')
+                      handleClick(EvaluationPeriod.midYear, 'view')
                     }
                   >
                     <IconSearch size={20} />
@@ -163,7 +173,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
             </Group>
             <Group style={{ justifyContent: 'space-between' }}>
               <Text style={{ fontWeight: 500 }}>
-                {STATUS_EVALUATION['endYear'].name[locale]}
+                {EvaluationStatus['endYear'].name[locale]}
               </Text>
               <Group>
                 {validPeriods(['midYear']) ? (
@@ -183,7 +193,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
                           variant={'light'}
                           color={'cyan'}
                           onClick={() =>
-                            handleClick(EVALUATION_MODEL_PERIOD.endYear, 'edit')
+                            handleClick(EvaluationPeriod.endYear, 'edit')
                           }
                         >
                           <IconEdit size={20} />
@@ -198,7 +208,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
                         variant={'light'}
                         color={'violet'}
                         onClick={() =>
-                          handleClick(EVALUATION_MODEL_PERIOD.endYear, 'view')
+                          handleClick(EvaluationPeriod.endYear, 'view')
                         }
                       >
                         <IconSearch size={20} />

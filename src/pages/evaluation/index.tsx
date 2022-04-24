@@ -4,7 +4,7 @@ import { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
 import EvaluationListTemplate, {
   EvaluationListTemplateProps
-} from 'templates/Evaluation'
+} from 'templates/EvaluationList'
 import { GetAllEvaluationModelProps } from 'types/queries/collection/EvaluationModel'
 
 const PageEvaluationList = ({ items }: EvaluationListTemplateProps) => {

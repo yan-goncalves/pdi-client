@@ -6,6 +6,7 @@ import { NextUIProvider } from '@nextui-org/react'
 import { store } from 'app/store'
 import AppShell from 'components/AppShell'
 import LoadingOverlay from 'components/LoadingOverlay'
+import EvaluationProvider from 'contexts/EvaluationProvider'
 import LocaleProvider, { LocaleType } from 'contexts/LocaleProvider'
 import RoutesManagerProvider from 'contexts/RoutesManagerProvider'
 import { useApollo } from 'graphql/client'
@@ -26,7 +27,7 @@ export default function _App({
   const { locale } = useRouter()
   const client = useApollo(pageProps.initialApolloState)
   const { pathname } = useRouter()
-  const match = useMediaQuery(`(max-width: 992px)`)
+  const match = useMediaQuery(`(max-width: 992px)`, false)
 
   useEffect(() => {
     // Remove the server-side injected CSS.
@@ -76,17 +77,17 @@ export default function _App({
                     position={match ? 'bottom-center' : 'bottom-right'}
                   >
                     <RoutesManagerProvider>
-                      {/* <Header /> */}
-                      <GlobalStyles />
-                      <LoadingOverlay />
-                      {pathname.includes('404') ? (
-                        <Page404 />
-                      ) : (
-                        <AppShell>
-                          <Component {...pageProps} />
-                        </AppShell>
-                      )}
-                      {/* <Footer /> */}
+                      <EvaluationProvider>
+                        <GlobalStyles />
+                        <LoadingOverlay />
+                        {pathname.includes('404') ? (
+                          <Page404 />
+                        ) : (
+                          <AppShell>
+                            <Component {...pageProps} />
+                          </AppShell>
+                        )}
+                      </EvaluationProvider>
                     </RoutesManagerProvider>
                   </NotificationsProvider>
                 </ReduxProvider>

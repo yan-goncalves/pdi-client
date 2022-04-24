@@ -9,8 +9,10 @@ import {
   Progress,
   Step,
   StepperProps,
-  useMantineDefaultProps
+  useMantineDefaultProps,
+  useMantineTheme
 } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import React, { Children, forwardRef, useEffect, useState } from 'react'
 import { StepCompleted } from './StepCompleted'
 import useStyles from './styles'
@@ -47,6 +49,9 @@ export type StepperProgressProps = Omit<StepperProps, 'active'> & {
 
   /* Action to finish button when clicked */
   onFinish?: () => void
+
+  /* Allow all steps to be selectable */
+  allowStepSelect?: boolean
 }
 
 type StepperComponent = ((
@@ -69,9 +74,12 @@ export const StepperProgress: StepperComponent = forwardRef<
   HTMLDivElement,
   StepperProgressProps
 >((props: StepperProgressProps, ref) => {
+  const theme = useMantineTheme()
+  const match = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`, false)
+
   const {
-    active = 0,
-    activeContent = 0,
+    active,
+    activeContent,
     groupButtonProps,
     control,
     prevBtnLabel,
@@ -79,6 +87,7 @@ export const StepperProgress: StepperComponent = forwardRef<
     finishBtnLabel,
     finishStepIcon,
     onFinish,
+    allowStepSelect = false,
     className,
     children,
     onStepClick,
@@ -135,12 +144,18 @@ export const StepperProgress: StepperComponent = forwardRef<
 
   useEffect(() => {
     /* [Controlled] Update step state */
-    setActiveStep(Math.min(active, filteredChildren.length))
+    if (typeof active === 'number') {
+      setActiveStep(Math.min(active, filteredChildren.length))
+    }
   }, [active])
 
   useEffect(() => {
     /* [Controlled] Update step content state */
-    setActiveStepContent(Math.min(activeContent, activeStepChildren.length - 1))
+    if (typeof activeContent === 'number') {
+      setActiveStepContent(
+        Math.min(activeContent, activeStepChildren.length - 1)
+      )
+    }
   }, [activeContent])
 
   /* [Uncontrolled] Handle previous step/step content */
@@ -154,12 +169,15 @@ export const StepperProgress: StepperComponent = forwardRef<
       return
     }
 
-    const max = Math.max(-1, activeStepContent - 1)
-    if (max === -1) {
-      setActiveStep(Math.max(0, activeStep - 1))
-      setActiveStepContent(activeStepChildren.length - 1)
+    if (activeStepContent - 1 === -1) {
+      const newActiveStepChildren = Children.toArray(
+        filteredChildren?.[activeStep - 1]?.props?.children
+      )
+
+      setActiveStep(activeStep - 1)
+      setActiveStepContent(newActiveStepChildren.length - 1)
     } else {
-      setActiveStepContent(max)
+      setActiveStepContent(activeStepContent - 1)
     }
   }
 
@@ -170,12 +188,11 @@ export const StepperProgress: StepperComponent = forwardRef<
       return
     }
 
-    const min = Math.min(activeStepChildren.length, activeStepContent + 1)
-    if (min === activeStepChildren.length) {
+    if (activeStepContent + 1 === activeStepChildren.length) {
       setActiveStep(activeStep + 1)
       setActiveStepContent(0)
     } else {
-      setActiveStepContent(min)
+      setActiveStepContent(activeStepContent + 1)
     }
   }
 
@@ -185,7 +202,9 @@ export const StepperProgress: StepperComponent = forwardRef<
       setActiveStep(index)
     } else {
       onStepClick(index)
-      active !== activeStep && setActiveStep(active)
+      typeof active === 'number' &&
+        active !== activeStep &&
+        setActiveStep(active)
     }
 
     setActiveStepContent(0)
@@ -212,23 +231,28 @@ export const StepperProgress: StepperComponent = forwardRef<
       acc.push(
         <Step
           {...item.props}
-          __staticSelector="StepperProgress"
+          __staticSelector={'StepperProgress'}
           icon={item.props.icon || index + 1}
           key={index}
           state={state}
-          onClick={() => shouldAllowSelect && handleStepClick(index)}
+          onClick={() =>
+            shouldAllowSelect || (handleStepClick && handleStepClick(index))
+          }
           allowStepClick={
-            shouldAllowSelect || typeof onStepClick === 'function'
+            shouldAllowSelect ||
+            typeof onStepClick === 'function' ||
+            allowStepSelect
           }
           completedIcon={item.props.completedIcon || completedIcon}
           progressIcon={item.props.progressIcon || progressIcon}
           color={item.props.color || color}
-          iconSize={iconSize}
+          iconSize={!match ? iconSize : 24}
           size={size}
           radius={radius}
           classNames={classNames}
           styles={styles}
           iconPosition={item.props.iconPosition || iconPosition}
+          className={classes.steps}
         />
       )
 
@@ -261,7 +285,7 @@ export const StepperProgress: StepperComponent = forwardRef<
   /* [core] Add step on last index to end stepper */
   items.push(
     <Step
-      __staticSelector="StepperProgress"
+      __staticSelector={'StepperProgress'}
       icon={finishStepIcon || filteredChildren.length + 1}
       key={filteredChildren.length}
       state={
@@ -271,18 +295,19 @@ export const StepperProgress: StepperComponent = forwardRef<
           ? 'stepProgress'
           : 'stepInactive'
       }
-      allowStepClick={typeof onStepClick === 'function'}
-      allowStepSelect={typeof onStepClick === 'function'}
-      onClick={() => onStepClick && onStepClick(filteredChildren.length)}
+      allowStepClick={typeof onStepClick === 'function' || allowStepSelect}
+      allowStepSelect={typeof onStepClick === 'function' || allowStepSelect}
+      onClick={() => handleStepClick(filteredChildren.length)}
       completedIcon={completedIcon}
       progressIcon={progressIcon}
       color={color}
-      iconSize={iconSize}
+      iconSize={!match ? iconSize : 24}
       size={size}
       radius={radius}
       classNames={classNames}
       styles={styles}
       iconPosition={iconPosition}
+      className={classes.steps}
     />
   )
 
@@ -292,7 +317,7 @@ export const StepperProgress: StepperComponent = forwardRef<
   const content =
     nextDisabled || finished
       ? completedContent
-      : stepContent?.[activeStepContent]
+      : stepContent?.[activeStepContent] || stepContent
 
   return (
     <Box className={cx(classes.root, className)} ref={ref} {...others}>
@@ -301,7 +326,7 @@ export const StepperProgress: StepperComponent = forwardRef<
 
       {/* [Controlled/Uncontrolled] Group button according prop control  */}
       {control ?? (
-        <Group {...groupProps} pt="md">
+        <Group {...groupProps} pt={'md'}>
           <Button
             {...prevBtnProps}
             onClick={handlePrev}

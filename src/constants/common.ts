@@ -12,5 +12,20 @@ export const CommonConstants = {
   soon: {
     'pt-BR': 'Em breve',
     en: 'Soon'
+  },
+
+  next: {
+    'pt-BR': 'Próximo',
+    en: 'Next'
+  },
+
+  previous: {
+    'pt-BR': 'Anterior',
+    en: 'Previous'
+  },
+
+  finish: {
+    'pt-BR': 'Finalizar',
+    en: 'Finish'
   }
 }

@@ -1,15 +1,17 @@
 import { Title } from '@mantine/core'
 import { useWindowScroll } from '@mantine/hooks'
+import ContentNavbar from 'components/ContentNavbar'
 import { NavItemLinkProps } from 'components/NavItemLink'
-import { managerNavItemLinks, userNavItemLinks } from 'constants/defsRoutes'
+import { managerNavItemLinks, userNavItemLinks } from 'constants/ROUTES'
 import { useLocale } from 'contexts/LocaleProvider'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { useStyles } from './styles'
+import { isValidElement, useEffect, useState } from 'react'
 
-const ContentHeader = () => {
-  const [scroll] = useWindowScroll()
-  const { classes } = useStyles({ scroll: scroll.y >= 30 })
+export type ContentHeaderProps = {
+  title?: React.ReactNode
+}
+
+const ContentHeader = ({ title }: ContentHeaderProps) => {
   const { locale } = useLocale()
   const { pathname } = useRouter()
   const [route, setRoute] = useState<Pick<NavItemLinkProps, 'title'>>({
@@ -31,11 +33,15 @@ const ContentHeader = () => {
   }, [pathname])
 
   return (
-    <div className={classes.root}>
-      <Title p={20} order={2}>
-        {route.title[locale]}
-      </Title>
-    </div>
+    <ContentNavbar>
+      {isValidElement(title) ? (
+        <>{title}</>
+      ) : (
+        <Title p={20} order={2}>
+          {title ?? route.title[locale]}
+        </Title>
+      )}
+    </ContentNavbar>
   )
 }
 

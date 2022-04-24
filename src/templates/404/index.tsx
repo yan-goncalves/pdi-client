@@ -9,7 +9,7 @@ const Template404 = () => {
   const theme = useMantineTheme()
   const { classes } = useStyles()
   const { push } = useRouter()
-  const matches = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
+  const match = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`, false)
 
   const goBack = async () => {
     await push('/')
@@ -47,7 +47,7 @@ const Template404 = () => {
             variant={'default'}
             leftIcon={<IconArrowBackUp />}
             onClick={goBack}
-            size={matches ? 'xs' : 'sm'}
+            size={match ? 'xs' : 'sm'}
           >
             Voltar à página inicial
           </Button>

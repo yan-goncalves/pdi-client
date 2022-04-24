@@ -30,6 +30,7 @@ export const GET_EVALUATION_MODEL = gql`
                 title
                 visibility
                 order_list
+                type
                 skills {
                   data {
                     id

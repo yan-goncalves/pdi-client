@@ -22,13 +22,13 @@ const Drawer = () => {
   const { pathname } = useRouter()
   const { drawerOpened } = useAppSelector(selectDrawerOpened)
   const dispatch = useAppDispatch()
-  const matches = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`)
+  const match = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`, false)
 
   useEffect(() => {
-    if (!matches && drawerOpened) {
+    if (!match && drawerOpened) {
       dispatch(setDrawerOpened({ drawerOpened: false }))
     }
-  }, [matches, drawerOpened])
+  }, [match, drawerOpened])
 
   useEffect(() => {
     if (drawerOpened && pathname) {
