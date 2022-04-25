@@ -4,7 +4,7 @@ import {
   managerNavItemLinks,
   navLinkWrapperTitles,
   userNavItemLinks
-} from 'constants/ROUTES'
+} from 'constants/routes'
 import { LocaleType, useLocale } from 'contexts/LocaleProvider'
 import { useSession } from 'next-auth/react'
 

@@ -1,5 +1,5 @@
 import { BaseType } from 'types/common'
-import { SkillType } from 'types/queries/collection/Skill'
+import { SkillType } from 'types/collection/Skill'
 
 export type VisibilitySectionType = {
   User: boolean

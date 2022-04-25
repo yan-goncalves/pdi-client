@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
   Button,
@@ -249,10 +250,13 @@ export const StepperProgress: StepperComponent = forwardRef<
           iconSize={!match ? iconSize : 24}
           size={size}
           radius={radius}
-          classNames={classNames}
+          classNames={{
+            ...classNames,
+            step: classes.step,
+            stepProgress: classes.stepProgress
+          }}
           styles={styles}
           iconPosition={item.props.iconPosition || iconPosition}
-          className={classes.steps}
         />
       )
 
@@ -307,7 +311,6 @@ export const StepperProgress: StepperComponent = forwardRef<
       classNames={classNames}
       styles={styles}
       iconPosition={iconPosition}
-      className={classes.steps}
     />
   )
 

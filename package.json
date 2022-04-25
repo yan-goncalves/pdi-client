@@ -18,7 +18,7 @@
     "@mantine/modals": "4.1.4",
     "@mantine/next": "4.1.4",
     "@mantine/notifications": "4.1.4",
-    "@nextui-org/react": "1.0.2-beta.3",
+    "@nextui-org/react": "^1.0.0-beta.6",
     "@reduxjs/toolkit": "1.7.2",
     "@tabler/icons": "1.53.0",
     "axios": "0.26.1",

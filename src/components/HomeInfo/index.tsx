@@ -24,7 +24,7 @@ const HomeInfo = ({ title, description, button }: HomeInfoProps) => {
 
   const handleClick = async () => {
     if (status === 'authenticated') {
-      push('/dashboard')
+      push('dashboard')
     } else {
       dispatch(
         setLoadingOverlayVisibility({
@@ -32,7 +32,7 @@ const HomeInfo = ({ title, description, button }: HomeInfoProps) => {
         })
       )
 
-      await push('/dashboard', undefined, { locale }).then(() => {
+      await push('dashboard').then(() => {
         dispatch(
           setLoadingOverlayVisibility({
             loadingOverlayVisible: false

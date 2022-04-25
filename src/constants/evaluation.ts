@@ -5,60 +5,80 @@ export enum EvaluationPeriod {
   out = 'out'
 }
 
-export const EvaluationStatus = {
-  [EvaluationPeriod.free]: {
-    name: {
-      'pt-BR': 'admin',
-      en: 'admin'
+export const EvaluationConstants = {
+  status: {
+    [EvaluationPeriod.free]: {
+      name: {
+        'pt-BR': 'admin',
+        en: 'admin'
+      },
+      color: 'red'
     },
-    color: 'red'
-  },
-  [EvaluationPeriod.out]: {
-    name: {
-      'pt-BR': 'Concluída',
-      en: 'Completed'
+    [EvaluationPeriod.out]: {
+      name: {
+        'pt-BR': 'Concluída',
+        en: 'Completed'
+      },
+      color: 'gray'
     },
-    color: 'gray'
-  },
-  [EvaluationPeriod.midYear]: {
-    name: {
-      'pt-BR': 'Meio de Ano',
-      en: 'Mid-Year'
+    [EvaluationPeriod.midYear]: {
+      name: {
+        'pt-BR': 'Meio de Ano',
+        en: 'Mid-Year'
+      },
+      color: 'indigo'
     },
-    color: 'indigo'
+    [EvaluationPeriod.endYear]: {
+      name: {
+        'pt-BR': 'Fechamento de Ano',
+        en: 'End-Year'
+      },
+      color: 'yellow'
+    }
   },
-  [EvaluationPeriod.endYear]: {
-    name: {
-      'pt-BR': 'Fechamento de Ano',
-      en: 'End-Year'
+
+  contentTitle: {
+    my: {
+      'pt-BR': 'Minha Avaliação de Desempenho',
+      en: 'My Performance Evaluation'
     },
-    color: 'yellow'
-  }
-}
-
-export const EvaluationSteps = {
-  questions: {
-    'pt-BR': 'Questões Iniciais',
-    en: 'Opening Questions'
+    team: {
+      'pt-BR': 'Avaliação de Desempenho',
+      en: 'Performance Evaluation'
+    }
   },
 
-  skills: {
-    'pt-BR': 'Competências',
-    en: 'Skills'
+  steps: {
+    questions: {
+      'pt-BR': 'Questões Iniciais',
+      en: 'Opening Questions'
+    },
+
+    skills: {
+      'pt-BR': 'Competências',
+      en: 'Skills'
+    },
+
+    goals: {
+      'pt-BR': 'Objetivos',
+      en: 'Goals'
+    },
+
+    feedbacks: {
+      'pt-BR': 'Feedbacks',
+      en: 'Feedbacks'
+    },
+
+    pdi: {
+      'pt-BR': 'PDI',
+      en: 'IDP'
+    }
   },
 
-  goals: {
-    'pt-BR': 'Objetivos',
-    en: 'Goals'
-  },
-
-  feedbacks: {
-    'pt-BR': 'Feedbacks',
-    en: 'Feedbacks'
-  },
-
-  pdi: {
-    'pt-BR': 'PDI',
-    en: 'IDP'
+  description: {
+    finished: {
+      'pt-BR': 'Avaliação finalizada',
+      en: 'Evaluation completed'
+    }
   }
 }

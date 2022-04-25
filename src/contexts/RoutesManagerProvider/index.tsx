@@ -1,4 +1,4 @@
-import { PUBLIC_ROUTES } from 'constants/ROUTES'
+import { PUBLIC_ROUTES } from 'constants/routes'
 import { useRouter } from 'next/router'
 import { createContext, useContext, useEffect, useState } from 'react'
 

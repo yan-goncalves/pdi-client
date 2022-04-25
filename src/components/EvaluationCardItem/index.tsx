@@ -11,7 +11,7 @@ import {
 } from '@mantine/core'
 import { IconEdit, IconSearch } from '@tabler/icons'
 import { CommonConstants } from 'constants/common'
-import { EvaluationPeriod, EvaluationStatus } from 'constants/evaluation'
+import { EvaluationConstants, EvaluationPeriod } from 'constants/evaluation'
 import { useLocale } from 'contexts/LocaleProvider'
 import Countdown from 'react-countdown'
 import LoadingOverlay from 'components/LoadingOverlay'
@@ -45,7 +45,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
     setPeriodMode(periodMode)
 
     dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: true }))
-    await push(`${pathname}/${year}`, undefined, { locale }).then(() => {
+    await push(`${pathname}/${year}`).then(() => {
       dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: false }))
     })
   }
@@ -55,13 +55,20 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
   }
 
   return (
-    <Card withBorder key={year} shadow={'sm'} py={25} px={25}>
+    <Card
+      withBorder
+      key={year}
+      shadow={'sm'}
+      py={25}
+      px={25}
+      sx={{ height: '100%' }}
+    >
       <Card.Section p={15}>
         <Grid justify={'space-between'} align={'center'}>
           <Grid.Col span={2} lg={2}>
             <Badge
               size={'xl'}
-              color={EvaluationStatus[period].color}
+              color={EvaluationConstants.status[period].color}
               variant={period !== 'out' ? 'filled' : undefined}
             >
               <strong>{year}</strong>
@@ -78,45 +85,19 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
               justifyContent: 'flex-end'
             }}
           >
-            <Tooltip label={'status'} color={EvaluationStatus[period].color}>
+            <Tooltip
+              label={'status'}
+              color={EvaluationConstants.status[period].color}
+            >
               <Badge
                 size={'md'}
                 variant={'dot'}
-                color={EvaluationStatus[period].color}
+                color={EvaluationConstants.status[period].color}
               >
-                {EvaluationStatus[period].name[locale]}
+                {EvaluationConstants.status[period].name[locale]}
               </Badge>
             </Tooltip>
           </Grid.Col>
-
-          {/* <Grid.Col span={6} lg={7}>
-                  <Slider
-                    disabled
-                    labelAlwaysOn
-                    radius={'sm'}
-                    value={index + Math.random() * 95}
-                    label={'04/04'}
-                    marks={[
-                      { value: 0, label: '10/01' },
-                      { value: 100, label: '30/06' }
-                    ]}
-                    classNames={{
-                      root: classes.root,
-                      dragging: classes.dragging,
-                      thumb: classes.thumb,
-                      track: classes.track,
-                      bar: classes.bar,
-                      markLabel: classes.markLabel,
-                      label: classes.label
-                    }}
-                    thumbChildren={
-                      <IconStar
-                        fill={theme.colors.blue[1]}
-                        color={theme.colors.blue[9]}
-                      />
-                    }
-                  />
-                </Grid.Col> */}
         </Grid>
       </Card.Section>
       <Divider m={5} style={{ borderTopColor: theme.colors.gray[2] }} />
@@ -124,9 +105,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
         {validPeriods(['out']) ? (
           <Group mb={15} style={{ justifyContent: 'space-between' }}>
             <Text color={'gray'} style={{ fontWeight: 500 }}>
-              {locale === 'en'
-                ? 'Evaluation completed'
-                : 'Avaliação finalizada'}
+              {EvaluationConstants.description.finished[locale]}
             </Text>
             <Tooltip color={'violet'} label={CommonConstants.view[locale]}>
               <ActionIcon
@@ -142,7 +121,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
           <>
             <Group mb={15} style={{ justifyContent: 'space-between' }}>
               <Text style={{ fontWeight: 500 }}>
-                {EvaluationStatus['midYear'].name[locale]}
+                {EvaluationConstants.status['midYear'].name[locale]}
               </Text>
               <Group>
                 {validPeriods(['free', 'midYear']) && (
@@ -173,7 +152,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
             </Group>
             <Group style={{ justifyContent: 'space-between' }}>
               <Text style={{ fontWeight: 500 }}>
-                {EvaluationStatus['endYear'].name[locale]}
+                {EvaluationConstants.status['endYear'].name[locale]}
               </Text>
               <Group>
                 {validPeriods(['midYear']) ? (

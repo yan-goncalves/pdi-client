@@ -1,6 +1,6 @@
 import { BaseType } from 'types/common'
-import { KpiType } from 'types/queries/collection/Kpi'
-import { EvaluationGoalType } from 'types/queries/collection/EvaluationGoal'
+import { KpiType } from 'types/collection/Kpi'
+import { EvaluationGoalType } from 'types/collection/EvaluationGoal'
 
 export interface EvaluationGoalKpiType extends BaseType {
   kpi: KpiType

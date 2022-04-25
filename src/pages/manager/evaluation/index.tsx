@@ -1,29 +1,30 @@
 import { initializeApollo } from 'graphql/client'
-import { GET_ALL_EVALUATION_MODEL } from 'graphql/queries/collection/EvaluationModel'
+import { GET_TEAM_MEMBERS } from 'graphql/queries/collection/Team'
 import { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
-import EvaluationListTemplate, {
-  EvaluationListTemplateProps
-} from 'templates/EvaluationList'
-import { GetAllEvaluationModelProps } from 'types/queries/collection/EvaluationModel'
+import TeamMembersTemplate, { TeamMembersTemplateProps } from 'templates/Team'
+import { GetTeamMembers } from 'types/collection/Team'
 
-const PageEvaluationList = ({ items }: EvaluationListTemplateProps) => {
-  return <EvaluationListTemplate items={items} />
+const PageTeamList = ({ items }: TeamMembersTemplateProps) => {
+  return <TeamMembersTemplate items={items} />
 }
 
 export const getServerSideProps: GetServerSideProps<
-  EvaluationListTemplateProps
+  TeamMembersTemplateProps
 > = async ({ req }) => {
   const session = await getSession({ req })
   const apolloClient = initializeApollo(null, session)
 
   const {
-    data: { evaluationModels }
-  } = await apolloClient.query<GetAllEvaluationModelProps>({
-    query: GET_ALL_EVALUATION_MODEL
+    data: { team }
+  } = await apolloClient.query<GetTeamMembers>({
+    query: GET_TEAM_MEMBERS,
+    variables: {
+      idManager: session?.user.id
+    }
   })
 
-  if (!evaluationModels) {
+  if (!team) {
     return {
       notFound: true
     }
@@ -31,9 +32,9 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
-      items: [...evaluationModels]
+      items: [...team]
     }
   }
 }
 
-export default PageEvaluationList
+export default PageTeamList

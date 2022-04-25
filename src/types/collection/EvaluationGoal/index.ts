@@ -1,8 +1,8 @@
 import { UserType } from 'types/auth'
 import { BaseType } from 'types/common'
-import { EvaluationGoalKpiType } from 'types/queries/collection/EvaluationGoalKpiType'
-import { EvaluationModelType } from 'types/queries/collection/EvaluationModel'
-import { GoalType } from 'types/queries/collection/Goal'
+import { EvaluationGoalKpiType } from 'types/collection/EvaluationGoalKpiType'
+import { EvaluationModelType } from 'types/collection/EvaluationModel'
+import { GoalType } from 'types/collection/Goal'
 
 export interface EvaluationGoalType extends BaseType {
   evaluation: EvaluationModelType

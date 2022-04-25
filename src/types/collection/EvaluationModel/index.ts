@@ -1,7 +1,7 @@
 import { EvaluationPeriod } from 'constants/evaluation'
 import { BaseType } from 'types/common'
-import { SectionType } from 'types/queries/collection/Section'
-import { FeedbackType } from 'types/queries/collection/Feedback'
+import { SectionType } from 'types/collection/Section'
+import { FeedbackType } from 'types/collection/Feedback'
 import { EvaluationGoalType } from '../EvaluationGoal'
 
 export interface EvaluationModelType extends BaseType {

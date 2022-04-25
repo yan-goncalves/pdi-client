@@ -1,10 +1,9 @@
-import { Container } from '@mantine/core'
 import ContentHeader from 'components/ContentHeader'
 import { useStyles } from './styles'
 
 type ContentBaseProps = {
   children: React.ReactNode
-  title?: string
+  title?: React.ReactNode
 }
 
 const ContentBase = ({ children, title }: ContentBaseProps) => {

@@ -2,7 +2,7 @@ import { ApolloProvider } from '@apollo/client'
 import { MantineProvider } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { NotificationsProvider } from '@mantine/notifications'
-import { NextUIProvider } from '@nextui-org/react'
+import { createTheme, NextUIProvider } from '@nextui-org/react'
 import { store } from 'app/store'
 import AppShell from 'components/AppShell'
 import LoadingOverlay from 'components/LoadingOverlay'
@@ -71,7 +71,20 @@ export default function _App({
                 }
               }}
             >
-              <NextUIProvider>
+              <NextUIProvider
+                theme={createTheme({
+                  type: 'light',
+                  theme: {
+                    breakpoints: {
+                      xs: '576px',
+                      sm: '768px',
+                      md: '992px',
+                      lg: '1200px',
+                      xl: '1400px'
+                    }
+                  }
+                })}
+              >
                 <ReduxProvider store={store}>
                   <NotificationsProvider
                     position={match ? 'bottom-center' : 'bottom-right'}
