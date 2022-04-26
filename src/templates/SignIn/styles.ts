@@ -5,7 +5,7 @@ export const useStyles = createStyles((theme) => ({
     padding: 0,
     display: 'flex',
     alignItems: 'center',
-    paddingBottom: 35,
+    paddingBottom: 15,
 
     [`@media(min-width: ${theme.breakpoints.xl}px)`]: {
       paddingBottom: 125

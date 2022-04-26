@@ -18,7 +18,7 @@ const HomeTemplate = ({ info, hero }: HomeTemplateProps) => {
           <HomeInfo {...info} />
         </Grid.Col>
         <Grid.Col xl={6} lg={6} md={6} sm={6} xs={12}>
-          <Image hideOnMobile {...hero} />
+          <Image hideOnMobile {...hero} className={classes.hero} />
         </Grid.Col>
       </Grid>
     </Container>

@@ -16,12 +16,15 @@ const Image = ({
   hideOnMobile = false,
   ...props
 }: ImageProps & MantineImageProps) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   return (
     <MantineImage
       {...props}
-      className={!hideOnMobile ? undefined : classes.hideOnMobile}
+      className={cx(
+        props.className,
+        !hideOnMobile ? undefined : classes.hideOnMobile
+      )}
       src={`${process.env.NEXT_PUBLIC_API_URL}${url}`}
       alt={alternativeText || url}
     />

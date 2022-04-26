@@ -2,7 +2,7 @@ import { initializeApollo } from 'graphql/client'
 import { GET_HOME_PAGE } from 'graphql/queries/pages/Home'
 import { GetStaticProps } from 'next'
 import HomeTemplate, { HomeTemplateProps } from 'templates/Home'
-import { HomePageProps } from 'types/queries/pages'
+import { HomePageProps } from 'types/pages'
 
 const Home = (props: HomeTemplateProps) => {
   return <HomeTemplate {...props} />

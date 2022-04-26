@@ -13,10 +13,10 @@ const AppShell: React.FC = ({ children }) => {
   return (
     <MantineAppShell
       header={<Header />}
-      navbar={isPublic ? undefined : <Navbar />}
+      navbar={!isPublic ? <Navbar /> : undefined}
       footer={<Footer />}
       classNames={{
-        root: classes.root,
+        // root: classes.root,
         body: classes.body,
         main: classes.main
       }}
