@@ -6,7 +6,7 @@ import ScrollArea from 'components/ScrollArea'
 const Navbar = () => {
   return (
     <MediaQuery smallerThan={'md'} styles={{ display: 'none' }}>
-      <MantineNavbar height={'100%'} width={{ base: 220 }} p={10}>
+      <MantineNavbar width={{ base: 220 }} p={10}>
         <ScrollArea>
           <NavItemUser />
           <NavLinkWrapper />

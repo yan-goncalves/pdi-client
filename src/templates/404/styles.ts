@@ -2,7 +2,7 @@ import { createStyles } from '@mantine/core'
 
 export const useStyles = createStyles((theme) => ({
   root: {
-    height: 'calc(100% - 10rem)'
+    height: '100vh'
   },
 
   imageContainer: {

@@ -13,7 +13,7 @@ const EvaluationListTemplate = ({ items }: EvaluationListTemplateProps) => {
     <ContentBase>
       <Grid justify={'flex-start'}>
         {items.map((props) => (
-          <Grid.Col xs={6} md={5} lg={4} key={props.year}>
+          <Grid.Col xs={6} md={5} lg={4} xl={3} key={props.year}>
             <EvaluationCardItem {...props} />
           </Grid.Col>
         ))}

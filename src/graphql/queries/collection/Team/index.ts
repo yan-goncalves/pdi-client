@@ -9,11 +9,20 @@ export const GET_TEAM_MEMBERS = gql`
         id
         attributes {
           username
+          department {
+            data {
+              attributes {
+                key
+                name
+              }
+            }
+          }
           info {
             data {
               attributes {
                 name
                 lastname
+                access_role
               }
             }
           }

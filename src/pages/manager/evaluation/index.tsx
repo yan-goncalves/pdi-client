@@ -1,12 +1,18 @@
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { initializeApollo } from 'graphql/client'
 import { GET_TEAM_MEMBERS } from 'graphql/queries/collection/Team'
 import { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
 import TeamMembersTemplate, { TeamMembersTemplateProps } from 'templates/Team'
-import { GetTeamMembers } from 'types/collection/Team'
+import { GetTeamMembers, TeamMember } from 'types/collection/Team'
+import {
+  getMembersRecursively,
+  isManager,
+  orderMembersByDepartments
+} from 'utils/helpers'
 
-const PageTeamList = ({ items }: TeamMembersTemplateProps) => {
-  return <TeamMembersTemplate items={items} />
+const PageTeamList = (props: TeamMembersTemplateProps) => {
+  return <TeamMembersTemplate {...props} />
 }
 
 export const getServerSideProps: GetServerSideProps<
@@ -30,10 +36,14 @@ export const getServerSideProps: GetServerSideProps<
     }
   }
 
+  await Promise.all(
+    team.map(async (member) => {
+      await getMembersRecursively(member, apolloClient, team)
+    })
+  )
+
   return {
-    props: {
-      items: [...team]
-    }
+    props: orderMembersByDepartments(team)
   }
 }
 

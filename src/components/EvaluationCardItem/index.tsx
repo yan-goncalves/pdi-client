@@ -28,7 +28,7 @@ export type EvaluationCardItemProps = {
 
 const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
   const theme = useMantineTheme()
-  const { push, pathname } = useRouter()
+  const { push, asPath } = useRouter()
   const { locale } = useLocale()
   const { setMode, setPeriodMode } = useEvaluation()
   const dispatch = useAppDispatch()
@@ -45,7 +45,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
     setPeriodMode(periodMode)
 
     dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: true }))
-    await push(`${pathname}/${year}`).then(() => {
+    await push(`${asPath}/${year}`).then(() => {
       dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: false }))
     })
   }

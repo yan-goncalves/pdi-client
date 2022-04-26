@@ -40,8 +40,8 @@ const TeamMemberCardItem = ({ id, username, info, picture }: TeamMember) => {
           }
         />
       </Card.Body>
-      <Card.Footer>
-        <Text align={'center'} weight={500}>
+      <Card.Footer style={{ justifyContent: 'center' }}>
+        <Text size={'sm'} align={'center'} weight={500}>
           {!info ? username : `${info.name} ${info.lastname}`}
         </Text>
       </Card.Footer>

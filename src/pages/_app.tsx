@@ -61,7 +61,7 @@ export default function _App({
                 Button: { radius: 'md' },
                 Badge: { radius: 'md' },
                 ActionIcon: { radius: 'md' },
-                Card: { radius: 'md' }
+                Card: { radius: 'lg' }
               }}
               styles={{
                 Title: {

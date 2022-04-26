@@ -7,7 +7,6 @@ type StylesProps = {
 export const useStyles = createStyles(
   (theme, { isPublic = false }: StylesProps) => ({
     body: {
-      height: 'calc(100% - 6rem)',
       [`@media (min-width: ${theme.breakpoints.xl}px)`]: {
         height: 'calc(100% - 3.5rem)'
       }

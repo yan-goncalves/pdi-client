@@ -1,5 +1,7 @@
 import { BaseType } from 'types/common'
 
+export type AccessRoleType = 'User' | 'Manager' | 'Coordinator' | 'Director'
+
 export interface UserType extends BaseType {
   username: string
   email: string
@@ -16,7 +18,7 @@ export interface UserType extends BaseType {
 export interface UserInfoType extends BaseType {
   name: string
   lastname: string
-  access_role: 'User' | 'Manager' | 'Coordinator' | 'Director'
+  access_role: AccessRoleType
   role: string
   hiring_date: Date
   badge: number
