@@ -1,6 +1,7 @@
-import { Button, Text, Title } from '@mantine/core'
+import { Button, MediaQuery, Text, Title } from '@mantine/core'
 import { Grid } from '@nextui-org/react'
 import { useAppDispatch } from 'app/hooks'
+import Image, { ImageProps } from 'components/Image'
 import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
@@ -11,9 +12,10 @@ export type HomeInfoProps = {
   title: string
   description: string
   button: ButtonApiProps
+  hero: ImageProps
 }
 
-const HomeInfo = ({ title, description, button }: HomeInfoProps) => {
+const HomeInfo = ({ title, description, button, hero }: HomeInfoProps) => {
   const { push, locale } = useRouter()
   const { status } = useSession()
   const { classes, cx } = useStyles()
@@ -68,6 +70,9 @@ const HomeInfo = ({ title, description, button }: HomeInfoProps) => {
             )
           )}
       </Grid>
+      <MediaQuery largerThan={'sm'} styles={{ display: 'none' }}>
+        <Image {...hero} className={classes.hero} />
+      </MediaQuery>
       <Grid>
         {splitDescription.map((paragraph, index) =>
           index === splitDescription.length - 1 ? (

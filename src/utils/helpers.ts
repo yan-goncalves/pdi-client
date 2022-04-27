@@ -36,17 +36,28 @@ export const getMembersRecursively = async (
 export const orderMembersByDepartments = (team: TeamMember[]) => {
   const ordered: TeamMembersTemplateProps = {}
 
-  team.map((member) => {
-    const key = member.department.key
-    const name = member.department.name
-    if (typeof ordered[key] === 'undefined') {
-      ordered[key] = {
-        name,
-        members: []
+  team
+    .sort((memberA, memberB) => {
+      const departmentA = memberA.department.name
+      const departmentB = memberB.department.name
+      if (departmentA > departmentB) {
+        return 1
+      } else if (departmentA < departmentB) {
+        return -1
       }
-    }
-    ordered[key].members.push(member)
-  })
+      return 0
+    })
+    .map((member) => {
+      const key = member.department.key
+      const name = member.department.name
+      if (typeof ordered[key] === 'undefined') {
+        ordered[key] = {
+          name,
+          members: []
+        }
+      }
+      ordered[key].members.push(member)
+    })
 
   return ordered
 }

@@ -20,6 +20,12 @@ export const useStyles = createStyles(
     button: {
       width: '100%',
       padding: '8px 16px'
+    },
+
+    lang: {
+      [`@media (max-width: ${theme.breakpoints.xs}px)`]: {
+        fontSize: theme.fontSizes.xs
+      }
     }
   })
 )

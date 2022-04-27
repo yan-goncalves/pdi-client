@@ -1,4 +1,5 @@
-import { useWindowScroll } from '@mantine/hooks'
+import { useMantineTheme } from '@mantine/core'
+import { useMediaQuery, useWindowScroll } from '@mantine/hooks'
 import { useStyles } from './styles'
 
 export type ContentNavbarProps = {
@@ -6,8 +7,14 @@ export type ContentNavbarProps = {
 }
 
 const ContentNavbar = ({ children }: ContentNavbarProps) => {
+  const theme = useMantineTheme()
+  const match = useMediaQuery(`(max-width: ${theme.breakpoints.xs}px)`, false)
   const [scroll] = useWindowScroll()
-  const { classes } = useStyles({ scroll: scroll.y >= 30 })
+  const top = !match ? 60 : 0
+  const { classes } = useStyles({
+    top,
+    scroll: scroll.y >= 60
+  })
 
   return <div className={classes.root}>{children}</div>
 }

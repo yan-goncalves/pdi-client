@@ -34,7 +34,11 @@ const LocaleSwitcher = () => {
             <IconChevronLeft size={16} />
             <Group>
               <Avatar size={'xs'} src={`/img/${flag}.svg`} />
-              <Text size={'sm'} style={{ marginLeft: -7 }}>
+              <Text
+                size={'sm'}
+                style={{ marginLeft: -7 }}
+                className={classes.lang}
+              >
                 {label}
               </Text>
             </Group>

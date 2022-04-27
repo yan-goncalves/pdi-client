@@ -9,6 +9,10 @@ export const useStyles = createStyles((theme) => ({
 
     [`@media(min-width: ${theme.breakpoints.xl}px)`]: {
       paddingBottom: 125
+    },
+
+    [`@media(max-width: ${theme.breakpoints.xs}px)`]: {
+      padding: 0
     }
   },
 

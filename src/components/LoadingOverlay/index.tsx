@@ -7,6 +7,7 @@ import { Grid } from '@nextui-org/react'
 import { useAppSelector } from 'app/hooks'
 import LogoPdi from 'components/LogoPdi'
 import { selectLoadingOverlay } from 'features/LoadingOverlay/loading-overlay-slice'
+import { useEffect } from 'react'
 
 type LoadginOverlayProps = {
   alwaysVisible?: boolean
@@ -15,6 +16,14 @@ type LoadginOverlayProps = {
 const LoadingOverlay = ({ alwaysVisible = false }: LoadginOverlayProps) => {
   const theme = useMantineTheme()
   const { loadingOverlayVisible } = useAppSelector(selectLoadingOverlay)
+
+  useEffect(() => {
+    if (loadingOverlayVisible) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+  }, [loadingOverlayVisible])
 
   return (
     <MantineLoadingOverlay

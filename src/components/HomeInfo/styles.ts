@@ -29,5 +29,9 @@ export const useStyles = createStyles((theme) => ({
     [`@media(max-width: ${theme.breakpoints.sm}px)`]: {
       width: '100%'
     }
+  },
+
+  hero: {
+    maxWidth: '100%'
   }
 }))

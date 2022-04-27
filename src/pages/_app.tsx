@@ -52,6 +52,7 @@ export default function _App({
             <MantineProvider
               withGlobalStyles
               withNormalizeCSS
+              withCSSVariables
               theme={theme}
               defaultProps={{
                 Tooltip: {

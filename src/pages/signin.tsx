@@ -2,7 +2,7 @@ import { initializeApollo } from 'graphql/client'
 import { GET_SIGNIN_PAGE } from 'graphql/queries/pages/SignIn'
 import { GetStaticProps } from 'next'
 import SignInTemplate, { SignInTemplateProps } from 'templates/SignIn'
-import { SignInProps } from 'types/queries/pages'
+import { SignInProps } from 'types/pages'
 
 const SignIn = (props: SignInTemplateProps) => {
   return <SignInTemplate {...props} />

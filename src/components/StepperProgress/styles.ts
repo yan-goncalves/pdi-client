@@ -21,14 +21,31 @@ export default createStyles(
         display: 'flex',
         boxSizing: 'border-box',
         alignItems: 'center',
+        '& .mantine-StepperProgress-stepLabel': {
+          fontSize: 13
+        },
+
+        '& .mantine-StepperProgress-stepDescription': {
+          fontSize: 12
+        },
+
+        '& .mantine-StepperProgress-stepIcon': {
+          fontSize: 13
+        },
 
         [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
+          alignItems: 'flex-start',
+
           '& .mantine-StepperProgress-stepBody': {
             margin: 0
           },
 
           '& .mantine-StepperProgress-stepLabel': {
             fontSize: 11
+          },
+
+          '& .mantine-StepperProgress-stepDescription': {
+            fontSize: 10.5
           },
 
           '& .mantine-StepperProgress-stepIcon': {
@@ -39,9 +56,18 @@ export default createStyles(
             '&:not(:last-child)': {
               display: 'flex',
               gap: 5,
-              minWidth: 80,
+              minWidth: 'auto',
+              width: 50,
               flexDirection: 'column',
-              alignContent: 'center'
+              alignContent: 'center',
+
+              '& div.mantine-Text-root': {
+                textAlign: 'center'
+              }
+            },
+
+            '&:last-child': {
+              marginLeft: 10
             }
           }
         }
@@ -62,12 +88,19 @@ export default createStyles(
         boxSizing: 'border-box',
         flex: 1,
         height: 2,
-        marginLeft: theme.spacing.md,
-        marginRight: theme.spacing.md,
+        marginLeft: theme.spacing.sm,
+        marginRight: theme.spacing.sm,
 
         [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
+          marginTop: 12,
           marginLeft: 5,
           marginRight: 5
+        },
+
+        [`@media (max-width: ${theme.breakpoints.xs}px)`]: {
+          marginTop: 12,
+          marginLeft: 0,
+          marginRight: 0
         }
       },
 

@@ -1,5 +1,12 @@
-import { Avatar, Card, Group, Text, Title } from '@mantine/core'
-import { useWindowScroll } from '@mantine/hooks'
+import {
+  Avatar,
+  Card,
+  Group,
+  Text,
+  Title,
+  useMantineTheme
+} from '@mantine/core'
+import { useMediaQuery, useWindowScroll } from '@mantine/hooks'
 import ContentBase from 'components/ContentBase'
 import EvaluationItem from 'components/EvaluationItem'
 import { StepperProgress } from 'components/StepperProgress'
@@ -20,6 +27,7 @@ export type EvaluationTemplateProps = {
 }
 
 const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
+  const theme = useMantineTheme()
   const [scroll] = useWindowScroll()
   const { locale } = useLocale()
   const { data: session } = useSession()
@@ -28,6 +36,7 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
   const [skills, setSkills] = useState<SkillType[]>()
   const [goals, setGoals] = useState<EvaluationGoalType[]>()
   const [feedbacks, setFeedbacks] = useState<FeedbackType[]>()
+  const match = useMediaQuery(`(max-width: ${theme.breakpoints.xs}px)`, false)
 
   const sortSkill = (a: SkillType, b: SkillType) => {
     const a_id = Number(a.id)
@@ -67,26 +76,26 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
     <ContentBase
       title={
         <Group sx={{ justifyContent: 'space-between' }}>
-          <Title p={20} order={3}>
+          <Title p={20} order={!match ? 3 : 6}>
             {`${EvaluationConstants.contentTitle.my[locale]} - ${evaluationModel.year}`}
           </Title>
-          <Group mr={25} hidden={scroll.y < 30}>
+          <Group mr={25} hidden={scroll.y < 60}>
             <Avatar
-              size={'sm'}
+              size={!match ? 'sm' : 'xs'}
               src={
                 !session?.user.picture
                   ? FALLBACK_USER_PICTURE
                   : `${process.env.NEXT_PUBLIC_API_URL}${session.user.picture}`
               }
             />
-            <Text>
+            <Text size={!match ? 'md' : 'xs'}>
               {session?.user.info.name} {session?.user.info.lastname}
             </Text>
           </Group>
         </Group>
       }
     >
-      <Card p={30}>
+      <Card p={!match ? 30 : 15}>
         <StepperProgress
           allowStepSelect
           radius={'md'}
@@ -96,6 +105,7 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
         >
           <StepperProgress.Step
             label={EvaluationConstants.steps.questions[locale]}
+            description={'teste'}
           >
             {questions?.map((question) => (
               <EvaluationItem

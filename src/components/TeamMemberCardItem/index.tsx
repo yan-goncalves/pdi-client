@@ -5,6 +5,7 @@ import { FALLBACK_USER_PICTURE } from 'components/UserPicture'
 import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
 import { useRouter } from 'next/router'
 import { TeamMember } from 'types/collection/Team'
+import { useCardStyles } from './styles'
 
 const TeamMemberCardItem = ({ id, username, info, picture }: TeamMember) => {
   const { push, pathname } = useRouter()
@@ -25,6 +26,7 @@ const TeamMemberCardItem = ({ id, username, info, picture }: TeamMember) => {
       bordered
       hoverable
       clickable
+      className={useCardStyles()}
     >
       <Card.Body css={{ p: 0 }}>
         <Card.Image

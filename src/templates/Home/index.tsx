@@ -15,7 +15,7 @@ const HomeTemplate = ({ info, hero }: HomeTemplateProps) => {
     <Container fluid className={classes.container}>
       <Grid justify={'center'} align={'center'} gutter={100}>
         <Grid.Col xl={6} lg={6} md={6} sm={6} xs={12}>
-          <HomeInfo {...info} />
+          <HomeInfo {...info} hero={hero} />
         </Grid.Col>
         <Grid.Col xl={6} lg={6} md={6} sm={6} xs={12}>
           <Image hideOnMobile {...hero} className={classes.hero} />
