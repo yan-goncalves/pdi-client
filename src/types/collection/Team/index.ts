@@ -1,4 +1,4 @@
-import { AccessRoleType } from 'types/auth'
+import { AccessRoleType } from 'types/collection/User'
 
 export type TeamMember = {
   id: string

@@ -1,15 +1,16 @@
 import 'next-auth'
 import 'next-auth/jwt'
-import { UserType } from 'types/auth'
+import { UserType } from 'types/collection/User'
 
 declare module 'next-auth' {
+  interface User extends Omit<UserType, 'picture'> {
+    picture: string
+  }
+
   interface Session {
     jwt: string
     user: User
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface User extends UserType {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export interface CallbacksOptions<P = Profile, A = Account> {

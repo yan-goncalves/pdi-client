@@ -1,7 +1,7 @@
 import { useEvaluation } from 'contexts/EvaluationProvider'
 import { initializeApollo } from 'graphql/client'
 import { CREATE_PERFORMED_EVALUATION } from 'graphql/mutations/collection/PerformedEvaluation'
-import { GET_EVALUATION_GOALS } from 'graphql/queries/collection/EvaluationGoals'
+import { GET_EVALUATION_GOALS } from 'graphql/queries/collection/EvaluationGoal'
 import { GET_EVALUATION_MODEL } from 'graphql/queries/collection/EvaluationModel'
 import { GET_PERFORMED_EVALUATION } from 'graphql/queries/collection/PerformedEvaluation'
 import { GetServerSideProps } from 'next'
@@ -11,7 +11,7 @@ import EvaluationTemplate from 'templates/Evaluation'
 import { GetEvaluationGoalsType } from 'types/collection/EvaluationGoal'
 import {
   EvaluationModelType,
-  GetEvaluationModelProps
+  GetEvaluationModelType
 } from 'types/collection/EvaluationModel'
 import {
   CreatePerformedEvaluationType,
@@ -59,9 +59,19 @@ export const getServerSideProps: GetServerSideProps = async ({
   const session = await getSession({ req })
   const apolloClient = initializeApollo(null, session)
 
+  if (session?.user.info.access_role === 'Director') {
+    const rewriteLocale = locale === 'en' ? '/en' : ''
+    return {
+      redirect: {
+        destination: `${rewriteLocale}/manager/evaluation`,
+        permanent: false
+      }
+    }
+  }
+
   const {
     data: { evaluationModels }
-  } = await apolloClient.query<GetEvaluationModelProps>({
+  } = await apolloClient.query<GetEvaluationModelType>({
     query: GET_EVALUATION_MODEL,
     variables: {
       year: params?.year,
@@ -81,6 +91,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     query: GET_EVALUATION_GOALS,
     variables: {
       year: params?.year,
+      username: session?.user.username,
       manager: session?.user.manager?.username
     }
   })

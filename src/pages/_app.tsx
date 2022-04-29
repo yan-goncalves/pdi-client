@@ -18,7 +18,7 @@ import { useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
 import GlobalStyles from 'styles/globals'
 import { theme } from 'styles/theme'
-import Page404 from '../templates/404'
+import Page404 from 'pages/404'
 
 export default function _App({
   Component,
@@ -35,6 +35,10 @@ export default function _App({
     if (jssStyles) {
       jssStyles.parentElement!.removeChild(jssStyles)
     }
+  }, [])
+
+  useEffect(() => {
+    console.log('PAGE PROPS', pageProps)
   }, [])
 
   return (
@@ -95,7 +99,7 @@ export default function _App({
                         <GlobalStyles />
                         <LoadingOverlay />
                         {pathname.includes('404') ? (
-                          <Page404 />
+                          <Page404 {...pageProps} />
                         ) : (
                           <AppShell>
                             <Component {...pageProps} />

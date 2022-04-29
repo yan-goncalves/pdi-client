@@ -19,6 +19,7 @@ import { EvaluationModeType, useEvaluation } from 'contexts/EvaluationProvider'
 import { useRouter } from 'next/router'
 import { useAppDispatch } from 'app/hooks'
 import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
+import { useSession } from 'next-auth/react'
 
 export type EvaluationCardItemProps = {
   year: string
@@ -28,13 +29,17 @@ export type EvaluationCardItemProps = {
 
 const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
   const theme = useMantineTheme()
+  const { data: session } = useSession()
   const { push, asPath } = useRouter()
   const { locale } = useLocale()
   const { setMode, setPeriodMode } = useEvaluation()
   const dispatch = useAppDispatch()
 
-  const validPeriods = (periods: string[]) => {
-    return periods.includes(period)
+  const validPeriods = (periods: string[], validAccessRole = true) => {
+    return !validAccessRole
+      ? periods.includes(period)
+      : periods.includes(period) &&
+          session?.user.info.access_role !== 'Director'
   }
 
   const handleClick = async (
@@ -155,7 +160,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
                 {EvaluationConstants.status['endYear'].name[locale]}
               </Text>
               <Group>
-                {validPeriods(['midYear']) ? (
+                {validPeriods(['midYear'], false) ? (
                   <Tooltip color={'gray'} label={CommonConstants.soon[locale]}>
                     <Badge color={'gray'}>
                       <Countdown date={Date.now() + Math.random() * 99999999} />

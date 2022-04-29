@@ -24,10 +24,12 @@ const NavLinkWrapper = () => {
 
   return (
     <MantineNavbar.Section grow style={{ paddingBottom: 10 }}>
-      <NavItemSection
-        sectionTitle={userSectionTitle[locale]}
-        items={userNavItemLinks}
-      />
+      {session?.user.info.access_role !== 'Director' && (
+        <NavItemSection
+          sectionTitle={userSectionTitle[locale]}
+          items={userNavItemLinks}
+        />
+      )}
       {session?.user.info?.access_role !== 'User' && (
         <NavItemSection
           sectionTitle={managerSectionTitle[locale]}

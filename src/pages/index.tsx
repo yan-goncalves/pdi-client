@@ -33,10 +33,8 @@ export const getStaticProps: GetStaticProps<HomeTemplateProps> = async ({
       info: {
         title: homePage.title,
         description: homePage.description,
-        button: homePage.button
-      },
-      hero: {
-        ...homePage.hero
+        button: homePage.button,
+        hero: homePage.hero
       }
     }
   }

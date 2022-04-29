@@ -6,11 +6,15 @@ import EvaluationCardItem, {
 
 export type EvaluationListTemplateProps = {
   items: EvaluationCardItemProps[]
+  title?: React.ReactNode
 }
 
-const EvaluationListTemplate = ({ items }: EvaluationListTemplateProps) => {
+const EvaluationListTemplate = ({
+  items,
+  title
+}: EvaluationListTemplateProps) => {
   return (
-    <ContentBase>
+    <ContentBase title={title}>
       <Grid justify={'flex-start'}>
         {items.map((props) => (
           <Grid.Col xs={6} md={5} lg={4} xl={3} key={props.year}>

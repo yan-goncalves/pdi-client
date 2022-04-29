@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
-export const GET_ALL_EVALUATION_MODEL = gql`
-  query GetAllEvaluationModel {
+export const GET_EVALUATION_MODELS = gql`
+  query GetEvaluationModels {
     evaluationModels(sort: "year:desc") {
       data {
         attributes {

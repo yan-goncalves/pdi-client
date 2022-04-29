@@ -3,9 +3,15 @@ import { useMediaQuery } from '@mantine/hooks'
 import { Grid } from '@nextui-org/react'
 import { IconArrowBackUp } from '@tabler/icons'
 import { useRouter } from 'next/router'
+import { ButtonApiProps } from 'types/common'
 import { useStyles } from './styles'
 
-const Template404 = () => {
+export type Template404Props = {
+  message: string
+  button: ButtonApiProps
+}
+
+const Template404 = ({ message, button }: Template404Props) => {
   const theme = useMantineTheme()
   const { classes } = useStyles()
   const { push } = useRouter()
@@ -40,7 +46,7 @@ const Template404 = () => {
         gap={2}
       >
         <Grid>
-          <Title order={2}>A página que você está procurando não existe</Title>
+          <Title order={2}>{message}</Title>
         </Grid>
         <Grid>
           <Button
@@ -49,7 +55,7 @@ const Template404 = () => {
             onClick={goBack}
             size={match ? 'xs' : 'sm'}
           >
-            Voltar à página inicial
+            {button.label}
           </Button>
         </Grid>
       </Grid.Container>

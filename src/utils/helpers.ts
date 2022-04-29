@@ -1,8 +1,9 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { GET_TEAM_MEMBERS } from 'graphql/queries/collection/Team'
 import { TeamMembersTemplateProps } from 'templates/Team'
-import { AccessRoleType } from 'types/auth'
+import { DepartmentType } from 'types/collection/Department'
 import { GetTeamMembers, TeamMember } from 'types/collection/Team'
+import { AccessRoleType } from 'types/collection/User'
 
 export const isManager = (access_role: AccessRoleType) => {
   return access_role !== 'User'
@@ -33,7 +34,10 @@ export const getMembersRecursively = async (
   return member
 }
 
-export const orderMembersByDepartments = (team: TeamMember[]) => {
+export const orderMembersByDepartments = (
+  team: TeamMember[],
+  departments: DepartmentType[]
+) => {
   const ordered: TeamMembersTemplateProps = {}
 
   team
@@ -49,10 +53,10 @@ export const orderMembersByDepartments = (team: TeamMember[]) => {
     })
     .map((member) => {
       const key = member.department.key
-      const name = member.department.name
+
       if (typeof ordered[key] === 'undefined') {
         ordered[key] = {
-          name,
+          name: departments.find((department) => department.key === key)!.name,
           members: []
         }
       }

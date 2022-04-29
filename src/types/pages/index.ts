@@ -19,3 +19,10 @@ export type SignInProps = {
     button: ButtonApiProps
   }
 }
+
+export type NotFoundProps = {
+  notFoundPage: {
+    message: string
+    button: ButtonApiProps
+  }
+}

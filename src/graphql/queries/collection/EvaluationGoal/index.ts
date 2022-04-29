@@ -1,11 +1,16 @@
 import { gql } from '@apollo/client'
 
 export const GET_EVALUATION_GOALS = gql`
-  query GET_EVALUATION_GOALS($year: String!, $manager: String!) {
+  query GetEvaluationGoals(
+    $year: String!
+    $username: String!
+    $manager: String!
+  ) {
     evaluationGoals(
       filters: {
         evaluation: { year: { eq: $year } }
         goal: { manager: { username: { eq: $manager } } }
+        user: { username: { eq: $username } }
       }
     ) {
       data {

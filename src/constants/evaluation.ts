@@ -43,8 +43,8 @@ export const EvaluationConstants = {
       en: 'My Performance Evaluation'
     },
     team: {
-      'pt-BR': 'Avaliação de Desempenho',
-      en: 'Performance Evaluation'
+      'pt-BR': 'Avaliações de Desempenho',
+      en: 'Performance Evaluations'
     }
   },
 
