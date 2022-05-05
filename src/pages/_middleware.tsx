@@ -1,6 +1,7 @@
 import { PUBLIC_ROUTES } from 'constants/routes'
 import { NextApiRequest } from 'next'
 import { getToken } from 'next-auth/jwt'
+import { NextURL } from 'next/dist/server/web/next-url'
 import { NextRequest, NextResponse } from 'next/server'
 
 const stripDefaultLocale = (str: string): string => {
@@ -20,17 +21,29 @@ export async function middleware(req: NextApiRequest & NextRequest) {
   const nextLocale = req.nextUrl.locale
   const locale = nextLocale !== cookieLocale ? nextLocale : cookieLocale
 
-  const isNotPublic = () => {
-    const ret = PUBLIC_ROUTES.filter((route) => {
-      if (req.nextUrl.pathname.includes(route)) {
-        return route
-      }
-    })
-
-    return ret.length === 0
+  if (
+    pathname.includes('manager') &&
+    session?.user.info.access_role === 'User'
+  ) {
+    const redirect = locale === 'en' ? '/en/dashboard' : '/dashboard'
+    return NextResponse.redirect(redirect)
   }
 
-  if (isNotPublic() && req.nextUrl.pathname !== '/') {
+  // const isNotPublic = () => {
+  //   const ret = PUBLIC_ROUTES.filter((route) => {
+  //     if (req.nextUrl.pathname.includes(route)) {
+  //       return route
+  //     }
+  //   })
+
+  //   return ret.length === 0
+  // }
+
+  const isNotPublic = !PUBLIC_ROUTES.some((route) =>
+    req.nextUrl.pathname.includes(route)
+  )
+
+  if (isNotPublic && req.nextUrl.pathname !== '/') {
     if (!session) {
       const callbackUrl = encodeURIComponent(pathname)
       const redirect = stripDefaultLocale(`/${locale}/signin?callbackUrl=`)
@@ -49,7 +62,7 @@ export async function middleware(req: NextApiRequest & NextRequest) {
     return res
   }
 
-  if (pathname.includes('/signin') || isNotPublic()) {
+  if (pathname.includes('/signin') || isNotPublic) {
     const res = NextResponse.next()
     res.cookie('NEXT_LOCALE', locale)
 

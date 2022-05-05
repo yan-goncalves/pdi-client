@@ -24,5 +24,5 @@ export type GetUsers = {
 }
 
 export type GetUser = {
-  user: UserType[]
+  users: UserType[]
 }

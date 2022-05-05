@@ -31,8 +31,9 @@ export const GET_USERS = gql`
 `
 export const GET_USER = gql`
   query GetUser($username: String!) {
-    user: usersPermissionsUsers(filters: { username: { eq: $username } }) {
+    users: usersPermissionsUsers(filters: { username: { eq: $username } }) {
       data {
+        id
         attributes {
           username
           email

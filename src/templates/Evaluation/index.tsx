@@ -12,7 +12,7 @@ import EvaluationItem from 'components/EvaluationItem'
 import { StepperProgress } from 'components/StepperProgress'
 import { FALLBACK_USER_PICTURE } from 'components/UserPicture'
 import { CommonConstants } from 'constants/common'
-import { EvaluationConstants } from 'constants/evaluation'
+import { EvaluationConstants, EvaluationPeriod } from 'constants/evaluation'
 import { GoalsMessages } from 'constants/goals'
 import { useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
@@ -103,31 +103,35 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
           prevBtnLabel={CommonConstants.previous[locale]}
           finishBtnLabel={CommonConstants.finish[locale]}
         >
-          <StepperProgress.Step
-            label={EvaluationConstants.steps.questions[locale]}
-            description={'teste'}
-          >
-            {questions?.map((question) => (
-              <EvaluationItem
-                key={`${question.id}-${question.title}`}
-                sectionTitle={question.title}
-                sectionColor={'orange'}
-                title={question.description}
-              />
-            ))}
-          </StepperProgress.Step>
-          <StepperProgress.Step
-            label={EvaluationConstants.steps.skills[locale]}
-          >
-            {skills?.map((skill) => (
-              <EvaluationItem
-                key={`${skill.id}-${skill.title}`}
-                sectionTitle={skill.title}
-                sectionColor={'grape'}
-                title={skill.description}
-              />
-            ))}
-          </StepperProgress.Step>
+          {(type === 'manager' || periodMode !== EvaluationPeriod.midYear) && (
+            <StepperProgress.Step
+              label={EvaluationConstants.steps.questions[locale]}
+              description={'teste'}
+            >
+              {questions?.map((question) => (
+                <EvaluationItem
+                  key={`${question.id}-${question.title}`}
+                  sectionTitle={question.title}
+                  sectionColor={'orange'}
+                  title={question.description}
+                />
+              ))}
+            </StepperProgress.Step>
+          )}
+          {(type === 'manager' || periodMode !== EvaluationPeriod.midYear) && (
+            <StepperProgress.Step
+              label={EvaluationConstants.steps.skills[locale]}
+            >
+              {skills?.map((skill) => (
+                <EvaluationItem
+                  key={`${skill.id}-${skill.title}`}
+                  sectionTitle={skill.title}
+                  sectionColor={'grape'}
+                  title={skill.description}
+                />
+              ))}
+            </StepperProgress.Step>
+          )}
           <StepperProgress.Step label={EvaluationConstants.steps.goals[locale]}>
             {goals.length === 0 ? (
               <div key={'no-one-goal'}>
@@ -146,18 +150,25 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
               ))
             )}
           </StepperProgress.Step>
-          <StepperProgress.Step
-            label={EvaluationConstants.steps.feedbacks[locale]}
-          >
-            {feedbacks?.map((feedback) => (
-              <EvaluationItem
-                key={`${feedback.id}-${feedback.question}`}
-                sectionTitle={EvaluationConstants.steps.feedbacks[locale]}
-                sectionColor={'blue'}
-                title={feedback.question}
-              />
-            ))}
-          </StepperProgress.Step>
+          {(type === 'manager' || periodMode !== EvaluationPeriod.midYear) && (
+            <StepperProgress.Step
+              label={EvaluationConstants.steps.feedbacks[locale]}
+            >
+              {feedbacks?.map((feedback) => (
+                <EvaluationItem
+                  key={`${feedback.id}-${feedback.question}`}
+                  sectionTitle={EvaluationConstants.steps.feedbacks[locale]}
+                  sectionColor={'blue'}
+                  title={feedback.question}
+                />
+              ))}
+            </StepperProgress.Step>
+          )}
+          {(type === 'manager' || evaluationModel.finished) && (
+            <StepperProgress.Step label={EvaluationConstants.steps.pdi[locale]}>
+              <Text size={'xl'}>PDI SECTION</Text>
+            </StepperProgress.Step>
+          )}
           <StepperProgress.Completed>
             Avaliação finalizada
           </StepperProgress.Completed>
