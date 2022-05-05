@@ -73,10 +73,10 @@ export const getServerSideProps: GetServerSideProps = async ({
   })
 
   if (!team || !team.some((member) => member.username === params?.username)) {
-    const rewriteLocale = locale === 'en' ? 'en' : ''
+    const rewriteLocale = locale === 'en' ? '/en' : ''
     return {
       redirect: {
-        destination: `manager/evaluation`,
+        destination: `${rewriteLocale}/manager/evaluation`,
         permanent: false
       }
     }
