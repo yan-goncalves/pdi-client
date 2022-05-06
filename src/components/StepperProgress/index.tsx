@@ -76,7 +76,7 @@ export const StepperProgress: StepperComponent = forwardRef<
   StepperProgressProps
 >((props: StepperProgressProps, ref) => {
   const theme = useMantineTheme()
-  const matchXS = useMediaQuery(`(max-width: ${theme.breakpoints.xs}px)`, false)
+  const match = useMediaQuery(`(max-width: ${theme.breakpoints.xs}px)`, false)
 
   const {
     active,
@@ -247,7 +247,7 @@ export const StepperProgress: StepperComponent = forwardRef<
           completedIcon={item.props.completedIcon || completedIcon}
           progressIcon={item.props.progressIcon || progressIcon}
           color={item.props.color || color}
-          iconSize={matchXS ? 24 : 32}
+          iconSize={match ? 24 : 32}
           size={size}
           radius={radius}
           classNames={{
@@ -305,7 +305,7 @@ export const StepperProgress: StepperComponent = forwardRef<
       completedIcon={completedIcon}
       progressIcon={progressIcon}
       color={color}
-      iconSize={matchXS ? 24 : 32}
+      iconSize={match ? 24 : 32}
       size={size}
       radius={radius}
       classNames={classNames}

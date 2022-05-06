@@ -78,7 +78,7 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const {
-    data: { user }
+    data: { users }
   } = await apolloClient.query<GetUser>({
     query: GET_USER,
     variables: {
@@ -86,7 +86,7 @@ export const getServerSideProps: GetServerSideProps<
     }
   })
 
-  if (!user || !user[0]) {
+  if (!users || !users[0]) {
     return {
       notFound: true
     }
@@ -95,7 +95,7 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: {
       items: [...evaluationModels],
-      user: user[0]
+      user: users[0]
     }
   }
 }

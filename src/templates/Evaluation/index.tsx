@@ -114,6 +114,8 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
                   sectionTitle={question.title}
                   sectionColor={'orange'}
                   title={question.description}
+                  item={question}
+                  type={'Question'}
                 />
               ))}
             </StepperProgress.Step>
@@ -128,6 +130,8 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
                   sectionTitle={skill.title}
                   sectionColor={'grape'}
                   title={skill.description}
+                  item={skill}
+                  type={'Skill'}
                 />
               ))}
             </StepperProgress.Step>
@@ -146,6 +150,8 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
                   sectionTitle={EvaluationConstants.steps.goals[locale]}
                   sectionColor={'green'}
                   title={goal.name}
+                  item={goal}
+                  type={'Goal'}
                 />
               ))
             )}
@@ -160,6 +166,8 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
                   sectionTitle={EvaluationConstants.steps.feedbacks[locale]}
                   sectionColor={'blue'}
                   title={feedback.question}
+                  item={feedback}
+                  type={'Feedback'}
                 />
               ))}
             </StepperProgress.Step>

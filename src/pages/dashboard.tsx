@@ -1,5 +1,7 @@
-const NavLink = () => {
-  return <div>Esta é uma página acessada por link navbar</div>
+import Dashboard from 'templates/Dashboard'
+
+const UserHomePage = () => {
+  return <Dashboard type={'User'} />
 }
 
-export default NavLink
+export default UserHomePage

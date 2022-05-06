@@ -62,8 +62,9 @@ export const managerNavItemLinks: NavItemLinkProps[] = [
       'pt-BR': 'Visão Geral do Time',
       en: 'Team Dashboard'
     },
-    href: '/manager/teste',
-    icon: IconChartInfographic
+    href: '/manager',
+    icon: IconChartInfographic,
+    exact: true
   },
   {
     title: {

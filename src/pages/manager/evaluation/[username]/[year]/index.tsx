@@ -64,25 +64,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   const apolloClient = initializeApollo(null, session)
 
   const {
-    data: { team }
-  } = await apolloClient.query<GetTeamMembers>({
-    query: GET_TEAM_MEMBERS,
-    variables: {
-      idManager: session?.user.id
-    }
-  })
-
-  if (!team || !team.some((member) => member.username === params?.username)) {
-    const rewriteLocale = locale === 'en' ? '/en' : ''
-    return {
-      redirect: {
-        destination: `${rewriteLocale}/manager/evaluation`,
-        permanent: false
-      }
-    }
-  }
-
-  const {
     data: { evaluationModels }
   } = await apolloClient.query<GetEvaluationModelType>({
     query: GET_EVALUATION_MODEL,
@@ -149,7 +130,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     }
   })
 
-  if (performedEvaluations.length === 0) {
+  if (performedEvaluations.length == 0) {
     const { data, errors } =
       await apolloClient.mutate<CreatePerformedEvaluationType>({
         mutation: CREATE_PERFORMED_EVALUATION,

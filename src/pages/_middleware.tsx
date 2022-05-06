@@ -1,8 +1,11 @@
 import { PUBLIC_ROUTES } from 'constants/routes'
+import { initializeApollo } from 'graphql/client'
+import { GET_TEAM_MEMBERS } from 'graphql/queries/collection/Team'
 import { NextApiRequest } from 'next'
 import { getToken } from 'next-auth/jwt'
 import { NextURL } from 'next/dist/server/web/next-url'
 import { NextRequest, NextResponse } from 'next/server'
+import { GetTeamMembers } from 'types/collection/Team'
 
 const stripDefaultLocale = (str: string): string => {
   const stripped = str.replace('/pt-BR', '')
@@ -25,25 +28,35 @@ export async function middleware(req: NextApiRequest & NextRequest) {
     pathname.includes('manager') &&
     session?.user.info.access_role === 'User'
   ) {
-    const redirect = locale === 'en' ? '/en/dashboard' : '/dashboard'
-    return NextResponse.redirect(redirect)
+    return NextResponse.redirect(stripDefaultLocale(`/${locale}/dashboard`))
   }
 
-  // const isNotPublic = () => {
-  //   const ret = PUBLIC_ROUTES.filter((route) => {
-  //     if (req.nextUrl.pathname.includes(route)) {
-  //       return route
-  //     }
-  //   })
+  if (
+    pathname.includes('manager') &&
+    session?.user.info.access_role === 'Manager' &&
+    req.page.params?.username
+  ) {
+    const username = req.page.params?.username
+    const apolloClient = initializeApollo(null, session)
+    const {
+      data: { team }
+    } = await apolloClient.query<GetTeamMembers>({
+      query: GET_TEAM_MEMBERS,
+      variables: {
+        idManager: session.user.id
+      }
+    })
 
-  //   return ret.length === 0
-  // }
+    if (!team.some((member) => member.username === username)) {
+      return NextResponse.redirect(stripDefaultLocale(`/${locale}/manager`))
+    }
+  }
 
-  const isNotPublic = !PUBLIC_ROUTES.some((route) =>
+  const isPublic = PUBLIC_ROUTES.some((route) =>
     req.nextUrl.pathname.includes(route)
   )
 
-  if (isNotPublic && req.nextUrl.pathname !== '/') {
+  if (!isPublic && req.nextUrl.pathname !== '/') {
     if (!session) {
       const callbackUrl = encodeURIComponent(pathname)
       const redirect = stripDefaultLocale(`/${locale}/signin?callbackUrl=`)
@@ -62,7 +75,7 @@ export async function middleware(req: NextApiRequest & NextRequest) {
     return res
   }
 
-  if (pathname.includes('/signin') || isNotPublic) {
+  if (pathname.includes('/signin') || !isPublic) {
     const res = NextResponse.next()
     res.cookie('NEXT_LOCALE', locale)
 

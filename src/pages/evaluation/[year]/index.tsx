@@ -120,7 +120,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     }
   })
 
-  if (performedEvaluations.length === 0) {
+  if (performedEvaluations.length == 0) {
     const { data, errors } =
       await apolloClient.mutate<CreatePerformedEvaluationType>({
         mutation: CREATE_PERFORMED_EVALUATION,
