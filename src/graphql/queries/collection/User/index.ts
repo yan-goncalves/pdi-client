@@ -37,6 +37,11 @@ export const GET_USER = gql`
         attributes {
           username
           email
+          manager {
+            data {
+              id
+            }
+          }
           info {
             data {
               attributes {

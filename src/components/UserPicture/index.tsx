@@ -19,8 +19,8 @@ const UserPicture = ({ width = 80, height = 80 }: UserPictureProps) => {
   const [picture, setPicture] = useState<string>(FALLBACK_USER_PICTURE)
 
   useEffect(() => {
-    if (session && session.user?.picture) {
-      setPicture(`${process.env.NEXT_PUBLIC_API_URL}${session.user.picture}`)
+    if (session && session.user?.picture?.url) {
+      setPicture(`${process.env.NEXT_PUBLIC_API_URL}${session.user.picture.url}`)
     } else {
       setPicture(FALLBACK_USER_PICTURE)
     }
@@ -61,11 +61,7 @@ const UserPicture = ({ width = 80, height = 80 }: UserPictureProps) => {
             currentIndex={0}
             onClose={closeImageViewer}
             closeComponent={
-              <CloseButton
-                variant={'outline'}
-                style={{ color: '#FFF' }}
-                size={'lg'}
-              />
+              <CloseButton variant={'outline'} style={{ color: '#FFF' }} size={'lg'} />
             }
             backgroundStyle={{
               backgroundColor: 'rgba(0,0,0,0.75)'

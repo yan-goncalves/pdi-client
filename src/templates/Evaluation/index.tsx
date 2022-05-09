@@ -1,5 +1,5 @@
 import { Avatar, Card, Group, Text, Title, useMantineTheme } from '@mantine/core'
-import { useMediaQuery, useWindowScroll } from '@mantine/hooks'
+import { useMediaQuery } from '@mantine/hooks'
 import ContentBase from 'components/ContentBase'
 import EvaluationItem from 'components/EvaluationItem'
 import PerformedFeedback from 'components/Performed/Feedback'
@@ -13,8 +13,7 @@ import { EvaluationConstants, EvaluationPeriod } from 'constants/evaluation'
 import { GoalsMessages } from 'constants/goals'
 import { useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
-import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { EvaluationGoalType } from 'types/collection/EvaluationGoal'
 import { FeedbackType } from 'types/collection/Feedback'
 import { SkillType } from 'types/collection/Skill'
@@ -25,10 +24,8 @@ export type EvaluationTemplateProps = {
 
 const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
   const theme = useMantineTheme()
-  const [scroll] = useWindowScroll()
   const { locale } = useLocale()
-  const { data: session } = useSession()
-  const { evaluationModel, mode, periodMode } = useEvaluation()
+  const { evaluationModel, appraisee, periodMode } = useEvaluation()
   const [questions, setQuestions] = useState<SkillType[]>()
   const [skills, setSkills] = useState<SkillType[]>()
   const [goals, setGoals] = useState<EvaluationGoalType[]>()
@@ -71,17 +68,17 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
           <Title p={20} order={!match ? 3 : 6}>
             {`${EvaluationConstants.contentTitle.my[locale]} - ${evaluationModel.year}`}
           </Title>
-          <Group mr={25} hidden={scroll.y < 60}>
+          <Group mr={25}>
             <Avatar
               size={!match ? 'sm' : 'xs'}
               src={
-                !session?.user.picture
+                !appraisee?.picture
                   ? FALLBACK_USER_PICTURE
-                  : `${process.env.NEXT_PUBLIC_API_URL}${session.user.picture}`
+                  : `${process.env.NEXT_PUBLIC_API_URL}${appraisee.picture.url}`
               }
             />
             <Text size={!match ? 'md' : 'xs'}>
-              {session?.user.info.name} {session?.user.info.lastname}
+              {appraisee.info.name} {appraisee.info.lastname}
             </Text>
           </Group>
         </Group>
@@ -101,30 +98,28 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
               description={'teste'}
             >
               {questions?.map((question) => (
-                <>
+                <React.Fragment key={`${question.id}-${question.title}`}>
                   <EvaluationItem
-                    key={`${question.id}-${question.title}`}
                     sectionTitle={question.title}
                     sectionColor={'orange'}
                     title={question.description}
                   />
                   <PerformedQuestion item={question} />
-                </>
+                </React.Fragment>
               ))}
             </StepperProgress.Step>
           )}
           {(type === 'manager' || periodMode !== EvaluationPeriod.midYear) && (
             <StepperProgress.Step label={EvaluationConstants.steps.skills[locale]}>
               {skills?.map((skill) => (
-                <>
+                <React.Fragment key={`${skill.id}-${skill.title}`}>
                   <EvaluationItem
-                    key={`${skill.id}-${skill.title}`}
                     sectionTitle={skill.title}
                     sectionColor={'grape'}
                     title={skill.description}
                   />
                   <PerformedSkill item={skill} />
-                </>
+                </React.Fragment>
               ))}
             </StepperProgress.Step>
           )}
@@ -137,30 +132,28 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
               </div>
             ) : (
               goals?.map(({ goal }) => (
-                <>
+                <React.Fragment key={`${goal.id}-${goal.name}`}>
                   <EvaluationItem
-                    key={`${goal.id}-${goal.name}`}
                     sectionTitle={EvaluationConstants.steps.goals[locale]}
                     sectionColor={'green'}
                     title={goal.name}
                   />
                   <PerformedGoal item={goal} />
-                </>
+                </React.Fragment>
               ))
             )}
           </StepperProgress.Step>
           {(type === 'manager' || periodMode !== EvaluationPeriod.midYear) && (
             <StepperProgress.Step label={EvaluationConstants.steps.feedbacks[locale]}>
               {feedbacks?.map((feedback) => (
-                <>
+                <React.Fragment key={`${feedback.id}-${feedback.question}`}>
                   <EvaluationItem
-                    key={`${feedback.id}-${feedback.question}`}
                     sectionTitle={EvaluationConstants.steps.feedbacks[locale]}
                     sectionColor={'blue'}
                     title={feedback.question}
                   />
                   <PerformedFeedback item={feedback} />
-                </>
+                </React.Fragment>
               ))}
             </StepperProgress.Step>
           )}

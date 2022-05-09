@@ -5,7 +5,7 @@ import { GET_EVALUATION_GOALS } from 'graphql/queries/collection/EvaluationGoal'
 import { GET_EVALUATION_MODEL } from 'graphql/queries/collection/EvaluationModel'
 import { GET_PERFORMED_EVALUATION } from 'graphql/queries/collection/PerformedEvaluation'
 import { GetServerSideProps } from 'next'
-import { getSession } from 'next-auth/react'
+import { getSession, useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 import EvaluationTemplate from 'templates/Evaluation'
 import { GetEvaluationGoalsType } from 'types/collection/EvaluationGoal'
@@ -15,6 +15,7 @@ import {
   GetPerformedEvaluationType,
   PerformedEvaluationType
 } from 'types/collection/PerformedEvaluation'
+import { UserType } from 'types/collection/User'
 
 const EvaluationPage = ({
   evaluationModel,
@@ -23,7 +24,10 @@ const EvaluationPage = ({
   evaluationModel: EvaluationModelType
   performedEvaluation: PerformedEvaluationType
 }) => {
-  const { setEvaluationModel, setPerformedEvaluation, setMode, mode, periodMode } = useEvaluation()
+  const { data: session } = useSession()
+
+  const { setEvaluationModel, setPerformedEvaluation, setAppraisee, setMode, mode, periodMode } =
+    useEvaluation()
 
   useEffect(() => {
     if (evaluationModel) {
@@ -38,6 +42,12 @@ const EvaluationPage = ({
       setPerformedEvaluation(performedEvaluation)
     }
   }, [performedEvaluation])
+
+  useEffect(() => {
+    if (session?.user) {
+      setAppraisee(session.user)
+    }
+  }, [session])
 
   return <EvaluationTemplate type={'user'} />
 }

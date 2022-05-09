@@ -30,7 +30,7 @@ const TeamMembersTemplate = (items: TeamMembersTemplateProps) => {
   const { data: session } = useSession()
 
   const getMembers = (departmentKey: string, isManager = false) => (
-    <Grid key={departmentKey} gutter={20} justify={'flex-start'} align={'stretch'}>
+    <Grid key={departmentKey} gutter={10} justify={'flex-start'} align={'stretch'}>
       {isManager && (
         <Grid.Col>
           <Group>
@@ -60,7 +60,6 @@ const TeamMembersTemplate = (items: TeamMembersTemplateProps) => {
     <ContentBase>
       {session?.user.info.access_role === 'Director' ? (
         <Accordion
-          p={20}
           classNames={{
             item: classes.item,
             itemTitle: classes.itemTitle,

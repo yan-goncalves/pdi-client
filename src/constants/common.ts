@@ -27,5 +27,15 @@ export const CommonConstants = {
   finish: {
     'pt-BR': 'Finalizar',
     en: 'Finish'
+  },
+
+  answer: {
+    'pt-BR': 'Resposta',
+    en: 'Answer'
+  },
+
+  why: {
+    'pt-BR': 'Por que?',
+    en: 'Why?'
   }
 }

@@ -3,13 +3,9 @@ import 'next-auth/jwt'
 import { UserType } from 'types/collection/User'
 
 declare module 'next-auth' {
-  interface User extends Omit<UserType, 'picture'> {
-    picture: string
-  }
-
   interface Session {
     jwt: string
-    user: User
+    user: UserType
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
