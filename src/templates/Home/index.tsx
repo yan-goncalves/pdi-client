@@ -12,7 +12,7 @@ const HomeTemplate = ({ info }: HomeTemplateProps) => {
 
   return (
     <Container fluid className={classes.container}>
-      <Grid justify={'center'} align={'center'} gutter={100}>
+      <Grid justify={'center'} align={'center'} gutter={100} sx={{ height: '100%' }}>
         <Grid.Col xl={6} lg={6} md={6} sm={6} xs={12}>
           <HomeInfo {...info} />
         </Grid.Col>

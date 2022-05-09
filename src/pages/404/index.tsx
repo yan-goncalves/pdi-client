@@ -6,16 +6,10 @@ import Template404, { Template404Props } from 'templates/404'
 import { NotFoundProps } from 'types/pages'
 
 const Page404 = (props: Template404Props) => {
-  useEffect(() => {
-    console.log('PROPS', { ...props })
-  }, [props])
-
   return <Template404 {...props} />
 }
 
-export const getStaticProps: GetStaticProps<Template404Props> = async ({
-  locale
-}) => {
+export const getStaticProps: GetStaticProps<Template404Props> = async ({ locale }) => {
   const apolloClient = initializeApollo()
 
   const {

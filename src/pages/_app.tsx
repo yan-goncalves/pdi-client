@@ -20,10 +20,7 @@ import GlobalStyles from 'styles/globals'
 import { theme } from 'styles/theme'
 import Page404 from 'pages/404'
 
-export default function _App({
-  Component,
-  pageProps: { session, ...pageProps }
-}: AppProps) {
+export default function _App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const { locale } = useRouter()
   const client = useApollo(pageProps.initialApolloState)
   const { pathname } = useRouter()
@@ -37,18 +34,11 @@ export default function _App({
     }
   }, [])
 
-  useEffect(() => {
-    console.log('PAGE PROPS', pageProps)
-  }, [])
-
   return (
     <>
       <Head>
         <title>PDI - SLBRASIL</title>
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width"
-        />
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
       <LocaleProvider localeIni={locale as LocaleType}>
         <SessionProvider session={session}>
@@ -91,9 +81,7 @@ export default function _App({
                 })}
               >
                 <ReduxProvider store={store}>
-                  <NotificationsProvider
-                    position={match ? 'bottom-center' : 'bottom-right'}
-                  >
+                  <NotificationsProvider position={match ? 'bottom-center' : 'bottom-right'}>
                     <RoutesManagerProvider>
                       <EvaluationProvider>
                         <GlobalStyles />

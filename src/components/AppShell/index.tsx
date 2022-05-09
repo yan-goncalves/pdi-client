@@ -1,8 +1,4 @@
-import {
-  AppShell as MantineAppShell,
-  ScrollArea,
-  useMantineTheme
-} from '@mantine/core'
+import { AppShell as MantineAppShell, ScrollArea, useMantineTheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import Drawer from 'components/Drawer'
 import Footer from 'components/Footer'

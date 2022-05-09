@@ -22,8 +22,7 @@ const ContentHeader = ({ title }: ContentHeaderProps) => {
 
   useEffect(() => {
     const split = pathname.split('/').filter((x) => x.trim() !== '')
-    const routes =
-      split[0] === 'manager' ? managerNavItemLinks : userNavItemLinks
+    const routes = split[0] === 'manager' ? managerNavItemLinks : userNavItemLinks
     const evaluationRoute = routes.find((route) => route.href === pathname)
 
     setRoute((state) => ({

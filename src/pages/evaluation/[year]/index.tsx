@@ -9,10 +9,7 @@ import { getSession } from 'next-auth/react'
 import { useEffect } from 'react'
 import EvaluationTemplate from 'templates/Evaluation'
 import { GetEvaluationGoalsType } from 'types/collection/EvaluationGoal'
-import {
-  EvaluationModelType,
-  GetEvaluationModelType
-} from 'types/collection/EvaluationModel'
+import { EvaluationModelType, GetEvaluationModelType } from 'types/collection/EvaluationModel'
 import {
   CreatePerformedEvaluationType,
   GetPerformedEvaluationType,
@@ -26,13 +23,7 @@ const EvaluationPage = ({
   evaluationModel: EvaluationModelType
   performedEvaluation: PerformedEvaluationType
 }) => {
-  const {
-    setEvaluationModel,
-    setPerformedEvaluation,
-    setMode,
-    mode,
-    periodMode
-  } = useEvaluation()
+  const { setEvaluationModel, setPerformedEvaluation, setMode, mode, periodMode } = useEvaluation()
 
   useEffect(() => {
     if (evaluationModel) {
@@ -51,11 +42,7 @@ const EvaluationPage = ({
   return <EvaluationTemplate type={'user'} />
 }
 
-export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  locale,
-  params
-}) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, locale, params }) => {
   const session = await getSession({ req })
   const apolloClient = initializeApollo(null, session)
 
@@ -121,14 +108,13 @@ export const getServerSideProps: GetServerSideProps = async ({
   })
 
   if (performedEvaluations.length == 0) {
-    const { data, errors } =
-      await apolloClient.mutate<CreatePerformedEvaluationType>({
-        mutation: CREATE_PERFORMED_EVALUATION,
-        variables: {
-          idUser: session?.user.id,
-          idEvaluationModel: evaluationModel.id
-        }
-      })
+    const { data, errors } = await apolloClient.mutate<CreatePerformedEvaluationType>({
+      mutation: CREATE_PERFORMED_EVALUATION,
+      variables: {
+        idUser: session?.user.id,
+        idEvaluationModel: evaluationModel.id
+      }
+    })
     if (errors || !data) {
       return {
         notFound: true

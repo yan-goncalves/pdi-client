@@ -1,14 +1,11 @@
-import {
-  Avatar,
-  Card,
-  Group,
-  Text,
-  Title,
-  useMantineTheme
-} from '@mantine/core'
+import { Avatar, Card, Group, Text, Title, useMantineTheme } from '@mantine/core'
 import { useMediaQuery, useWindowScroll } from '@mantine/hooks'
 import ContentBase from 'components/ContentBase'
 import EvaluationItem from 'components/EvaluationItem'
+import PerformedFeedback from 'components/Performed/Feedback'
+import PerformedGoal from 'components/Performed/Goal'
+import PerformedQuestion from 'components/Performed/Question'
+import PerformedSkill from 'components/Performed/Skill'
 import { StepperProgress } from 'components/StepperProgress'
 import { FALLBACK_USER_PICTURE } from 'components/UserPicture'
 import { CommonConstants } from 'constants/common'
@@ -49,18 +46,13 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
     const arrayQuestions: SkillType[] = []
     evaluationModel?.sections?.map(
       (section) =>
-        section.type === 'question' &&
-        section?.skills &&
-        arrayQuestions.push(...section.skills)
+        section.type === 'question' && section?.skills && arrayQuestions.push(...section.skills)
     )
     setQuestions(arrayQuestions.sort(sortSkill))
 
     const arraySkill: SkillType[] = []
     evaluationModel?.sections?.map(
-      (section) =>
-        section.type === 'skill' &&
-        section?.skills &&
-        arraySkill.push(...section.skills)
+      (section) => section.type === 'skill' && section?.skills && arraySkill.push(...section.skills)
     )
     setSkills(arraySkill.sort(sortSkill))
 
@@ -109,30 +101,30 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
               description={'teste'}
             >
               {questions?.map((question) => (
-                <EvaluationItem
-                  key={`${question.id}-${question.title}`}
-                  sectionTitle={question.title}
-                  sectionColor={'orange'}
-                  title={question.description}
-                  item={question}
-                  type={'Question'}
-                />
+                <>
+                  <EvaluationItem
+                    key={`${question.id}-${question.title}`}
+                    sectionTitle={question.title}
+                    sectionColor={'orange'}
+                    title={question.description}
+                  />
+                  <PerformedQuestion item={question} />
+                </>
               ))}
             </StepperProgress.Step>
           )}
           {(type === 'manager' || periodMode !== EvaluationPeriod.midYear) && (
-            <StepperProgress.Step
-              label={EvaluationConstants.steps.skills[locale]}
-            >
+            <StepperProgress.Step label={EvaluationConstants.steps.skills[locale]}>
               {skills?.map((skill) => (
-                <EvaluationItem
-                  key={`${skill.id}-${skill.title}`}
-                  sectionTitle={skill.title}
-                  sectionColor={'grape'}
-                  title={skill.description}
-                  item={skill}
-                  type={'Skill'}
-                />
+                <>
+                  <EvaluationItem
+                    key={`${skill.id}-${skill.title}`}
+                    sectionTitle={skill.title}
+                    sectionColor={'grape'}
+                    title={skill.description}
+                  />
+                  <PerformedSkill item={skill} />
+                </>
               ))}
             </StepperProgress.Step>
           )}
@@ -145,30 +137,30 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
               </div>
             ) : (
               goals?.map(({ goal }) => (
-                <EvaluationItem
-                  key={`${goal.id}-${goal.name}`}
-                  sectionTitle={EvaluationConstants.steps.goals[locale]}
-                  sectionColor={'green'}
-                  title={goal.name}
-                  item={goal}
-                  type={'Goal'}
-                />
+                <>
+                  <EvaluationItem
+                    key={`${goal.id}-${goal.name}`}
+                    sectionTitle={EvaluationConstants.steps.goals[locale]}
+                    sectionColor={'green'}
+                    title={goal.name}
+                  />
+                  <PerformedGoal item={goal} />
+                </>
               ))
             )}
           </StepperProgress.Step>
           {(type === 'manager' || periodMode !== EvaluationPeriod.midYear) && (
-            <StepperProgress.Step
-              label={EvaluationConstants.steps.feedbacks[locale]}
-            >
+            <StepperProgress.Step label={EvaluationConstants.steps.feedbacks[locale]}>
               {feedbacks?.map((feedback) => (
-                <EvaluationItem
-                  key={`${feedback.id}-${feedback.question}`}
-                  sectionTitle={EvaluationConstants.steps.feedbacks[locale]}
-                  sectionColor={'blue'}
-                  title={feedback.question}
-                  item={feedback}
-                  type={'Feedback'}
-                />
+                <>
+                  <EvaluationItem
+                    key={`${feedback.id}-${feedback.question}`}
+                    sectionTitle={EvaluationConstants.steps.feedbacks[locale]}
+                    sectionColor={'blue'}
+                    title={feedback.question}
+                  />
+                  <PerformedFeedback item={feedback} />
+                </>
               ))}
             </StepperProgress.Step>
           )}
@@ -177,9 +169,7 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
               <Text size={'xl'}>PDI SECTION</Text>
             </StepperProgress.Step>
           )}
-          <StepperProgress.Completed>
-            Avaliação finalizada
-          </StepperProgress.Completed>
+          <StepperProgress.Completed>Avaliação finalizada</StepperProgress.Completed>
         </StepperProgress>
       </Card>
     </ContentBase>

@@ -1,11 +1,4 @@
-import {
-  Group,
-  Radio,
-  RadioGroup,
-  Text,
-  Textarea,
-  useMantineTheme
-} from '@mantine/core'
+import { Group, Textarea, useMantineTheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { SkillType } from 'types/collection/Skill'
 
@@ -19,11 +12,7 @@ const PerformedQuestion = ({ item }: PerformedQuestionProps) => {
 
   return (
     <Group p={10} direction={!match ? 'row' : 'column'}>
-      <RadioGroup size={'sm'} orientation={'vertical'} label={'Answer:'}>
-        <Radio value={'yes'} label={<Text size={'md'}>Yes</Text>} />
-        <Radio value={'no'} label={<Text size={'md'}>No</Text>} />
-      </RadioGroup>
-      <Textarea minRows={5} maxRows={5} />
+      <Textarea minRows={5} maxRows={5} sx={{ width: 'min(30rem, 100%)' }} />
     </Group>
   )
 }
