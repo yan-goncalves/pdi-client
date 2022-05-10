@@ -4,7 +4,6 @@ import { CREATE_PERFORMED_EVALUATION } from 'graphql/mutations/collection/Perfor
 import { GET_EVALUATION_GOALS } from 'graphql/queries/collection/EvaluationGoal'
 import { GET_EVALUATION_MODEL } from 'graphql/queries/collection/EvaluationModel'
 import { GET_PERFORMED_EVALUATION } from 'graphql/queries/collection/PerformedEvaluation'
-import { GET_TEAM_MEMBERS } from 'graphql/queries/collection/Team'
 import { GET_USER } from 'graphql/queries/collection/User'
 import { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
@@ -17,7 +16,6 @@ import {
   GetPerformedEvaluationType,
   PerformedEvaluationType
 } from 'types/collection/PerformedEvaluation'
-import { GetTeamMembers } from 'types/collection/Team'
 import { GetUser, UserType } from 'types/collection/User'
 
 const EvaluationPage = ({

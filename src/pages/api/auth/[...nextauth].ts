@@ -1,6 +1,7 @@
 import axios from 'axios'
 import NextAuth, { User } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import { UserType } from 'types/collection/User'
 
 export default NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
@@ -55,7 +56,7 @@ export default NextAuth({
         const { jwt, ...userProps } = user
 
         token.jwt = jwt as string
-        token.user = userProps
+        token.user = userProps as unknown as UserType
       }
 
       return token

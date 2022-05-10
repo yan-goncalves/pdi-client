@@ -106,7 +106,7 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
                   />
                   <PerformedQuestion
                     item={question}
-                    performed={performedEvaluation.performed_questions.find(
+                    performed={performedEvaluation.performed_questions?.find(
                       (performed) => performed && performed.skill.id === question.id
                     )}
                     type={type}

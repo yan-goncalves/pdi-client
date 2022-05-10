@@ -1,6 +1,7 @@
 import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
 import { Session } from 'next-auth'
+import { getSession } from 'next-auth/react'
 import { useMemo } from 'react'
 
 let apolloClient: ApolloClient<NormalizedCacheObject | null>
@@ -10,8 +11,9 @@ function createApolloClient(session?: Session | null) {
     uri: `${process.env.NEXT_PUBLIC_API_URL}/graphql`
   })
 
-  const authLink = setContext((_, { headers, session: clientSession }) => {
-    const jwt = session?.jwt || clientSession?.jwt || ''
+  const authLink = setContext(async (_, { headers, session: clientSession }) => {
+    const authSession = await getSession()
+    const jwt = authSession?.jwt || session?.jwt || clientSession?.jwt || ''
     const authorization = jwt ? `Bearer ${jwt}` : ''
     const normalize = true
     return { headers: { ...headers, authorization, normalize } }

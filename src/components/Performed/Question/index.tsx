@@ -24,14 +24,30 @@ export type PerformedQuestionProps = {
 
 const PerformedQuestion = ({ item, performed, type }: PerformedQuestionProps) => {
   const { locale } = useLocale()
-  const { performedEvaluation } = useEvaluation()
+  const { data: session } = useSession()
+  const { performedEvaluation, setPerformedEvaluation } = useEvaluation()
   const [performedQuestion, setPerformedQuestion] = useState<PerformedQuestionType>()
   const [answer, setAnswer] = useState<string>()
   const [why, setWhy] = useState<string>()
 
   // queries/mutations
-  const [create] = useMutation<CreatePerformedQuestionType>(CREATE_PERFORMED_QUESTION)
-  const [update] = useMutation<UpdatePerformedQuestionType>(UPDATE_PERFORMED_QUESTION)
+  const [create] = useMutation<CreatePerformedQuestionType>(CREATE_PERFORMED_QUESTION, {
+    onCompleted: ({ created }) => updatePerformedEvaluation(created),
+    onError: (e) => console.log('ERROR ON CREATING PERFORMED QUESTION', { ...e })
+  })
+  const [update] = useMutation<UpdatePerformedQuestionType>(UPDATE_PERFORMED_QUESTION, {
+    onCompleted: (data) => console.log('UPDATED PERFORMED QUESTION', { ...data }),
+    onError: (e) => console.log('ERROR ON UPDATING PERFORMED QUESTION', { ...e })
+  })
+
+  useEffect(() => {
+    if (performedEvaluation) {
+      const performedQuestionFound = performedEvaluation.performed_questions.find(
+        (pq) => pq.skill.id === item.id
+      )
+      setPerformedQuestion(performedQuestionFound)
+    }
+  }, [performedEvaluation])
 
   useEffect(() => {
     if (performed) {
@@ -46,6 +62,15 @@ const PerformedQuestion = ({ item, performed, type }: PerformedQuestionProps) =>
     }
   }, [performedQuestion])
 
+  const updatePerformedEvaluation = async (question: PerformedQuestionType) => {
+    setPerformedEvaluation((pe) => ({
+      ...pe,
+      performed_questions: pe.performed_questions.map((pq) =>
+        pq.id === question.id ? { ...pq, ...question } : pq
+      )
+    }))
+  }
+
   const handleSaveAnswer = async (value: string) => {
     setAnswer(value)
 
@@ -57,10 +82,6 @@ const PerformedQuestion = ({ item, performed, type }: PerformedQuestionProps) =>
           answer: value
         }
       })
-        .then(({ data }) => {
-          console.log('CREATE PERFORMED QUESTION', { ...data })
-        })
-        .catch((e) => console.log('ERROR ON CREATING PERFORMED QUESTION', { ...e }))
     } else {
       await update({
         variables: {
@@ -68,10 +89,6 @@ const PerformedQuestion = ({ item, performed, type }: PerformedQuestionProps) =>
           answer: value
         }
       })
-        .then(({ data }) => {
-          console.log('UPDATE PERFORMED QUESTION', { ...data })
-        })
-        .catch((e) => console.log('ERROR ON UPDATING PERFORMED QUESTION', { ...e }))
     }
   }
 
