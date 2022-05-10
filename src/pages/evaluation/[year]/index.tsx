@@ -15,7 +15,6 @@ import {
   GetPerformedEvaluationType,
   PerformedEvaluationType
 } from 'types/collection/PerformedEvaluation'
-import { UserType } from 'types/collection/User'
 
 const EvaluationPage = ({
   evaluationModel,
@@ -47,7 +46,7 @@ const EvaluationPage = ({
     if (session?.user) {
       setAppraisee(session.user)
     }
-  }, [session])
+  }, [])
 
   return <EvaluationTemplate type={'user'} />
 }
@@ -131,7 +130,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
       }
     }
 
-    performedEvaluation = data.createPerformedEvaluation
+    performedEvaluation = data.created
   } else {
     performedEvaluation = performedEvaluations[0]
   }

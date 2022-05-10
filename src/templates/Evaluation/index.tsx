@@ -1,4 +1,4 @@
-import { Avatar, Card, Group, Text, Title, useMantineTheme } from '@mantine/core'
+import { Avatar, Card, Divider, Group, Text, Title, useMantineTheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import ContentBase from 'components/ContentBase'
 import EvaluationItem from 'components/EvaluationItem'
@@ -25,7 +25,7 @@ export type EvaluationTemplateProps = {
 const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
-  const { evaluationModel, appraisee, periodMode } = useEvaluation()
+  const { evaluationModel, appraisee, periodMode, performedEvaluation } = useEvaluation()
   const [questions, setQuestions] = useState<SkillType[]>()
   const [skills, setSkills] = useState<SkillType[]>()
   const [goals, setGoals] = useState<EvaluationGoalType[]>()
@@ -104,7 +104,14 @@ const EvaluationTemplate = ({ type }: EvaluationTemplateProps) => {
                     sectionColor={'orange'}
                     title={question.description}
                   />
-                  <PerformedQuestion item={question} />
+                  <PerformedQuestion
+                    item={question}
+                    performed={performedEvaluation.performed_questions.find(
+                      (performed) => performed && performed.skill.id === question.id
+                    )}
+                    type={type}
+                  />
+                  <Divider mt={50} />
                 </React.Fragment>
               ))}
             </StepperProgress.Step>

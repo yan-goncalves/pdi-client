@@ -10,6 +10,22 @@ export const GET_PERFORMED_EVALUATION = gql`
     ) {
       data {
         id
+        attributes {
+          performed_questions {
+            data {
+              id
+              attributes {
+                answer
+                why
+                skill {
+                  data {
+                    id
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

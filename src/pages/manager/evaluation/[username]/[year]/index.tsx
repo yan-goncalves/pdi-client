@@ -142,7 +142,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
       }
     }
 
-    performedEvaluation = data.createPerformedEvaluation
+    performedEvaluation = data.created
   } else {
     performedEvaluation = performedEvaluations[0]
   }

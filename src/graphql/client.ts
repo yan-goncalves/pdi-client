@@ -1,9 +1,4 @@
-import {
-  ApolloClient,
-  HttpLink,
-  InMemoryCache,
-  NormalizedCacheObject
-} from '@apollo/client'
+import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
 import { Session } from 'next-auth'
 import { useMemo } from 'react'
@@ -37,10 +32,7 @@ function createApolloClient(session?: Session | null) {
   })
 }
 
-export function initializeApollo(
-  initialState = null,
-  session?: Session | null
-) {
+export function initializeApollo(initialState = null, session?: Session | null) {
   // serve para verificar se já existe uma instância, para não criar outra
   const apolloClientGlobal = apolloClient ?? createApolloClient(session)
 
@@ -59,10 +51,7 @@ export function initializeApollo(
 }
 
 export function useApollo(initialState = null, session?: Session) {
-  const store = useMemo(
-    () => initializeApollo(initialState, session),
-    [initialState, session]
-  )
+  const store = useMemo(() => initializeApollo(initialState, session), [initialState, session])
 
   return store
 }
