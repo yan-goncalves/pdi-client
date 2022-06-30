@@ -1,33 +1,35 @@
 import { gql } from '@apollo/client'
+import { FRAGMENT_PERFORMED_QUESTION } from 'graphql/fragments'
 
 export const CREATE_PERFORMED_QUESTION = gql`
+  ${FRAGMENT_PERFORMED_QUESTION}
   mutation CreatePerformedQuestion(
-    $answer: ENUM_PERFORMEDQUESTION_ANSWER
-    $why: String
-    $idPerformedEvaluation: ID!
-    $idQuestion: ID!
+    $reply: String
+    $justification: String
+    $idPerformed: Int!
+    $idQuestion: Int!
   ) {
     created: createPerformedQuestion(
-      data: {
-        answer: $answer
-        why: $why
-        performed_evaluation: $idPerformedEvaluation
-        skill: $idQuestion
+      input: {
+        reply: $reply
+        justification: $justification
+        idPerformed: $idPerformed
+        idQuestion: $idQuestion
       }
     ) {
-      data {
-        id
-      }
+      ...FragmentPerformedQuestion
     }
   }
 `
 
 export const UPDATE_PERFORMED_QUESTION = gql`
-  mutation UpdatePerformedQuestion($id: ID!, $answer: ENUM_PERFORMEDQUESTION_ANSWER, $why: String) {
-    updatePerformedQuestion(id: $id, data: { answer: $answer, why: $why }) {
-      data {
-        id
-      }
+  ${FRAGMENT_PERFORMED_QUESTION}
+  mutation UpdatePerformedQuestion($id: Int!, $reply: String, $justification: String) {
+    updated: updatePerformedQuestion(
+      id: $id
+      input: { reply: $reply, justification: $justification }
+    ) {
+      ...FragmentPerformedQuestion
     }
   }
 `

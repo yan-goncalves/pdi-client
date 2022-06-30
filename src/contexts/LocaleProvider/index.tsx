@@ -1,14 +1,7 @@
-import {
-  createContext,
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState
-} from 'react'
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import useCookie from 'react-use-cookie'
 
-export type LocaleType = 'pt-BR' | 'en'
+export type LocaleType = 'br' | 'en'
 
 export type LocaleDataType = {
   flag: 'brasil' | 'usa'
@@ -20,7 +13,7 @@ export type Locales = {
 }
 
 export const LOCALES: Locales = {
-  'pt-BR': {
+  br: {
     label: 'Português',
     flag: 'brasil'
   },
@@ -52,8 +45,8 @@ const LocaleProvider = ({ localeIni, children }: LocaleProviderProps) => {
     LocaleType,
     Dispatch<SetStateAction<LocaleType>>
   ]
-  const [label, setLabel] = useState(LOCALES[localeIni].label)
-  const [flag, setFlag] = useState(LOCALES[localeIni].flag)
+  const [label, setLabel] = useState<string>(LOCALES[localeIni].label)
+  const [flag, setFlag] = useState<string>(LOCALES[localeIni].flag)
 
   useEffect(() => {
     setLabel(LOCALES[locale].label)
@@ -61,9 +54,7 @@ const LocaleProvider = ({ localeIni, children }: LocaleProviderProps) => {
   }, [locale])
 
   return (
-    <LocaleContext.Provider
-      value={{ locale, setLocale, data: { label, flag } }}
-    >
+    <LocaleContext.Provider value={{ locale, setLocale, data: { label, flag } }}>
       {children}
     </LocaleContext.Provider>
   )

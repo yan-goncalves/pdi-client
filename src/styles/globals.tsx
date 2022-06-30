@@ -5,13 +5,18 @@ const GlobalStyles = () => {
     <Global
       styles={(theme) => ({
         '.mantine-AppShell-root': {
-          height: 'calc(100vh - 50px)',
           minHeight: 'max(calc(100vh - 50px), 38rem)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between'
 
-          [`@media(max-width: ${theme.breakpoints.xs}px)`]: {
-            minHeight: 0,
-            height: 'calc(100vh - 5.5rem)'
-          }
+          // height: 'calc(100vh - 50px)',
+          // minHeight: 'max(calc(100vh - 50px), 38rem)',
+
+          // [`@media(max-width: ${theme.breakpoints.xs}px)`]: {
+          // minHeight: 0
+          // height: 'calc(100vh - 5.5rem)'
+          // }
         },
 
         div: {

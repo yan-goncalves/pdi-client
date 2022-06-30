@@ -3,6 +3,10 @@ import { useNotifications } from '@mantine/notifications'
 import { Grid, Input } from '@nextui-org/react'
 import { IconLock, IconUser } from '@tabler/icons'
 import ErrorLabelInput from 'components/ErrorLabelInput'
+import { CommonConstants } from 'constants/common'
+import { ErrorsConstants } from 'constants/errors'
+import { ROLES } from 'constants/role'
+import { useLocale } from 'contexts/LocaleProvider'
 import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -21,14 +25,11 @@ type LoginFormProps = {
   button: ButtonApiProps
 }
 
-const LoginForm = ({
-  usernameLabel,
-  passwordLabel,
-  button
-}: LoginFormProps) => {
+const LoginForm = ({ usernameLabel, passwordLabel, button }: LoginFormProps) => {
   const theme = useMantineTheme()
   const { push, query } = useRouter()
-  const [loading, setLoading] = useState(false)
+  const { locale } = useLocale()
+  const [loading, setLoading] = useState<boolean>(false)
   const { classes } = useStyles({ loading })
   const notifications = useNotifications()
   const {
@@ -46,8 +47,7 @@ const LoginForm = ({
   useEffect(() => {
     if (
       (!!username || !!password) &&
-      (errors.username?.type === 'access_denied' ||
-        errors.password?.type === 'access_denied')
+      (errors.username?.type === 'access_denied' || errors.password?.type === 'access_denied')
     ) {
       clearErrors()
     }
@@ -60,9 +60,7 @@ const LoginForm = ({
       identifier: data.username,
       password: data.password,
       redirect: false,
-      callbackUrl: process.env.NEXT_PUBLIC_CLIENT_URL?.concat(
-        (query.callbackUrl as string) || '/'
-      )
+      callbackUrl: process.env.NEXT_PUBLIC_CLIENT_URL?.concat((query.callbackUrl as string) || '/')
     }).then(async (res) => {
       if (res?.error) {
         setLoading(false)
@@ -71,12 +69,8 @@ const LoginForm = ({
         setError('password', { type: 'access_denied' })
 
         notifications.showNotification({
-          title: (
-            <Text style={{ padding: 2 }}>
-              Não foi possível realizar o login 😢
-            </Text>
-          ),
-          message: 'Usuário ou senha incorretos',
+          title: <Text p={2}>{ErrorsConstants.login.credentials.title[locale]} 😢</Text>,
+          message: ErrorsConstants.login.credentials.message[locale],
           color: 'red',
           radius: 'md',
           autoClose: 3000,
@@ -98,27 +92,24 @@ const LoginForm = ({
           const session = await getSession()
           const user = session?.user
           const info = user?.info
-          const name = user?.role === 'Administrator' ? 'Admin' : info?.name
+          const name = user?.role === ROLES.ADMIN ? 'Admin' : info?.name
 
           notifications.showNotification({
             message: (
-              <Text style={{ padding: 2 }}>
-                Olá, <b>{name}</b>. Bem-vindo(a) de volta! 😎
-              </Text>
+              <Text
+                style={{ padding: 2 }}
+                dangerouslySetInnerHTML={{
+                  __html: `${CommonConstants.welcome[locale](name)} 😎`
+                }}
+              />
             ),
             color: 'green',
             radius: 'md',
             autoClose: 3000,
             styles: (theme) => ({
               root: {
-                backgroundColor: theme.colors.green[1],
-                borderColor: theme.colors.green[1],
-
-                '&::before': { backgroundColor: theme.colors.green[9] }
-              },
-              closeButton: {
-                color: theme.colors.green[7],
-                '&:hover': { backgroundColor: theme.colors.green[2] }
+                borderColor: theme.colors.green[6],
+                '&::before': { backgroundColor: theme.colors.green[6] }
               }
             })
           })
@@ -132,7 +123,7 @@ const LoginForm = ({
       <Grid.Container direction={'column'} gap={0.5}>
         <Grid>
           <ErrorLabelInput
-            text={'* Este campo é obrigatório'}
+            text={ErrorsConstants.input.required[locale]}
             inError={errors.username && errors.username?.type === 'required'}
           />
           <Input
@@ -150,7 +141,7 @@ const LoginForm = ({
         </Grid>
         <Grid>
           <ErrorLabelInput
-            text={'* Este campo é obrigatório'}
+            text={ErrorsConstants.input.required[locale]}
             inError={errors.password && errors.password?.type === 'required'}
           />
           <Input.Password

@@ -1,9 +1,11 @@
+import { EVALUATION_ACTOR } from 'contexts/EvaluationProvider'
+
 export type DashboardProps = {
-  type: 'User' | 'Manager'
+  actor: EVALUATION_ACTOR
 }
 
-const Dashboard = ({ type }: DashboardProps) => {
-  return <div>{type} dashboard</div>
+const Dashboard = ({ actor }: DashboardProps) => {
+  return <div></div>
 }
 
 export default Dashboard

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import ImageViewer from 'react-simple-image-viewer'
 import { useStyles } from './styles'
 
-export const FALLBACK_USER_PICTURE = '/img/fallbackUserPicture.jpg'
+export const FALLBACK_USER_PICTURE = '/img/fallbackUserPicture.png'
 
 type UserPictureProps = {
   width?: number
@@ -12,11 +12,15 @@ type UserPictureProps = {
 }
 
 const UserPicture = ({ width = 80, height = 80 }: UserPictureProps) => {
-  const { classes } = useStyles({ width, height })
-  const [isViewerOpen, setIsViewerOpen] = useState(false)
+  const [isViewerOpen, setIsViewerOpen] = useState<boolean>(false)
   const { data: session } = useSession()
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [picture, setPicture] = useState<string>(FALLBACK_USER_PICTURE)
+  const { classes } = useStyles({
+    width,
+    height,
+    cursor: picture !== FALLBACK_USER_PICTURE ? 'pointer' : undefined
+  })
 
   useEffect(() => {
     if (session && session.user?.picture?.url) {
@@ -33,7 +37,7 @@ const UserPicture = ({ width = 80, height = 80 }: UserPictureProps) => {
   }, [session])
 
   const openImageViewer = useCallback(() => {
-    setIsViewerOpen(true)
+    picture !== FALLBACK_USER_PICTURE && setIsViewerOpen(true)
   }, [])
 
   const closeImageViewer = () => {

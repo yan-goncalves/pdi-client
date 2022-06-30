@@ -15,8 +15,8 @@ function createApolloClient(session?: Session | null) {
     const authSession = await getSession()
     const jwt = authSession?.jwt || session?.jwt || clientSession?.jwt || ''
     const authorization = jwt ? `Bearer ${jwt}` : ''
-    const normalize = true
-    return { headers: { ...headers, authorization, normalize } }
+
+    return { headers: { ...headers, authorization } }
   })
 
   return new ApolloClient({

@@ -1,26 +1,15 @@
 import { gql } from '@apollo/client'
 
 export const GET_HOME_PAGE = gql`
-  query GetHomePage($locale: I18NLocaleCode) {
-    homePage(locale: $locale) {
-      data {
-        attributes {
-          title
-          description
+  query GetHomePage {
+    homePage {
+      title
+      description
 
-          hero {
-            data {
-              attributes {
-                url
-                alternativeText
-              }
-            }
-          }
+      hero
 
-          button {
-            label
-          }
-        }
+      button {
+        label
       }
     }
   }

@@ -1,10 +1,7 @@
-import { Navbar as MantineNavbar } from '@mantine/core'
+import { LoadingOverlay, Navbar as MantineNavbar } from '@mantine/core'
 import NavItemSection from 'components/NavItemSection'
-import {
-  managerNavItemLinks,
-  navLinkWrapperTitles,
-  userNavItemLinks
-} from 'constants/routes'
+import { ROLES } from 'constants/role'
+import { managerNavItemLinks, navLinkWrapperTitles, userNavItemLinks } from 'constants/routes'
 import { LocaleType, useLocale } from 'contexts/LocaleProvider'
 import { useSession } from 'next-auth/react'
 
@@ -22,19 +19,17 @@ const NavLinkWrapper = () => {
   const { data: session } = useSession()
   const { userSectionTitle, managerSectionTitle } = navLinkWrapperTitles
 
+  if (!session) {
+    return <LoadingOverlay visible />
+  }
+
   return (
     <MantineNavbar.Section grow style={{ paddingBottom: 10 }}>
-      {session?.user.info.access_role !== 'Director' && (
-        <NavItemSection
-          sectionTitle={userSectionTitle[locale]}
-          items={userNavItemLinks}
-        />
+      {![ROLES.ADMIN, ROLES.DIRECTOR].includes(session.user?.role) && (
+        <NavItemSection sectionTitle={userSectionTitle[locale]} items={userNavItemLinks} />
       )}
-      {session?.user.info?.access_role !== 'User' && (
-        <NavItemSection
-          sectionTitle={managerSectionTitle[locale]}
-          items={managerNavItemLinks}
-        />
+      {session?.user?.role !== ROLES.USER && (
+        <NavItemSection sectionTitle={managerSectionTitle[locale]} items={managerNavItemLinks} />
       )}
     </MantineNavbar.Section>
   )

@@ -4,10 +4,10 @@ import { useAppDispatch } from 'app/hooks'
 import { FALLBACK_USER_PICTURE } from 'components/UserPicture'
 import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
 import { useRouter } from 'next/router'
-import { TeamMember } from 'types/collection/Team'
+import { UserType } from 'types/collection/User'
 import { useCardStyles } from './styles'
 
-const TeamMemberCardItem = ({ id, username, info, picture }: TeamMember) => {
+const TeamMemberCardItem = ({ id, username, info, picture }: UserType) => {
   const { push, pathname } = useRouter()
   const dispatch = useAppDispatch()
 
@@ -22,23 +22,18 @@ const TeamMemberCardItem = ({ id, username, info, picture }: TeamMember) => {
     <Card
       key={`${id}-${username}`}
       onClick={handleClick}
-      shadow={false}
-      bordered
-      hoverable
-      clickable
+      isHoverable
+      isPressable
       className={useCardStyles()}
     >
-      <Card.Body css={{ p: 0 }}>
+      <Card.Body css={{ p: 0, backgroundColor: '#ddd' }}>
         <Card.Image
           css={{ objectPosition: 'center center' }}
           objectFit={'cover'}
-          width={'100%'}
-          height={140}
+          width={140}
           alt={'team-member-picture'}
           src={
-            !picture
-              ? FALLBACK_USER_PICTURE
-              : `${process.env.NEXT_PUBLIC_API_URL}${picture.url}`
+            !picture ? FALLBACK_USER_PICTURE : `${process.env.NEXT_PUBLIC_API_URL}${picture.url}`
           }
         />
       </Card.Body>

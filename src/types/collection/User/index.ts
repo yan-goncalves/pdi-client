@@ -1,16 +1,14 @@
-import { BaseType } from 'types/common'
+import { ROLES } from 'constants/role'
 import { DepartmentType } from 'types/collection/Department'
 import { UserInfoType } from 'types/collection/UserInfo'
-
-export type AccessRoleType = 'User' | 'Manager' | 'Coordinator' | 'Director'
+import { BaseType } from 'types/common'
 
 export interface UserType extends BaseType {
   username: string
   email: string
-  provider: 'local'
   blocked: boolean | null
   confirmed: boolean
-  role?: 'Administrator' | 'Authenticated'
+  role: ROLES
   picture?: {
     url: string
   }
@@ -19,10 +17,10 @@ export interface UserType extends BaseType {
   manager: Pick<UserType, 'id' | 'username'>
 }
 
-export type GetUsers = {
+export type GetUsersType = {
   users: UserType[]
 }
 
-export type GetUser = {
-  users: UserType[]
+export type GetUserType = {
+  user: UserType
 }

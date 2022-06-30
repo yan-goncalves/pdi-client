@@ -1,36 +1,60 @@
-export enum EvaluationPeriod {
-  endYear = 'endYear',
-  free = 'free',
-  midYear = 'midYear',
-  out = 'out'
+import { EVALUATION_ACTOR } from 'contexts/EvaluationProvider'
+
+export enum EVALUATION_PERIOD {
+  END = 'END',
+  FREE = 'FREE',
+  MID = 'MID',
+  OUT = 'OUT'
 }
 
 export const EvaluationConstants = {
+  title: {
+    default: {
+      br: 'Avaliação de Desempenho',
+      en: 'Performance Evaluation'
+    },
+    [EVALUATION_PERIOD.MID]: {
+      br: 'Avaliação de Meio de Ano',
+      en: 'Mid-Year Evaluation'
+    },
+    [EVALUATION_PERIOD.END]: {
+      br: 'Avaliação de Fim de Ano',
+      en: 'End-Year Evaluation'
+    },
+    [EVALUATION_PERIOD.FREE]: {
+      br: 'Avaliação Administração',
+      en: 'Admin Evaluation'
+    },
+    [EVALUATION_PERIOD.OUT]: {
+      br: 'Avaliação Fora do Período',
+      en: 'Outdated Evaluation'
+    }
+  },
   status: {
-    [EvaluationPeriod.free]: {
+    [EVALUATION_PERIOD.FREE]: {
       name: {
-        'pt-BR': 'admin',
+        br: 'admin',
         en: 'admin'
       },
       color: 'red'
     },
-    [EvaluationPeriod.out]: {
+    [EVALUATION_PERIOD.OUT]: {
       name: {
-        'pt-BR': 'Concluída',
+        br: 'Concluída',
         en: 'Completed'
       },
       color: 'gray'
     },
-    [EvaluationPeriod.midYear]: {
+    [EVALUATION_PERIOD.MID]: {
       name: {
-        'pt-BR': 'Meio de Ano',
+        br: 'Meio de Ano',
         en: 'Mid-Year'
       },
       color: 'indigo'
     },
-    [EvaluationPeriod.endYear]: {
+    [EVALUATION_PERIOD.END]: {
       name: {
-        'pt-BR': 'Fechamento de Ano',
+        br: 'Fechamento de Ano',
         en: 'End-Year'
       },
       color: 'yellow'
@@ -38,46 +62,46 @@ export const EvaluationConstants = {
   },
 
   contentTitle: {
-    my: {
-      'pt-BR': 'Minha Avaliação de Desempenho',
+    [EVALUATION_ACTOR.USER]: {
+      br: 'Minha Avaliação de Desempenho',
       en: 'My Performance Evaluation'
     },
-    team: {
-      'pt-BR': 'Avaliações de Desempenho',
+    [EVALUATION_ACTOR.MANAGER]: {
+      br: 'Avaliações de Desempenho',
       en: 'Performance Evaluations'
     }
   },
 
   steps: {
     questions: {
-      'pt-BR': 'Questões Iniciais',
+      br: 'Questões Iniciais',
       en: 'Opening Questions'
     },
 
     skills: {
-      'pt-BR': 'Competências',
+      br: 'Competências',
       en: 'Skills'
     },
 
     goals: {
-      'pt-BR': 'Objetivos',
+      br: 'Objetivos',
       en: 'Goals'
     },
 
     feedbacks: {
-      'pt-BR': 'Feedbacks',
+      br: 'Feedbacks',
       en: 'Feedbacks'
     },
 
     pdi: {
-      'pt-BR': 'PDI',
-      en: 'IDP'
+      br: 'PDI',
+      en: 'PDI'
     }
   },
 
   description: {
     finished: {
-      'pt-BR': 'Avaliação finalizada',
+      br: 'Avaliação finalizada',
       en: 'Evaluation completed'
     }
   }

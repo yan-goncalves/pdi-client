@@ -1,11 +1,4 @@
-import {
-  Avatar,
-  Group,
-  Title,
-  Text,
-  useMantineTheme,
-  Badge
-} from '@mantine/core'
+import { Avatar, Group, Text, Title, useMantineTheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { FALLBACK_USER_PICTURE } from 'components/UserPicture'
 import { EvaluationConstants } from 'constants/evaluation'
@@ -15,15 +8,11 @@ import { GET_EVALUATION_MODELS } from 'graphql/queries/collection/EvaluationMode
 import { GET_USER } from 'graphql/queries/collection/User'
 import { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
-import { useEffect } from 'react'
-import EvaluationListTemplate, {
-  EvaluationListTemplateProps
-} from 'templates/EvaluationList'
+import EvaluationListTemplate, { EvaluationListTemplateProps } from 'templates/EvaluationList'
 import { GetEvaluationModelsType } from 'types/collection/EvaluationModel'
-import { GetUser, UserType } from 'types/collection/User'
+import { GetUserType, UserType } from 'types/collection/User'
 
-export interface PageEvaluationListUserProps
-  extends EvaluationListTemplateProps {
+export interface PageEvaluationListUserProps extends EvaluationListTemplateProps {
   user: UserType
 }
 
@@ -38,7 +27,7 @@ const PageEvaluationList = ({ items, user }: PageEvaluationListUserProps) => {
       title={
         <Group sx={{ justifyContent: 'space-between' }}>
           <Title p={20} order={!match ? 3 : 6}>
-            {`${EvaluationConstants.contentTitle.team[locale]}`}
+            {`${EvaluationConstants.contentTitle.manager[locale]}`}
           </Title>
           <Group mr={25}>
             <Avatar
@@ -48,6 +37,7 @@ const PageEvaluationList = ({ items, user }: PageEvaluationListUserProps) => {
                   ? FALLBACK_USER_PICTURE
                   : `${process.env.NEXT_PUBLIC_API_URL}${user.picture.url}`
               }
+              sx={{ backgroundColor: theme.colors.gray[3] }}
             />
             <Text size={!match ? 'md' : 'xs'} weight={500}>
               {user.info.name} {user.info.lastname}
@@ -59,34 +49,45 @@ const PageEvaluationList = ({ items, user }: PageEvaluationListUserProps) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  EvaluationListTemplateProps
-> = async ({ req, params }) => {
+export const getServerSideProps: GetServerSideProps<EvaluationListTemplateProps> = async ({
+  req,
+  params,
+  locale
+}) => {
   const session = await getSession({ req })
   const apolloClient = initializeApollo(null, session)
 
   const {
-    data: { evaluationModels }
+    data: { evaluations }
   } = await apolloClient.query<GetEvaluationModelsType>({
-    query: GET_EVALUATION_MODELS
+    query: GET_EVALUATION_MODELS,
+    context: {
+      headers: {
+        locale
+      }
+    }
   })
 
-  if (!evaluationModels) {
+  if (!evaluations) {
     return {
       notFound: true
     }
   }
 
   const {
-    data: { users }
-  } = await apolloClient.query<GetUser>({
+    data: { user },
+    error,
+    errors
+  } = await apolloClient.query<GetUserType>({
     query: GET_USER,
     variables: {
-      username: params?.username
+      input: {
+        username: params?.username
+      }
     }
   })
 
-  if (!users || !users[0]) {
+  if (error || errors) {
     return {
       notFound: true
     }
@@ -94,8 +95,8 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
-      items: [...evaluationModels],
-      user: users[0]
+      items: [...evaluations],
+      user
     }
   }
 }

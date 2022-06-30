@@ -1,12 +1,17 @@
 import { BaseType } from 'types/common'
 import { PerformedEvaluationType } from '../PerformedEvaluation'
-import { SkillType } from '../Skill'
+import { QuestionType } from '../Question'
+
+export enum REPLY_OPTION {
+  YES = 'yes',
+  NO = 'no'
+}
 
 export interface PerformedQuestionType extends BaseType {
-  answer: 'yes' | 'no'
-  why: string
-  performed_evaluation: PerformedEvaluationType
-  skill: SkillType
+  performed: PerformedEvaluationType
+  reply: REPLY_OPTION
+  justification: string
+  question: QuestionType
 }
 
 export type CreatePerformedQuestionType = {

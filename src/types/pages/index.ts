@@ -1,10 +1,10 @@
-import { ButtonApiProps, ImageApiProps, TextFieldApiProps } from 'types/common'
+import { ButtonApiProps, TextFieldApiProps } from 'types/common'
 
 export type HomePageProps = {
   homePage: {
     title: string
     description: string
-    hero: ImageApiProps
+    hero: string
     button: ButtonApiProps
   }
 }
@@ -13,7 +13,7 @@ export type SignInProps = {
   signInPage: {
     title: string
     caption: string
-    logo: ImageApiProps
+    logo: string
     usernameTextField: TextFieldApiProps
     passwordTextField: TextFieldApiProps
     button: ButtonApiProps

@@ -1,48 +1,46 @@
-import { useEvaluation } from 'contexts/EvaluationProvider'
+import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { initializeApollo } from 'graphql/client'
 import { CREATE_PERFORMED_EVALUATION } from 'graphql/mutations/collection/PerformedEvaluation'
-import { GET_EVALUATION_GOALS } from 'graphql/queries/collection/EvaluationGoal'
 import { GET_EVALUATION_MODEL } from 'graphql/queries/collection/EvaluationModel'
-import { GET_PERFORMED_EVALUATION } from 'graphql/queries/collection/PerformedEvaluation'
+import { GET_EVALUATION_GOALS } from 'graphql/queries/collection/Goals'
+import { GET_PERFORMED_EVALUATION_RELATION } from 'graphql/queries/collection/PerformedEvaluation'
+import { GET_RATINGS } from 'graphql/queries/collection/Rating'
 import { GET_USER } from 'graphql/queries/collection/User'
 import { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
 import { useEffect } from 'react'
 import EvaluationTemplate from 'templates/Evaluation'
-import { GetEvaluationGoalsType } from 'types/collection/EvaluationGoal'
 import { EvaluationModelType, GetEvaluationModelType } from 'types/collection/EvaluationModel'
+import { GetEvaluationGoalsType } from 'types/collection/Goal'
 import {
   CreatePerformedEvaluationType,
   GetPerformedEvaluationType,
   PerformedEvaluationType
 } from 'types/collection/PerformedEvaluation'
-import { GetUser, UserType } from 'types/collection/User'
+import { GetRatings, RatingType } from 'types/collection/Rating'
+import { GetUserType, UserType } from 'types/collection/User'
 
 const EvaluationPage = ({
-  evaluationModel,
-  performedEvaluation,
-  user
+  user,
+  evaluation,
+  performed,
+  ratings
 }: {
-  evaluationModel: EvaluationModelType
-  performedEvaluation: PerformedEvaluationType
   user: UserType
+  evaluation: EvaluationModelType
+  performed: PerformedEvaluationType
+  ratings: RatingType[]
 }) => {
-  const { setEvaluationModel, setPerformedEvaluation, setAppraisee, setMode, mode, periodMode } =
-    useEvaluation()
-
-  useEffect(() => {
-    if (evaluationModel) {
-      const checkMode = periodMode !== evaluationModel.period ? 'view' : mode
-      setEvaluationModel(evaluationModel)
-      setMode(checkMode)
-    }
-  }, [evaluationModel])
-
-  useEffect(() => {
-    if (performedEvaluation) {
-      setPerformedEvaluation(performedEvaluation)
-    }
-  }, [performedEvaluation])
+  const {
+    setEvaluationModel,
+    setPerformedEvaluation,
+    setRatings,
+    setAppraisee,
+    setMode,
+    mode,
+    periodMode,
+    setIsLocaleLoading
+  } = useEvaluation()
 
   useEffect(() => {
     if (user) {
@@ -50,7 +48,28 @@ const EvaluationPage = ({
     }
   }, [user])
 
-  return <EvaluationTemplate type={'manager'} />
+  useEffect(() => {
+    if (evaluation) {
+      const checkMode = periodMode !== evaluation.period ? EVALUATION_MODE.VIEW : mode
+      setEvaluationModel(evaluation)
+      setMode(checkMode)
+      setIsLocaleLoading(false)
+    }
+  }, [evaluation])
+
+  useEffect(() => {
+    if (performed) {
+      setPerformedEvaluation(performed)
+    }
+  }, [performed])
+
+  useEffect(() => {
+    if (ratings) {
+      setRatings(ratings)
+    }
+  }, [ratings])
+
+  return <EvaluationTemplate actor={EVALUATION_ACTOR.MANAGER} />
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, locale, params }) => {
@@ -58,47 +77,54 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
   const apolloClient = initializeApollo(null, session)
 
   const {
-    data: { users }
-  } = await apolloClient.query<GetUser>({
+    data: { user },
+    error: userError,
+    errors: userErrors
+  } = await apolloClient.query<GetUserType>({
     query: GET_USER,
     variables: {
-      username: params?.username
+      input: {
+        username: params?.username,
+        loadRelations: true
+      }
     }
   })
 
-  if (!users.length) {
+  if (userError || userErrors) {
     return {
       notFound: true
     }
   }
-  const user = users[0]
 
   const {
-    data: { evaluationModels }
+    data: { evaluation },
+    error: evaluationError,
+    errors: evaluationErrors
   } = await apolloClient.query<GetEvaluationModelType>({
     query: GET_EVALUATION_MODEL,
     variables: {
-      year: params?.year,
-      locale: locale
+      year: Number(params?.year)
+    },
+    context: {
+      headers: {
+        locale
+      }
     }
   })
 
-  if (!evaluationModels.length) {
+  if (!evaluation || evaluationError || evaluationErrors) {
     return {
       notFound: true
     }
   }
-
-  // const manager = session?.user.info.access_role === 'Director' ? user.manager.id : session?.user.id
 
   const {
     data: { evaluationGoals }
   } = await apolloClient.query<GetEvaluationGoalsType>({
     query: GET_EVALUATION_GOALS,
     variables: {
-      year: params?.year,
-      username: params?.username
-      // manager: manager
+      idEvaluation: evaluation.id,
+      idUser: user.id
     }
   })
 
@@ -108,48 +134,57 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
     }
   }
 
-  const evaluationModel = evaluationModels[0]
-  evaluationModel.goals = evaluationGoals
-  evaluationModel.sections = evaluationModel.sections?.filter(
-    (section) => section.visibility[user.info.access_role] === true
+  evaluation.goals = evaluationGoals
+  evaluation.sections = evaluation.sections?.filter(
+    (section) => section.visibility[user.role] === true
   )
 
-  let performedEvaluation
+  let performed
+
+  await apolloClient
+    .query<GetPerformedEvaluationType>({
+      query: GET_PERFORMED_EVALUATION_RELATION,
+      variables: {
+        idEvaluation: evaluation.id,
+        idUser: user.id
+      }
+    })
+    .then(({ data: { performedEvaluation } }) => (performed = performedEvaluation))
+    .catch(async () => {
+      const { data, errors } = await apolloClient.mutate<CreatePerformedEvaluationType>({
+        mutation: CREATE_PERFORMED_EVALUATION,
+        variables: {
+          idEvaluation: evaluation.id,
+          idUser: user.id
+        }
+      })
+
+      if (errors) {
+        return {
+          notFound: true
+        }
+      }
+
+      performed = data?.created
+    })
 
   const {
-    data: { performedEvaluations }
-  } = await apolloClient.query<GetPerformedEvaluationType>({
-    query: GET_PERFORMED_EVALUATION,
-    variables: {
-      idUser: user.id,
-      idEvaluationModel: evaluationModel.id
+    data: { ratings }
+  } = await apolloClient.query<GetRatings>({
+    query: GET_RATINGS,
+    context: {
+      headers: {
+        locale
+      }
     }
   })
 
-  if (performedEvaluations.length == 0) {
-    const { data, errors } = await apolloClient.mutate<CreatePerformedEvaluationType>({
-      mutation: CREATE_PERFORMED_EVALUATION,
-      variables: {
-        idUser: user.id,
-        idEvaluationModel: evaluationModel.id
-      }
-    })
-    if (errors || !data) {
-      return {
-        notFound: true
-      }
-    }
-
-    performedEvaluation = data.created
-  } else {
-    performedEvaluation = performedEvaluations[0]
-  }
-
   return {
     props: {
-      evaluationModel,
-      performedEvaluation,
-      user
+      user,
+      evaluation,
+      performed,
+      ratings
     }
   }
 }

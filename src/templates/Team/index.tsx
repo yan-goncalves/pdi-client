@@ -1,36 +1,30 @@
-import {
-  Accordion,
-  Card,
-  Grid,
-  Group,
-  SimpleGrid,
-  Text,
-  Title,
-  useMantineTheme
-} from '@mantine/core'
+import { Grid, Group, Text, Title, useMantineTheme } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import { IconSocial, TablerIconProps } from '@tabler/icons'
+import Accordion from 'components/Accordion'
 import ContentBase from 'components/ContentBase'
+import LoadingOverlay from 'components/LoadingOverlay'
 import TeamMemberCardItem from 'components/TeamMemberCardItem'
 import { DepartmentIcon } from 'constants/department'
+import { ROLES } from 'constants/role'
 import { useSession } from 'next-auth/react'
 import { ComponentType } from 'react'
-import { TeamMember } from 'types/collection/Team'
-import { useStyles } from './styles'
+import { UserType } from 'types/collection/User'
 
 export type TeamMembersTemplateProps = {
   [key in string]: {
     name: string
-    members: TeamMember[]
+    members: UserType[]
   }
 }
 
 const TeamMembersTemplate = (items: TeamMembersTemplateProps) => {
   const theme = useMantineTheme()
-  const { classes } = useStyles()
+  const match = useMediaQuery(`(max-width: ${theme.breakpoints.xs}px)`)
   const { data: session } = useSession()
 
   const getMembers = (departmentKey: string, isManager = false) => (
-    <Grid key={departmentKey} gutter={10} justify={'flex-start'} align={'stretch'}>
+    <Grid key={departmentKey} gutter={!match ? 30 : 15} justify={'flex-start'} align={'stretch'}>
       {isManager && (
         <Grid.Col>
           <Group>
@@ -40,7 +34,7 @@ const TeamMembersTemplate = (items: TeamMembersTemplateProps) => {
         </Grid.Col>
       )}
       {items[departmentKey].members.map((props) => (
-        <Grid.Col span={6} xs={5} sm={3} lg={2} key={`${props.id}-${props.username}`}>
+        <Grid.Col span={6} sm={4} lg={3} xl={2} key={`${props.id}-${props.username}`}>
           <TeamMemberCardItem {...props} />
         </Grid.Col>
       ))}
@@ -56,19 +50,17 @@ const TeamMembersTemplate = (items: TeamMembersTemplateProps) => {
     )
   }
 
+  if (!session) {
+    return <LoadingOverlay />
+  }
+
   return (
     <ContentBase>
-      {session?.user.info.access_role === 'Director' ? (
-        <Accordion
-          classNames={{
-            item: classes.item,
-            itemTitle: classes.itemTitle,
-            itemOpened: classes.itemOpened,
-            content: classes.content
-          }}
-        >
+      {[ROLES.ADMIN, ROLES.DIRECTOR].includes(session.user.role) ? (
+        <Accordion>
           {Object.keys(items).map((departmentKey) => (
             <Accordion.Item
+              m={10}
               key={departmentKey}
               color={theme.colors.blue[3]}
               label={renderLabel(DepartmentIcon[departmentKey], items[departmentKey].name)}

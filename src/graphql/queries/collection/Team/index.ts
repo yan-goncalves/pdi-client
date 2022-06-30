@@ -1,40 +1,11 @@
 import { gql } from '@apollo/client'
+import { FRAGMENT_USER_MODEL } from 'graphql/fragments'
 
 export const GET_TEAM_MEMBERS = gql`
-  query GetTeamMembers($idManager: ID!) {
-    team: usersPermissionsUsers(
-      filters: { manager: { id: { eq: $idManager } } }
-    ) {
-      data {
-        id
-        attributes {
-          username
-          department {
-            data {
-              attributes {
-                key
-                name
-              }
-            }
-          }
-          info {
-            data {
-              attributes {
-                name
-                lastname
-                access_role
-              }
-            }
-          }
-          picture {
-            data {
-              attributes {
-                url
-              }
-            }
-          }
-        }
-      }
+  ${FRAGMENT_USER_MODEL}
+  query GetTeamMembers($id: Int) {
+    team(id: $id) {
+      ...FragmentUserModel
     }
   }
 `

@@ -1,8 +1,4 @@
-import {
-  Loader,
-  LoadingOverlay as MantineLoadingOverlay,
-  useMantineTheme
-} from '@mantine/core'
+import { Loader, LoadingOverlay as MantineLoadingOverlay, useMantineTheme } from '@mantine/core'
 import { Grid } from '@nextui-org/react'
 import { useAppSelector } from 'app/hooks'
 import LogoPdi from 'components/LogoPdi'
@@ -19,6 +15,7 @@ const LoadingOverlay = ({ alwaysVisible = false }: LoadginOverlayProps) => {
 
   useEffect(() => {
     if (loadingOverlayVisible) {
+      window.scrollTo({ top: 0 })
       document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = 'unset'

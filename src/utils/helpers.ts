@@ -1,31 +1,28 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { ROLES } from 'constants/role'
 import { GET_TEAM_MEMBERS } from 'graphql/queries/collection/Team'
 import { TeamMembersTemplateProps } from 'templates/Team'
 import { DepartmentType } from 'types/collection/Department'
-import { GetTeamMembers, TeamMember } from 'types/collection/Team'
-import { AccessRoleType } from 'types/collection/User'
-
-export const isManager = (access_role: AccessRoleType) => {
-  return access_role !== 'User'
-}
+import { GetTeamMembersType } from 'types/collection/Team'
+import { UserType } from 'types/collection/User'
+import { BaseType } from 'types/common'
 
 export const getMembersRecursively = async (
-  member: TeamMember,
+  member: UserType,
   apolloClient: ApolloClient<NormalizedCacheObject | null>,
-  team: TeamMember[]
+  team: UserType[]
 ) => {
-  if (isManager(member.info!.access_role)) {
-    const { data } = await apolloClient.query<GetTeamMembers>({
+  if (member.role !== ROLES.USER) {
+    const { data } = await apolloClient.query<GetTeamMembersType>({
       query: GET_TEAM_MEMBERS,
       variables: {
-        idManager: member.id
+        id: member.id
       }
     })
 
     const ordered = await Promise.all(
       data.team.map(
-        async (dataMember) =>
-          await getMembersRecursively(dataMember, apolloClient, team)
+        async (dataMember) => await getMembersRecursively(dataMember, apolloClient, team)
       )
     )
     team.push(...ordered)
@@ -34,10 +31,7 @@ export const getMembersRecursively = async (
   return member
 }
 
-export const orderMembersByDepartments = (
-  team: TeamMember[],
-  departments: DepartmentType[]
-) => {
+export const orderMembersByDepartments = (team: UserType[], departments: DepartmentType[]) => {
   const ordered: TeamMembersTemplateProps = {}
 
   team
@@ -51,6 +45,7 @@ export const orderMembersByDepartments = (
       }
       return 0
     })
+    .filter((member) => ![ROLES.ADMIN, ROLES.DIRECTOR].includes(member.role))
     .map((member) => {
       const key = member.department.key
 
@@ -64,4 +59,14 @@ export const orderMembersByDepartments = (
     })
 
   return ordered
+}
+
+export const sortById = (baseA: BaseType, baseB: BaseType, order: 'ASC' | 'DESC' = 'ASC') => {
+  const a_id = Number(baseA.id)
+  const b_id = Number(baseB.id)
+
+  const greater = order === 'ASC' ? 1 : -1
+  const less = order === 'ASC' ? -1 : 1
+
+  return a_id > b_id ? greater : a_id < b_id ? less : 0
 }

@@ -1,14 +1,11 @@
 import { gql } from '@apollo/client'
+import { FRAGMENT_DEPARTMENT_MODEL } from 'graphql/fragments'
 
 export const GetDepartments = gql`
-  query GetDepartments($locale: I18NLocaleCode) {
-    departments(locale: $locale) {
-      data {
-        attributes {
-          key
-          name
-        }
-      }
+  ${FRAGMENT_DEPARTMENT_MODEL}
+  query GetDepartments {
+    departments {
+      ...FragmentDepartmentModel
     }
   }
 `

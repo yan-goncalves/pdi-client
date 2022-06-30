@@ -12,12 +12,23 @@ export const useStyles = createStyles((theme) => ({
 
     [`@media(max-width: ${theme.breakpoints.md}px)`]: {
       fontSize: 42
+    },
+
+    [`@media(max-width: ${theme.breakpoints.sm}px)`]: {
+      textAlign: 'center'
     }
   },
 
   description: {
     color: theme.colors.dark[3],
     fontWeight: 500
+  },
+
+  descriptionGroup: {
+    [`@media(max-width: ${theme.breakpoints.sm}px)`]: {
+      maxWidth: 400,
+      textAlign: 'center'
+    }
   },
 
   footerDescription: {
@@ -31,7 +42,18 @@ export const useStyles = createStyles((theme) => ({
     }
   },
 
+  buttonGroup: {
+    [`@media(max-width: ${theme.breakpoints.sm}px)`]: {
+      maxWidth: 400,
+      textAlign: 'center'
+    }
+  },
+
   hero: {
-    maxWidth: '100%'
+    justifyContent: 'center',
+    maxWidth: '100%',
+    img: {
+      maxWidth: 400
+    }
   }
 }))

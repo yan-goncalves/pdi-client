@@ -1,3 +1,4 @@
+import { Card, Divider } from '@mantine/core'
 import ContentHeader from 'components/ContentHeader'
 import { useStyles } from './styles'
 
@@ -11,8 +12,17 @@ const ContentBase = ({ children, title }: ContentBaseProps) => {
 
   return (
     <div className={classes.root}>
-      <ContentHeader title={title} />
-      <div className={classes.container}>{children}</div>
+      <Card withBorder mx={15} sx={{ height: '100%' }}>
+        <Card.Section>
+          <ContentHeader title={title} />
+        </Card.Section>
+        <Card.Section>
+          <Divider />
+        </Card.Section>
+        <Card.Section sx={{ height: '100%' }}>
+          <div className={classes.container}>{children}</div>
+        </Card.Section>
+      </Card>
     </div>
   )
 }

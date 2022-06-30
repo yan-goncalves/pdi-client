@@ -7,7 +7,7 @@ const RoutesManagerContext = createContext({ isPublic: true })
 const RoutesManagerProvider: React.FC = ({ children }) => {
   const home = '/'
   const { pathname } = useRouter()
-  const [isPublic, setIsPublic] = useState(true)
+  const [isPublic, setIsPublic] = useState<boolean>(true)
 
   useEffect(() => {
     const routes = PUBLIC_ROUTES.filter((route) => {
@@ -24,9 +24,7 @@ const RoutesManagerProvider: React.FC = ({ children }) => {
   }, [pathname])
 
   return (
-    <RoutesManagerContext.Provider value={{ isPublic }}>
-      {children}
-    </RoutesManagerContext.Provider>
+    <RoutesManagerContext.Provider value={{ isPublic }}>{children}</RoutesManagerContext.Provider>
   )
 }
 

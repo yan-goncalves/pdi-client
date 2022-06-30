@@ -1,34 +1,38 @@
 import { useMutation } from '@apollo/client'
-import { Grid, Group, Radio, RadioGroup, Text, Textarea, Title } from '@mantine/core'
+import { Grid, Group, Radio, RadioGroup, Text, Title } from '@mantine/core'
+import Comment from 'components/Comment'
 import { CommonConstants } from 'constants/common'
-import { useEvaluation } from 'contexts/EvaluationProvider'
+import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import {
   CREATE_PERFORMED_QUESTION,
   UPDATE_PERFORMED_QUESTION
 } from 'graphql/mutations/collection/PerformedQuestion'
-import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import {
   CreatePerformedQuestionType,
   PerformedQuestionType,
+  REPLY_OPTION,
   UpdatePerformedQuestionType
 } from 'types/collection/PerformedQuestion'
-import { SkillType } from 'types/collection/Skill'
+import { QuestionType } from 'types/collection/Question'
+import { useStyles } from './styles'
 
 export type PerformedQuestionProps = {
-  item: SkillType
+  question: QuestionType
   performed?: PerformedQuestionType
-  type: 'user' | 'manager'
+  actor: EVALUATION_ACTOR
 }
 
-const PerformedQuestion = ({ item, performed, type }: PerformedQuestionProps) => {
+const PerformedQuestion = ({ question, performed, actor }: PerformedQuestionProps) => {
   const { locale } = useLocale()
-  const { data: session } = useSession()
-  const { performedEvaluation, setPerformedEvaluation } = useEvaluation()
+  const { performedEvaluation, setPerformedEvaluation, mode } = useEvaluation()
+  const { classes } = useStyles({ actor, mode })
   const [performedQuestion, setPerformedQuestion] = useState<PerformedQuestionType>()
-  const [answer, setAnswer] = useState<string>()
-  const [why, setWhy] = useState<string>()
+  const [reply, setReply] = useState<REPLY_OPTION>()
+  const [justification, setJustification] = useState<string>()
+  // const [currentJustification, setCurrentJustification] = useState<string>()
+  const [isDisabled, setIsDisabled] = useState<boolean>(false)
 
   // queries/mutations
   const [create] = useMutation<CreatePerformedQuestionType>(CREATE_PERFORMED_QUESTION, {
@@ -36,14 +40,20 @@ const PerformedQuestion = ({ item, performed, type }: PerformedQuestionProps) =>
     onError: (e) => console.log('ERROR ON CREATING PERFORMED QUESTION', { ...e })
   })
   const [update] = useMutation<UpdatePerformedQuestionType>(UPDATE_PERFORMED_QUESTION, {
-    onCompleted: (data) => console.log('UPDATED PERFORMED QUESTION', { ...data }),
+    onCompleted: ({ updated }) => updatePerformedEvaluation(updated),
     onError: (e) => console.log('ERROR ON UPDATING PERFORMED QUESTION', { ...e })
   })
 
+  useLayoutEffect(() => {
+    if (actor === EVALUATION_ACTOR.MANAGER || mode === EVALUATION_MODE.VIEW) {
+      setIsDisabled(true)
+    }
+  }, [actor, mode])
+
   useEffect(() => {
     if (performedEvaluation) {
-      const performedQuestionFound = performedEvaluation.performed_questions.find(
-        (pq) => pq.skill.id === item.id
+      const performedQuestionFound = performedEvaluation.questions?.find(
+        ({ question }) => question.id === question.id
       )
       setPerformedQuestion(performedQuestionFound)
     }
@@ -52,84 +62,91 @@ const PerformedQuestion = ({ item, performed, type }: PerformedQuestionProps) =>
   useEffect(() => {
     if (performed) {
       setPerformedQuestion(performed)
+      setReply(performed.reply)
+      setJustification(performed.justification || '')
+    } else {
+      setJustification('')
     }
   }, [performed])
 
-  useEffect(() => {
-    if (performedQuestion) {
-      setAnswer(performedQuestion.answer)
-      setWhy(performedQuestion.why)
-    }
-  }, [performedQuestion])
-
   const updatePerformedEvaluation = async (question: PerformedQuestionType) => {
+    const questionIndex = performedEvaluation.questions.findIndex((q) => q.id === question.id)
+    const questions = performedEvaluation.questions.map((currQuestion) => {
+      return currQuestion.id === question.id
+        ? { ...currQuestion, ...question }
+        : { ...currQuestion }
+    })
     setPerformedEvaluation((pe) => ({
       ...pe,
-      performed_questions: pe.performed_questions.map((pq) =>
-        pq.id === question.id ? { ...pq, ...question } : pq
-      )
+      questions: questionIndex < 0 ? [...pe.questions, question] : questions
     }))
   }
 
-  const handleSaveAnswer = async (value: string) => {
-    setAnswer(value)
-
+  const handleSave = async (field: 'reply' | 'justification', value: string) => {
     if (!performedQuestion) {
       await create({
         variables: {
-          idPerformedEvaluation: performedEvaluation.id,
-          idQuestion: item.id,
-          answer: value
+          idPerformed: performedEvaluation.id,
+          idQuestion: question.id,
+          [field]: value
         }
       })
     } else {
       await update({
         variables: {
           id: performedQuestion.id,
-          answer: value
+          [field]: value
         }
       })
     }
   }
 
-  const handleSaveWhy = async () => {
-    /* */
+  const handleSaveReply = async (value: REPLY_OPTION) => {
+    if (!isDisabled) {
+      setReply(value)
+      await handleSave('reply', value)
+    }
+  }
+
+  const handleSavejustification = async () => {
+    await handleSave('justification', justification || '')
   }
 
   return (
-    <Grid p={10}>
+    <Grid p={10} gutter={50}>
       <Grid.Col span={12} xs={3} xl={2}>
         <Group direction={'column'}>
-          <Title order={6}>{CommonConstants.answer[locale]}:</Title>
-          <RadioGroup
-            value={answer}
-            onChange={handleSaveAnswer}
-            spacing={'xl'}
-            orientation={'horizontal'}
-          >
-            <Radio
-              disabled={type === 'manager'}
-              value={'yes'}
-              label={<Text weight={500}>{locale === 'en' ? 'Yes' : 'Sim'}</Text>}
-            />
-            <Radio
-              disabled={type === 'manager'}
-              value={'no'}
-              label={<Text weight={500}>{locale === 'en' ? 'No' : 'Não'}</Text>}
-            />
-          </RadioGroup>
+          <Title order={6}>{CommonConstants.reply[locale]}:</Title>
+          <Group sx={{ cursor: !isDisabled ? 'auto' : 'not-allowed' }}>
+            <RadioGroup
+              value={reply}
+              onChange={!isDisabled ? handleSaveReply : undefined}
+              spacing={'xl'}
+              orientation={'horizontal'}
+              sx={{ pointerEvents: !isDisabled ? 'auto' : 'none' }}
+            >
+              <Radio
+                value={REPLY_OPTION.YES}
+                label={<Text weight={500}>{CommonConstants.replyOption.yes[locale]}</Text>}
+                className={classes.radio}
+              />
+              <Radio
+                value={REPLY_OPTION.NO}
+                label={<Text weight={500}>{CommonConstants.replyOption.no[locale]}</Text>}
+                className={classes.radio}
+              />
+            </RadioGroup>
+          </Group>
         </Group>
       </Grid.Col>
       <Grid.Col span={12} xs={8}>
         <Group direction={'column'}>
-          <Title order={6}>{CommonConstants.why[locale]}</Title>
-          <Textarea
-            disabled={type === 'manager'}
-            value={why}
-            onChange={({ currentTarget: { value } }) => setWhy(value)}
-            minRows={5}
-            maxRows={5}
-            sx={{ width: 'min(30rem, 100%)' }}
+          <Title order={6}>{CommonConstants.justification[locale]}</Title>
+          <Comment
+            isDisabled={isDisabled}
+            value={justification}
+            onChange={setJustification}
+            handleSave={handleSavejustification}
           />
         </Group>
       </Grid.Col>

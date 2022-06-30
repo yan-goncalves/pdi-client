@@ -13,7 +13,7 @@ const drawerSlice = createSlice({
   name: 'drawer',
   initialState,
   reducers: {
-    setDrawerOpened(state, { payload }: PayloadAction<DrawerType>) {
+    setDrawerOpened(state: DrawerType, { payload }: PayloadAction<DrawerType>) {
       state.drawerOpened = payload.drawerOpened
     }
   }

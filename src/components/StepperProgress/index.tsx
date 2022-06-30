@@ -3,6 +3,8 @@ import {
   Box,
   Button,
   ButtonProps,
+  Divider,
+  DividerProps,
   filterChildrenByType,
   findChildByType,
   Group,
@@ -34,6 +36,7 @@ export type StepperProgressProps = Omit<StepperProps, 'active'> & {
     prev?: ButtonProps<any>
     next?: ButtonProps<any>
     finish?: ButtonProps<any>
+    withDivider?: DividerProps
   }
 
   /* Previous button label when uncontrolled */
@@ -53,11 +56,12 @@ export type StepperProgressProps = Omit<StepperProps, 'active'> & {
 
   /* Allow all steps to be selectable */
   allowStepSelect?: boolean
+
+  /* Allow all steps to be selectable */
+  disabled?: boolean
 }
 
-type StepperComponent = ((
-  props: StepperProgressProps
-) => React.ReactElement) & {
+type StepperComponent = ((props: StepperProgressProps) => React.ReactElement) & {
   displayName: string
   Step: typeof Step
   Completed: typeof StepCompleted
@@ -71,151 +75,139 @@ const defaultProps: Partial<StepperProgressProps> = {
   iconPosition: 'left'
 }
 
-export const StepperProgress: StepperComponent = forwardRef<
-  HTMLDivElement,
-  StepperProgressProps
->((props: StepperProgressProps, ref) => {
-  const theme = useMantineTheme()
-  const match = useMediaQuery(`(max-width: ${theme.breakpoints.xs}px)`, false)
+export const StepperProgress: StepperComponent = forwardRef<HTMLDivElement, StepperProgressProps>(
+  (props: StepperProgressProps, ref) => {
+    const theme = useMantineTheme()
+    const match = useMediaQuery(`(max-width: ${theme.breakpoints.xs}px)`, false)
 
-  const {
-    active,
-    activeContent,
-    groupButtonProps,
-    control,
-    prevBtnLabel,
-    nextBtnLabel,
-    finishBtnLabel,
-    finishStepIcon,
-    onFinish,
-    allowStepSelect = false,
-    className,
-    children,
-    onStepClick,
-    completedIcon,
-    progressIcon,
-    color,
-    iconSize,
-    contentPadding,
-    size,
-    radius,
-    orientation,
-    breakpoint,
-    iconPosition,
-    classNames,
-    styles,
-    ...others
-  } = useMantineDefaultProps('Stepper', defaultProps, props)
-
-  const { classes, cx } = useStyles(
-    {
+    const {
+      active,
+      activeContent,
+      groupButtonProps,
+      control,
+      prevBtnLabel,
+      nextBtnLabel,
+      finishBtnLabel,
+      finishStepIcon,
+      onFinish,
+      allowStepSelect = false,
+      disabled = false,
+      className,
+      children,
+      onStepClick,
+      completedIcon,
+      progressIcon,
+      color,
       iconSize,
-      contentPadding: contentPadding || 'md',
-      color: color || 'blue',
-      orientation: orientation || 'horizontal',
-      iconPosition: iconPosition || 'left',
-      size: size || 'md',
-      breakpoint: breakpoint || 'sm'
-    },
-    { classNames, styles, name: 'Stepper' }
-  )
-  const filteredChildren = filterChildrenByType(children, Step)
-  const completedStep = findChildByType(children, StepCompleted)
+      contentPadding,
+      size,
+      radius,
+      orientation,
+      breakpoint,
+      iconPosition,
+      classNames,
+      styles,
+      ...others
+    } = useMantineDefaultProps('Stepper', defaultProps, props)
 
-  /* Index of active step */
-  const [activeStep, setActiveStep] = useState(0)
+    const { classes, cx } = useStyles(
+      {
+        iconSize,
+        contentPadding: contentPadding || 'md',
+        color: color || 'blue',
+        orientation: orientation || 'horizontal',
+        iconPosition: iconPosition || 'left',
+        size: size || 'md',
+        breakpoint: breakpoint || 'sm'
+      },
+      { classNames, styles, name: 'Stepper' }
+    )
+    const filteredChildren = filterChildrenByType(children, Step)
+    const completedStep = findChildByType(children, StepCompleted)
 
-  /* Index of active step content to be shown */
-  const [activeStepContent, setActiveStepContent] = useState(0)
+    /* Index of active step */
+    const [activeStep, setActiveStep] = useState<number>(0)
 
-  /* Group Button props */
-  const groupProps = groupButtonProps?.group || {}
-  const prevBtnProps = groupButtonProps?.prev || {}
-  const nextBtnProps = groupButtonProps?.next || {}
-  const finishBtnProps = groupButtonProps?.finish || {}
+    /* Index of active step content to be shown */
+    const [activeStepContent, setActiveStepContent] = useState<number>(0)
 
-  const validIndex = Math.min(activeStep, filteredChildren.length - 1)
-  const activeStepChildren = Children.toArray(
-    filteredChildren?.[validIndex]?.props?.children
-  )
+    /* Group Button props */
+    const groupProps = groupButtonProps?.group || {}
+    const prevBtnProps = groupButtonProps?.prev || {}
+    const nextBtnProps = groupButtonProps?.next || {}
+    const finishBtnProps = groupButtonProps?.finish || {}
 
-  const finished = activeStep === filteredChildren.length
-  const prevDisabled = activeStep === 0 && activeStepContent === 0
-  const nextDisabled = activeStep === filteredChildren.length + 1
+    const validIndex = Math.min(activeStep, filteredChildren.length - 1)
+    const activeStepChildren = Children.toArray(filteredChildren?.[validIndex]?.props?.children)
 
-  useEffect(() => {
-    /* [Controlled] Update step state */
-    if (typeof active === 'number') {
-      setActiveStep(Math.min(active, filteredChildren.length))
+    const finished = activeStep === filteredChildren.length
+    const prevDisabled = activeStep === 0 && activeStepContent === 0
+    const nextDisabled = activeStep === filteredChildren.length + 1
+
+    useEffect(() => {
+      /* [Controlled] Update step state */
+      if (typeof active === 'number') {
+        setActiveStep(Math.min(active, filteredChildren.length))
+      }
+    }, [active])
+
+    useEffect(() => {
+      /* [Controlled] Update step content state */
+      if (typeof activeContent === 'number') {
+        setActiveStepContent(Math.min(activeContent, activeStepChildren.length - 1))
+      }
+    }, [activeContent])
+
+    /* [Uncontrolled] Handle previous step/step content */
+    const handlePrev = () => {
+      if (finished || nextDisabled) {
+        const { length } = filteredChildren
+        setActiveStep(finished ? length - 1 : length)
+        setActiveStepContent(finished ? activeStepChildren.length - 1 : activeStepContent)
+        return
+      }
+
+      if (activeStepContent - 1 === -1) {
+        const newActiveStepChildren = Children.toArray(
+          filteredChildren?.[activeStep - 1]?.props?.children
+        )
+
+        setActiveStep(activeStep - 1)
+        setActiveStepContent(newActiveStepChildren.length - 1)
+      } else {
+        setActiveStepContent(activeStepContent - 1)
+      }
     }
-  }, [active])
 
-  useEffect(() => {
-    /* [Controlled] Update step content state */
-    if (typeof activeContent === 'number') {
-      setActiveStepContent(
-        Math.min(activeContent, activeStepChildren.length - 1)
-      )
-    }
-  }, [activeContent])
+    /* [Uncontrolled] Handle next step/step content */
+    const handleNext = () => {
+      if (finished) {
+        setActiveStep(filteredChildren.length + 1)
+        return
+      }
 
-  /* [Uncontrolled] Handle previous step/step content */
-  const handlePrev = () => {
-    if (finished || nextDisabled) {
-      const { length } = filteredChildren
-      setActiveStep(finished ? length - 1 : length)
-      setActiveStepContent(
-        finished ? activeStepChildren.length - 1 : activeStepContent
-      )
-      return
+      if (activeStepContent + 1 === activeStepChildren.length) {
+        setActiveStep(activeStep + 1)
+        setActiveStepContent(0)
+      } else {
+        setActiveStepContent(activeStepContent + 1)
+      }
     }
 
-    if (activeStepContent - 1 === -1) {
-      const newActiveStepChildren = Children.toArray(
-        filteredChildren?.[activeStep - 1]?.props?.children
-      )
+    /* [Controlled/Uncontrolled] Handle step click when allowed */
+    const handleStepClick = (index: number) => {
+      if (!onStepClick) {
+        setActiveStep(index)
+      } else {
+        onStepClick(index)
+        typeof active === 'number' && active !== activeStep && setActiveStep(active)
+      }
 
-      setActiveStep(activeStep - 1)
-      setActiveStepContent(newActiveStepChildren.length - 1)
-    } else {
-      setActiveStepContent(activeStepContent - 1)
-    }
-  }
-
-  /* [Uncontrolled] Handle next step/step content */
-  const handleNext = () => {
-    if (finished) {
-      setActiveStep(filteredChildren.length + 1)
-      return
-    }
-
-    if (activeStepContent + 1 === activeStepChildren.length) {
-      setActiveStep(activeStep + 1)
       setActiveStepContent(0)
-    } else {
-      setActiveStepContent(activeStepContent + 1)
-    }
-  }
-
-  /* [Controlled/Uncontrolled] Handle step click when allowed */
-  const handleStepClick = (index: number) => {
-    if (!onStepClick) {
-      setActiveStep(index)
-    } else {
-      onStepClick(index)
-      typeof active === 'number' &&
-        active !== activeStep &&
-        setActiveStep(active)
     }
 
-    setActiveStepContent(0)
-  }
-
-  const items = filteredChildren.reduce<React.ReactNode[]>(
-    (acc, item, index, array) => {
-      const stepChildren = Children.toArray(
-        filteredChildren[index]?.props.children
-      )
+    const items = filteredChildren.reduce<React.ReactNode[]>((acc, item, index, array) => {
+      const stepChildren = Children.toArray(filteredChildren[index]?.props.children)
 
       const shouldAllowSelect =
         typeof item.props.allowStepSelect === 'boolean'
@@ -232,18 +224,13 @@ export const StepperProgress: StepperComponent = forwardRef<
       acc.push(
         <Step
           {...item.props}
+          disabled={disabled}
           __staticSelector={'StepperProgress'}
           icon={item.props.icon || index + 1}
           key={index}
           state={state}
-          onClick={() =>
-            shouldAllowSelect || (handleStepClick && handleStepClick(index))
-          }
-          allowStepClick={
-            shouldAllowSelect ||
-            typeof onStepClick === 'function' ||
-            allowStepSelect
-          }
+          onClick={() => shouldAllowSelect || (handleStepClick && handleStepClick(index))}
+          allowStepClick={shouldAllowSelect || typeof onStepClick === 'function' || allowStepSelect}
           completedIcon={item.props.completedIcon || completedIcon}
           progressIcon={item.props.progressIcon || progressIcon}
           color={item.props.color || color}
@@ -282,86 +269,78 @@ export const StepperProgress: StepperComponent = forwardRef<
       }
 
       return acc
-    },
-    []
-  )
+    }, [])
 
-  /* [core] Add step on last index to end stepper */
-  items.push(
-    <Step
-      __staticSelector={'StepperProgress'}
-      icon={finishStepIcon || filteredChildren.length + 1}
-      key={filteredChildren.length}
-      state={
-        activeStep > filteredChildren.length
-          ? 'stepCompleted'
-          : activeStep === filteredChildren.length
-          ? 'stepProgress'
-          : 'stepInactive'
-      }
-      allowStepClick={typeof onStepClick === 'function' || allowStepSelect}
-      allowStepSelect={typeof onStepClick === 'function' || allowStepSelect}
-      onClick={() => handleStepClick(filteredChildren.length)}
-      completedIcon={completedIcon}
-      progressIcon={progressIcon}
-      color={color}
-      iconSize={match ? 24 : 32}
-      size={size}
-      radius={radius}
-      classNames={classNames}
-      styles={styles}
-      iconPosition={iconPosition}
-    />
-  )
+    /* [core] Add step on last index to end stepper */
+    items.push(
+      <Step
+        __staticSelector={'StepperProgress'}
+        icon={finishStepIcon || filteredChildren.length + 1}
+        key={filteredChildren.length}
+        state={
+          activeStep > filteredChildren.length
+            ? 'stepCompleted'
+            : activeStep === filteredChildren.length
+            ? 'stepProgress'
+            : 'stepInactive'
+        }
+        allowStepClick={typeof onStepClick === 'function' || allowStepSelect}
+        allowStepSelect={typeof onStepClick === 'function' || allowStepSelect}
+        onClick={() => handleStepClick(filteredChildren.length)}
+        completedIcon={completedIcon}
+        progressIcon={progressIcon}
+        color={color}
+        iconSize={match ? 24 : 32}
+        size={size}
+        radius={radius}
+        classNames={classNames}
+        styles={styles}
+        iconPosition={iconPosition}
+      />
+    )
 
-  const stepContent = filteredChildren[validIndex]?.props?.children
-  const completedContent = completedStep?.props?.children
+    const stepContent = filteredChildren[validIndex]?.props?.children
+    const completedContent = completedStep?.props?.children
 
-  const content =
-    nextDisabled || finished
-      ? completedContent
-      : stepContent?.[activeStepContent] || stepContent
+    const content =
+      nextDisabled || finished ? completedContent : stepContent?.[activeStepContent] || stepContent
 
-  return (
-    <Box className={cx(classes.root, className)} ref={ref} {...others}>
-      <div className={classes.steps}>{items}</div>
-      {content && <div className={classes.content}>{content}</div>}
+    return (
+      <Box className={cx(classes.root, className)} ref={ref} {...others}>
+        <div className={classes.steps}>{items}</div>
+        {content && <div className={classes.content}>{content}</div>}
 
-      {/* [Controlled/Uncontrolled] Group button according prop control  */}
-      {control ?? (
-        <Group {...groupProps} pt={'md'}>
-          <Button
-            {...prevBtnProps}
-            onClick={handlePrev}
-            disabled={prevDisabled}
-          >
-            {prevBtnProps?.children || prevBtnLabel || 'Previous'}
-          </Button>
-          {!finished ? (
-            <Button
-              {...nextBtnProps}
-              onClick={handleNext}
-              disabled={nextDisabled}
-            >
-              {nextBtnProps?.children || nextBtnLabel || 'Next'}
-            </Button>
-          ) : (
-            <Button
-              {...finishBtnProps}
-              color={finishBtnProps?.color || 'teal'}
-              onClick={() => {
-                !!onFinish && onFinish()
-                handleNext()
-              }}
-            >
-              {finishBtnProps?.children || finishBtnLabel || 'Finish'}
-            </Button>
-          )}
-        </Group>
-      )}
-    </Box>
-  )
-}) as any
+        {/* [Controlled/Uncontrolled] Group button according prop control  */}
+        {control ?? (
+          <>
+            {groupButtonProps?.withDivider && <Divider {...groupButtonProps.withDivider} />}
+            <Group {...groupProps} pt={'md'}>
+              <Button {...prevBtnProps} onClick={handlePrev} disabled={disabled || prevDisabled}>
+                {prevBtnProps?.children || prevBtnLabel || 'Previous'}
+              </Button>
+              {!finished ? (
+                <Button {...nextBtnProps} onClick={handleNext} disabled={disabled || nextDisabled}>
+                  {nextBtnProps?.children || nextBtnLabel || 'Next'}
+                </Button>
+              ) : (
+                <Button
+                  {...finishBtnProps}
+                  color={finishBtnProps?.color || 'teal'}
+                  onClick={() => {
+                    !!onFinish && onFinish()
+                    handleNext()
+                  }}
+                >
+                  {finishBtnProps?.children || finishBtnLabel || 'Finish'}
+                </Button>
+              )}
+            </Group>
+          </>
+        )}
+      </Box>
+    )
+  }
+) as any
 
 StepperProgress.Step = Step
 StepperProgress.Completed = StepCompleted

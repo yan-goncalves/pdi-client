@@ -1,6 +1,7 @@
-import { Navbar as MantineNavbar, Text } from '@mantine/core'
+import { LoadingOverlay, Navbar as MantineNavbar, Text } from '@mantine/core'
 import { Grid } from '@nextui-org/react'
 import UserPicture from 'components/UserPicture'
+import { ROLES } from 'constants/role'
 import { useSession } from 'next-auth/react'
 import { useStyles } from './styles'
 
@@ -11,6 +12,10 @@ type NavItemUserProps = {
 const NavItemUser = ({ direction = 'column' }: NavItemUserProps) => {
   const { data: session } = useSession()
   const { classes } = useStyles({ direction })
+
+  if (!session) {
+    return <LoadingOverlay visible />
+  }
 
   return (
     <MantineNavbar.Section mt={15}>
@@ -34,20 +39,16 @@ const NavItemUser = ({ direction = 'column' }: NavItemUserProps) => {
           justify={'flex-start'}
           className={classes.userDescriptionContainer}
         >
-          {session?.user.role === 'Administrator' ? (
+          {session.user.role === ROLES.ADMIN ? (
             <Text size={direction === 'row' ? 'xs' : 'sm'} weight={500} mt={15}>
               Administrador
             </Text>
           ) : (
             <>
-              <Text
-                size={direction === 'row' ? 'xs' : 'sm'}
-                weight={500}
-                mt={15}
-              >
-                {session?.user?.info.name}
+              <Text size={direction === 'row' ? 'xs' : 'sm'} weight={500} mt={15}>
+                {session.user?.info.name}
               </Text>
-              <Text size={'xs'}>{session?.user?.info.lastname}</Text>
+              <Text size={'xs'}>{session.user?.info.lastname}</Text>
             </>
           )}
         </Grid.Container>

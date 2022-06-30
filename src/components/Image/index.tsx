@@ -1,7 +1,4 @@
-import {
-  Image as MantineImage,
-  ImageProps as MantineImageProps
-} from '@mantine/core'
+import { Image as MantineImage, ImageProps as MantineImageProps } from '@mantine/core'
 import { useStyles } from './styles'
 
 export type ImageProps = {
@@ -21,11 +18,8 @@ const Image = ({
   return (
     <MantineImage
       {...props}
-      className={cx(
-        props.className,
-        !hideOnMobile ? undefined : classes.hideOnMobile
-      )}
-      src={`${process.env.NEXT_PUBLIC_API_URL}${url}`}
+      className={cx(props.className, !hideOnMobile ? undefined : classes.hideOnMobile)}
+      src={`${process.env.NEXT_PUBLIC_API_URL}/${url}`}
       alt={alternativeText || url}
     />
   )

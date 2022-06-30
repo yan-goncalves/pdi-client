@@ -1,5 +1,7 @@
-import axios from 'axios'
-import NextAuth, { User } from 'next-auth'
+import { initializeApollo } from 'graphql/client'
+import { LOGIN } from 'graphql/mutations/auth'
+import NextAuth from 'next-auth'
+import { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { UserType } from 'types/collection/User'
 
@@ -18,22 +20,19 @@ export default NextAuth({
       },
 
       authorize: async (credentials) => {
-        const { jwt } = await axios
-          .post<{ jwt: string; user: User }>(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/auth/local`,
-            credentials
-          )
-          .then((response) => response.data)
+        const client = initializeApollo()
 
-        const user = await axios
-          .get(`${process.env.NEXT_PUBLIC_API_URL}/api/users/me`, {
-            headers: {
-              authorization: `Bearer ${jwt}`
+        const data = await client
+          .mutate<{ signin: JWT }>({
+            mutation: LOGIN,
+            variables: {
+              identifier: credentials?.identifier,
+              password: credentials?.password
             }
           })
-          .then((response) => response.data)
+          .then(({ data }) => data?.signin)
 
-        return { jwt, ...user }
+        return { ...data }
       }
     })
   ],
@@ -56,7 +55,7 @@ export default NextAuth({
         const { jwt, ...userProps } = user
 
         token.jwt = jwt as string
-        token.user = userProps as unknown as UserType
+        token.user = userProps.user as unknown as UserType
       }
 
       return token

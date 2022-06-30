@@ -12,6 +12,9 @@ import { IconMenu2, IconPower } from '@tabler/icons'
 import { useAppDispatch } from 'app/hooks'
 import LocaleSwitcher from 'components/LocaleSwitcher'
 import LogoPdi from 'components/LogoPdi'
+import { CommonConstants } from 'constants/common'
+import { ROLES } from 'constants/role'
+import { useLocale } from 'contexts/LocaleProvider'
 import { useRoutesManagerProvider } from 'contexts/RoutesManagerProvider'
 import { setDrawerOpened } from 'features/Drawer/drawer-slice'
 import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
@@ -22,6 +25,7 @@ import { useStyles } from './styles'
 
 const Header = () => {
   const theme = useMantineTheme()
+  const { locale } = useLocale()
   const { classes, cx } = useStyles()
   const { data: session } = useSession()
   const { push, pathname } = useRouter()
@@ -32,37 +36,29 @@ const Header = () => {
 
   const handleClick = async () => {
     const user = session?.user
-    const name = user?.role === 'Administrator' ? 'Admin' : user?.info.name
+    const name = user?.role === ROLES.ADMIN ? 'Admin' : user?.info.name
     dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: true }))
 
     await push('/').then(
       async () =>
         await signOut({ redirect: false })
-          .then(() =>
-            dispatch(
-              setLoadingOverlayVisibility({ loadingOverlayVisible: false })
-            )
-          )
+          .then(() => dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: false })))
           .finally(() => {
             notifications.showNotification({
               message: (
-                <Text>
-                  Até mais, <b>{name}</b>! 👋`
-                </Text>
+                <Text
+                  dangerouslySetInnerHTML={{
+                    __html: `${CommonConstants.bye[locale](name)} 👋`
+                  }}
+                />
               ),
               color: 'primary',
               radius: 'md',
               autoClose: 1500,
               styles: {
                 root: {
-                  backgroundColor: theme.colors.blue[1],
-                  borderColor: theme.colors.blue[1],
-
-                  '&::before': { backgroundColor: theme.colors.blue[9] }
-                },
-                closeButton: {
-                  color: theme.colors.blue[7],
-                  '&:hover': { backgroundColor: theme.colors.blue[2] }
+                  borderColor: theme.colors.blue[6],
+                  '&::before': { backgroundColor: theme.colors.blue[6] }
                 }
               }
             })
@@ -81,9 +77,7 @@ const Header = () => {
                 color={'dark'}
                 size={'sm'}
                 mr={'md'}
-                onClick={() =>
-                  dispatch(setDrawerOpened({ drawerOpened: true }))
-                }
+                onClick={() => dispatch(setDrawerOpened({ drawerOpened: true }))}
               >
                 <IconMenu2 />
               </ActionIcon>

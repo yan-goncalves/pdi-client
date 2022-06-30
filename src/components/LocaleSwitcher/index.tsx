@@ -1,5 +1,6 @@
 import { Avatar, Group, Menu, Text, UnstyledButton } from '@mantine/core'
 import { IconChevronLeft } from '@tabler/icons'
+import { useEvaluation } from 'contexts/EvaluationProvider'
 import { LocaleType, useLocale } from 'contexts/LocaleProvider'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -11,11 +12,13 @@ const LocaleSwitcher = () => {
     setLocale,
     data: { label, flag }
   } = useLocale()
+  const { setIsLocaleLoading } = useEvaluation()
   const { pathname, query, asPath } = useRouter()
-  const [opened, setOpened] = useState(false)
+  const [opened, setOpened] = useState<boolean>(false)
   const { classes } = useStyles({ opened })
 
   const changeLocale = (locale: LocaleType) => {
+    setIsLocaleLoading(true)
     setLocale(locale)
   }
 
@@ -34,11 +37,7 @@ const LocaleSwitcher = () => {
             <IconChevronLeft size={16} />
             <Group>
               <Avatar size={'xs'} src={`/img/${flag}.svg`} />
-              <Text
-                size={'sm'}
-                style={{ marginLeft: -7 }}
-                className={classes.lang}
-              >
+              <Text size={'sm'} style={{ marginLeft: -7 }} className={classes.lang}>
                 {label}
               </Text>
             </Group>
@@ -46,10 +45,10 @@ const LocaleSwitcher = () => {
         </UnstyledButton>
       }
     >
-      <Link href={{ pathname, query }} as={asPath} locale={'pt-BR'} passHref>
+      <Link href={{ pathname, query }} as={asPath} locale={'br'} passHref>
         <Menu.Item
           icon={<Avatar size={'xs'} src={'/img/brasil.svg'} />}
-          onClick={() => changeLocale('pt-BR')}
+          onClick={() => changeLocale('br')}
         >
           Português
         </Menu.Item>

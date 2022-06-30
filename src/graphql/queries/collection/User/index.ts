@@ -1,73 +1,19 @@
 import { gql } from '@apollo/client'
+import { FRAGMENT_USER_MODEL } from 'graphql/fragments'
 
 export const GET_USERS = gql`
+  ${FRAGMENT_USER_MODEL}
   query GetUsers {
-    users: usersPermissionsUsers {
-      data {
-        attributes {
-          username
-          email
-          info {
-            data {
-              attributes {
-                name
-                lastname
-                access_role
-              }
-            }
-          }
-          department {
-            data {
-              attributes {
-                key
-                name
-              }
-            }
-          }
-        }
-      }
+    users {
+      ...FragmentUserModel
     }
   }
 `
 export const GET_USER = gql`
-  query GetUser($username: String!) {
-    users: usersPermissionsUsers(filters: { username: { eq: $username } }) {
-      data {
-        id
-        attributes {
-          username
-          email
-          manager {
-            data {
-              id
-            }
-          }
-          info {
-            data {
-              attributes {
-                name
-                lastname
-                access_role
-              }
-            }
-          }
-          department {
-            data {
-              attributes {
-                key
-                name
-              }
-            }
-          }
-          picture {
-            data {
-              attributes {
-                url
-              }
-            }
-          }
-        }
-      }
+  ${FRAGMENT_USER_MODEL}
+  query GetUser($input: GetUserInput!) {
+    user(input: $input) {
+      ...FragmentUserModel
     }
   }
 `

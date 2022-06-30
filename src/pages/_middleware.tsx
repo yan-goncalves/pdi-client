@@ -1,11 +1,11 @@
+import { ROLES } from 'constants/role'
 import { PUBLIC_ROUTES } from 'constants/routes'
 import { initializeApollo } from 'graphql/client'
 import { GET_TEAM_MEMBERS } from 'graphql/queries/collection/Team'
 import { NextApiRequest } from 'next'
 import { getToken } from 'next-auth/jwt'
-import { NextURL } from 'next/dist/server/web/next-url'
 import { NextRequest, NextResponse } from 'next/server'
-import { GetTeamMembers } from 'types/collection/Team'
+import { GetTeamMembersType } from 'types/collection/Team'
 
 const stripDefaultLocale = (str: string): string => {
   const stripped = str.replace('/pt-BR', '')
@@ -24,23 +24,20 @@ export async function middleware(req: NextApiRequest & NextRequest) {
   const nextLocale = req.nextUrl.locale
   const locale = nextLocale !== cookieLocale ? nextLocale : cookieLocale
 
-  if (
-    pathname.includes('manager') &&
-    session?.user.info.access_role === 'User'
-  ) {
+  if (pathname.includes('manager') && session?.user.role === ROLES.USER) {
     return NextResponse.redirect(stripDefaultLocale(`/${locale}/dashboard`))
   }
 
   if (
     pathname.includes('manager') &&
-    session?.user.info.access_role === 'Manager' &&
+    session?.user.role === ROLES.MANAGER &&
     req.page.params?.username
   ) {
     const username = req.page.params?.username
     const apolloClient = initializeApollo(null, session)
     const {
       data: { team }
-    } = await apolloClient.query<GetTeamMembers>({
+    } = await apolloClient.query<GetTeamMembersType>({
       query: GET_TEAM_MEMBERS,
       variables: {
         idManager: session.user.id
@@ -52,9 +49,7 @@ export async function middleware(req: NextApiRequest & NextRequest) {
     }
   }
 
-  const isPublic = PUBLIC_ROUTES.some((route) =>
-    req.nextUrl.pathname.includes(route)
-  )
+  const isPublic = PUBLIC_ROUTES.some((route) => req.nextUrl.pathname.includes(route))
 
   if (!isPublic && req.nextUrl.pathname !== '/') {
     if (!session) {

@@ -8,17 +8,17 @@ const Home = (props: HomeTemplateProps) => {
   return <HomeTemplate {...props} />
 }
 
-export const getStaticProps: GetStaticProps<HomeTemplateProps> = async ({
-  locale
-}) => {
+export const getStaticProps: GetStaticProps<HomeTemplateProps> = async ({ locale }) => {
   const apolloClient = initializeApollo()
 
   const {
     data: { homePage }
   } = await apolloClient.query<HomePageProps>({
     query: GET_HOME_PAGE,
-    variables: {
-      locale
+    context: {
+      headers: {
+        locale
+      }
     }
   })
 

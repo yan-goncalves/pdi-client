@@ -1,22 +1,21 @@
-import { EvaluationPeriod } from 'constants/evaluation'
-import { BaseType } from 'types/common'
-import { SectionType } from 'types/collection/Section'
+import { EVALUATION_PERIOD } from 'constants/evaluation'
 import { FeedbackType } from 'types/collection/Feedback'
-import { EvaluationGoalType } from 'types/collection/EvaluationGoal'
+import { SectionType } from 'types/collection/Section'
+import { BaseType } from 'types/common'
+import { GoalType } from '../Goal'
 
 export interface EvaluationModelType extends BaseType {
   year: string
-  period: EvaluationPeriod
-  finished: boolean
+  period: EVALUATION_PERIOD
   sections?: SectionType[]
   feedbacks?: FeedbackType[]
-  goals?: EvaluationGoalType[]
+  goals?: GoalType[]
 }
 
 export type GetEvaluationModelsType = {
-  evaluationModels: Pick<EvaluationModelType, 'year' | 'period' | 'finished'>[]
+  evaluations: Pick<EvaluationModelType, 'id' | 'year' | 'period'>[]
 }
 
 export type GetEvaluationModelType = {
-  evaluationModels: EvaluationModelType[]
+  evaluation: EvaluationModelType
 }

@@ -10,21 +10,23 @@ import {
   useMantineTheme
 } from '@mantine/core'
 import { IconEdit, IconSearch } from '@tabler/icons'
-import { CommonConstants } from 'constants/common'
-import { EvaluationConstants, EvaluationPeriod } from 'constants/evaluation'
-import { useLocale } from 'contexts/LocaleProvider'
-import Countdown from 'react-countdown'
-import LoadingOverlay from 'components/LoadingOverlay'
-import { EvaluationModeType, useEvaluation } from 'contexts/EvaluationProvider'
-import { useRouter } from 'next/router'
 import { useAppDispatch } from 'app/hooks'
+import LoadingOverlay from 'components/LoadingOverlay'
+import { CommonConstants } from 'constants/common'
+import { EvaluationConstants, EVALUATION_PERIOD } from 'constants/evaluation'
+import { ROLES } from 'constants/role'
+import { EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
+import { useLocale } from 'contexts/LocaleProvider'
 import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
+import Countdown from 'react-countdown'
 
 export type EvaluationCardItemProps = {
   year: string
-  period: EvaluationPeriod
-  finished: boolean
+  period: EVALUATION_PERIOD
+  // midFinished: boolean
+  // endFinished: boolean
 }
 
 const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
@@ -38,14 +40,10 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
   const validPeriods = (periods: string[], validAccessRole = true) => {
     return !validAccessRole
       ? periods.includes(period)
-      : periods.includes(period) &&
-          session?.user.info.access_role !== 'Director'
+      : periods.includes(period) && session?.user.role !== ROLES.DIRECTOR
   }
 
-  const handleClick = async (
-    periodMode: EvaluationPeriod,
-    action: EvaluationModeType
-  ) => {
+  const handleClick = async (periodMode: EVALUATION_PERIOD, action: EVALUATION_MODE) => {
     setMode(action)
     setPeriodMode(periodMode)
 
@@ -60,21 +58,14 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
   }
 
   return (
-    <Card
-      withBorder
-      key={year}
-      shadow={'sm'}
-      py={25}
-      px={25}
-      sx={{ height: '100%' }}
-    >
+    <Card withBorder key={year} py={25} px={25} sx={{ height: '100%' }}>
       <Card.Section p={15}>
         <Grid justify={'space-between'} align={'center'}>
           <Grid.Col span={2} lg={2}>
             <Badge
               size={'xl'}
               color={EvaluationConstants.status[period].color}
-              variant={period !== 'out' ? 'filled' : undefined}
+              variant={period !== EVALUATION_PERIOD.OUT ? 'filled' : undefined}
             >
               <strong>{year}</strong>
             </Badge>
@@ -90,24 +81,19 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
               justifyContent: 'flex-end'
             }}
           >
-            <Tooltip
-              label={'status'}
-              color={EvaluationConstants.status[period].color}
-            >
-              <Badge
-                size={'md'}
-                variant={'dot'}
-                color={EvaluationConstants.status[period].color}
-              >
+            <Tooltip label={'status'} color={EvaluationConstants.status[period].color}>
+              <Badge size={'md'} variant={'dot'} color={EvaluationConstants.status[period].color}>
                 {EvaluationConstants.status[period].name[locale]}
               </Badge>
             </Tooltip>
           </Grid.Col>
         </Grid>
       </Card.Section>
-      <Divider m={5} style={{ borderTopColor: theme.colors.gray[2] }} />
+      <Card.Section>
+        <Divider mx={-10} style={{ borderTopColor: theme.colors.gray[3] }} />
+      </Card.Section>
       <Card.Section p={20}>
-        {validPeriods(['out']) ? (
+        {validPeriods([EVALUATION_PERIOD.OUT], session?.user.role !== ROLES.DIRECTOR) ? (
           <Group mb={15} style={{ justifyContent: 'space-between' }}>
             <Text color={'gray'} style={{ fontWeight: 500 }}>
               {EvaluationConstants.description.finished[locale]}
@@ -116,7 +102,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
               <ActionIcon
                 variant={'light'}
                 color={'violet'}
-                onClick={() => handleClick(EvaluationPeriod.out, 'view')}
+                onClick={() => handleClick(EVALUATION_PERIOD.OUT, EVALUATION_MODE.VIEW)}
               >
                 <IconSearch size={20} />
               </ActionIcon>
@@ -126,17 +112,15 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
           <>
             <Group mb={15} style={{ justifyContent: 'space-between' }}>
               <Text style={{ fontWeight: 500 }}>
-                {EvaluationConstants.status['midYear'].name[locale]}
+                {EvaluationConstants.status[EVALUATION_PERIOD.MID].name[locale]}
               </Text>
               <Group>
-                {validPeriods(['free', 'midYear']) && (
+                {validPeriods([EVALUATION_PERIOD.FREE, EVALUATION_PERIOD.MID]) && (
                   <Tooltip color={'cyan'} label={CommonConstants.edit[locale]}>
                     <ActionIcon
                       variant={'light'}
                       color={'cyan'}
-                      onClick={() =>
-                        handleClick(EvaluationPeriod.midYear, 'edit')
-                      }
+                      onClick={() => handleClick(EVALUATION_PERIOD.MID, EVALUATION_MODE.EDIT)}
                     >
                       <IconEdit size={20} />
                     </ActionIcon>
@@ -146,9 +130,7 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
                   <ActionIcon
                     variant={'light'}
                     color={'violet'}
-                    onClick={() =>
-                      handleClick(EvaluationPeriod.midYear, 'view')
-                    }
+                    onClick={() => handleClick(EVALUATION_PERIOD.MID, EVALUATION_MODE.VIEW)}
                   >
                     <IconSearch size={20} />
                   </ActionIcon>
@@ -157,10 +139,10 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
             </Group>
             <Group style={{ justifyContent: 'space-between' }}>
               <Text style={{ fontWeight: 500 }}>
-                {EvaluationConstants.status['endYear'].name[locale]}
+                {EvaluationConstants.status[EVALUATION_PERIOD.END].name[locale]}
               </Text>
               <Group>
-                {validPeriods(['midYear'], false) ? (
+                {validPeriods([EVALUATION_PERIOD.MID], false) ? (
                   <Tooltip color={'gray'} label={CommonConstants.soon[locale]}>
                     <Badge color={'gray'}>
                       <Countdown date={Date.now() + Math.random() * 99999999} />
@@ -168,32 +150,22 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
                   </Tooltip>
                 ) : (
                   <>
-                    {validPeriods(['free', 'endYear']) && (
-                      <Tooltip
-                        color={'cyan'}
-                        label={CommonConstants.edit[locale]}
-                      >
+                    {validPeriods([EVALUATION_PERIOD.FREE, EVALUATION_PERIOD.END]) && (
+                      <Tooltip color={'cyan'} label={CommonConstants.edit[locale]}>
                         <ActionIcon
                           variant={'light'}
                           color={'cyan'}
-                          onClick={() =>
-                            handleClick(EvaluationPeriod.endYear, 'edit')
-                          }
+                          onClick={() => handleClick(EVALUATION_PERIOD.END, EVALUATION_MODE.EDIT)}
                         >
                           <IconEdit size={20} />
                         </ActionIcon>
                       </Tooltip>
                     )}
-                    <Tooltip
-                      color={'violet'}
-                      label={CommonConstants.view[locale]}
-                    >
+                    <Tooltip color={'violet'} label={CommonConstants.view[locale]}>
                       <ActionIcon
                         variant={'light'}
                         color={'violet'}
-                        onClick={() =>
-                          handleClick(EvaluationPeriod.endYear, 'view')
-                        }
+                        onClick={() => handleClick(EVALUATION_PERIOD.END, EVALUATION_MODE.VIEW)}
                       >
                         <IconSearch size={20} />
                       </ActionIcon>

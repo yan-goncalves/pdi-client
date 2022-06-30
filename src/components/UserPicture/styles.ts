@@ -3,54 +3,53 @@ import { createStyles } from '@mantine/core'
 type StylesProps = {
   width: number
   height: number
+  cursor?: 'pointer'
 }
 
-export const useStyles = createStyles(
-  (theme, { width, height }: StylesProps) => ({
-    container: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: theme.radius.md,
-      boxShadow: theme.shadows.xl,
-      backgroundColor: theme.colors.blue[0],
-      width,
-      height
-    },
+export const useStyles = createStyles((theme, { width, height, cursor }: StylesProps) => ({
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: theme.radius.md,
+    boxShadow: theme.shadows.xl,
+    backgroundColor: theme.colors.blue[0],
+    width,
+    height
+  },
 
-    image: {
-      transition: 'opacity 0.3s ease-out',
-      '&:hover': {
-        cursor: 'pointer',
-        opacity: '0.7',
-
-        img: {
-          transform: 'scale(0.95)'
-        }
-      },
+  image: {
+    transition: 'opacity 0.3s ease-out',
+    '&:hover': {
+      cursor,
+      opacity: '0.7',
 
       img: {
-        transition: 'transform 0.3s ease-out',
-        borderRadius: theme.radius.md
+        transform: 'scale(0.95)'
       }
     },
 
-    containerImageViewer: {
-      span: {
-        opacity: '1 !important',
-        backgroundColor: 'transparent'
-      },
+    img: {
+      transition: 'transform 0.3s ease-out',
+      borderRadius: theme.radius.md
+    }
+  },
 
-      img: {
-        borderRadius: theme.radius.xl
-      },
+  containerImageViewer: {
+    span: {
+      opacity: '1 !important',
+      backgroundColor: 'transparent'
+    },
 
-      '#ReactSimpleImageViewer': {
-        [`@media(max-width: ${theme.breakpoints.md}px)`]: {
-          width: '100vw',
-          height: '100vh'
-        }
+    img: {
+      borderRadius: theme.radius.xl
+    },
+
+    '#ReactSimpleImageViewer': {
+      [`@media(max-width: ${theme.breakpoints.md}px)`]: {
+        width: '100vw',
+        height: '100vh'
       }
     }
-  })
-)
+  }
+}))

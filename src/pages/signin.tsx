@@ -8,17 +8,17 @@ const SignIn = (props: SignInTemplateProps) => {
   return <SignInTemplate {...props} />
 }
 
-export const getStaticProps: GetStaticProps<SignInTemplateProps> = async ({
-  locale
-}) => {
+export const getStaticProps: GetStaticProps<SignInTemplateProps> = async ({ locale }) => {
   const apolloClient = initializeApollo()
 
   const {
     data: { signInPage }
   } = await apolloClient.query<SignInProps>({
     query: GET_SIGNIN_PAGE,
-    variables: {
-      locale
+    context: {
+      headers: {
+        locale
+      }
     }
   })
 

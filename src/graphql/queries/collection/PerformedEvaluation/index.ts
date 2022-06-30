@@ -1,32 +1,22 @@
 import { gql } from '@apollo/client'
+import { FRAGMENT_PERFORMED_EVALUATION } from 'graphql/fragments'
 
 export const GET_PERFORMED_EVALUATION = gql`
-  query GetPerformedEvaluation($idUser: ID!, $idEvaluationModel: ID!) {
-    performedEvaluations(
-      filters: {
-        user: { id: { eq: $idUser } }
-        evaluation_model: { id: { eq: $idEvaluationModel } }
-      }
+  ${FRAGMENT_PERFORMED_EVALUATION}
+  query GetPerformedEvaluation($id: Int!) {
+    performedEvaluation: performedEvaluation(id: $id) {
+      ...FragmentPerformedEvaluation
+    }
+  }
+`
+
+export const GET_PERFORMED_EVALUATION_RELATION = gql`
+  ${FRAGMENT_PERFORMED_EVALUATION}
+  query GetPerformedEvaluationByRelation($idEvaluation: Int!, $idUser: Int!) {
+    performedEvaluation: performedEvaluationRelation(
+      input: { idEvaluation: $idEvaluation, idUser: $idUser }
     ) {
-      data {
-        id
-        attributes {
-          performed_questions {
-            data {
-              id
-              attributes {
-                answer
-                why
-                skill {
-                  data {
-                    id
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+      ...FragmentPerformedEvaluation
     }
   }
 `

@@ -1,10 +1,10 @@
 import { Title } from '@mantine/core'
-import ContentNavbar from 'components/ContentNavbar'
 import { NavItemLinkProps } from 'components/NavItemLink'
 import { managerNavItemLinks, userNavItemLinks } from 'constants/routes'
 import { useLocale } from 'contexts/LocaleProvider'
 import { useRouter } from 'next/router'
 import { isValidElement, useEffect, useState } from 'react'
+// import ContentNavbar from 'components/ContentNavbar'
 
 export type ContentHeaderProps = {
   title?: React.ReactNode
@@ -15,7 +15,7 @@ const ContentHeader = ({ title }: ContentHeaderProps) => {
   const { pathname } = useRouter()
   const [route, setRoute] = useState<Pick<NavItemLinkProps, 'title'>>({
     title: {
-      'pt-BR': '',
+      br: '',
       en: ''
     }
   })
@@ -31,7 +31,7 @@ const ContentHeader = ({ title }: ContentHeaderProps) => {
   }, [pathname])
 
   return (
-    <ContentNavbar>
+    <>
       {isValidElement(title) ? (
         <>{title}</>
       ) : (
@@ -39,7 +39,7 @@ const ContentHeader = ({ title }: ContentHeaderProps) => {
           {title ?? route.title[locale]}
         </Title>
       )}
-    </ContentNavbar>
+    </>
   )
 }
 

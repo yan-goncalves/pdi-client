@@ -1,7 +1,7 @@
-import { Button, MediaQuery, Text, Title } from '@mantine/core'
+import { Button, Group, MediaQuery, Text, Title } from '@mantine/core'
 import { Grid } from '@nextui-org/react'
 import { useAppDispatch } from 'app/hooks'
-import Image, { ImageProps } from 'components/Image'
+import Image from 'components/Image'
 import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
@@ -12,17 +12,15 @@ export type HomeInfoProps = {
   title: string
   description: string
   button: ButtonApiProps
-  hero: ImageProps
+  hero: string
 }
 
 const HomeInfo = ({ title, description, button, hero }: HomeInfoProps) => {
-  const { push, locale } = useRouter()
+  const { push } = useRouter()
   const { status } = useSession()
   const { classes, cx } = useStyles()
   const dispatch = useAppDispatch()
-  const splitDescription = description
-    .split(/<[^>]*>/g)
-    .filter((p) => p.trim() !== '')
+  const splitDescription = description.split(/<[^>]*>/g).filter((p) => p.trim() !== '')
 
   const handleClick = async () => {
     if (status === 'authenticated') {
@@ -71,9 +69,14 @@ const HomeInfo = ({ title, description, button, hero }: HomeInfoProps) => {
           )}
       </Grid>
       <MediaQuery largerThan={'sm'} styles={{ display: 'none' }}>
-        <Image {...hero} className={classes.hero} />
+        {
+          // ADICIONAR ALT TEXT
+        }
+        <Group direction={'column'} align={'center'}>
+          <Image url={hero} alternativeText={''} className={classes.hero} />
+        </Group>
       </MediaQuery>
-      <Grid>
+      <Grid className={classes.descriptionGroup}>
         {splitDescription.map((paragraph, index) =>
           index === splitDescription.length - 1 ? (
             <Text
@@ -96,7 +99,7 @@ const HomeInfo = ({ title, description, button, hero }: HomeInfoProps) => {
           )
         )}
       </Grid>
-      <Grid>
+      <Grid className={classes.buttonGroup}>
         <Button className={classes.button} onClick={handleClick}>
           {button.label}
         </Button>

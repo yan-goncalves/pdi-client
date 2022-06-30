@@ -1,9 +1,4 @@
-import {
-  IconChartInfographic,
-  IconStars,
-  IconTarget,
-  IconTrendingUp
-} from '@tabler/icons'
+import { IconChartInfographic, IconStars, IconTarget, IconTrendingUp } from '@tabler/icons'
 import { NavItemLinkProps } from 'components/NavItemLink'
 import { NavLinkWrapperProps } from 'components/NavLinkWrapper'
 
@@ -11,12 +6,12 @@ export const PUBLIC_ROUTES = ['/api/auth', '/signin', '/favicon', '/img/']
 
 export const navLinkWrapperTitles: NavLinkWrapperProps = {
   userSectionTitle: {
-    'pt-BR': 'Área do Usuário',
+    br: 'Área do Usuário',
     en: 'User Area'
   },
 
   managerSectionTitle: {
-    'pt-BR': 'Área do Gestor',
+    br: 'Área do Gestor',
     en: 'Manager Area'
   }
 }
@@ -24,7 +19,7 @@ export const navLinkWrapperTitles: NavLinkWrapperProps = {
 export const userNavItemLinks: NavItemLinkProps[] = [
   {
     title: {
-      'pt-BR': 'Visão Geral',
+      br: 'Visão Geral',
       en: 'Dashboard'
     },
     href: '/dashboard',
@@ -32,7 +27,7 @@ export const userNavItemLinks: NavItemLinkProps[] = [
   },
   {
     title: {
-      'pt-BR': 'Minhas Avaliações',
+      br: 'Minhas Avaliações',
       en: 'My Evaluations'
     },
     href: '/evaluation',
@@ -40,7 +35,7 @@ export const userNavItemLinks: NavItemLinkProps[] = [
   },
   {
     title: {
-      'pt-BR': 'Meus Objetivos',
+      br: 'Meus Objetivos',
       en: 'My Goals'
     },
     href: '/goals',
@@ -48,7 +43,7 @@ export const userNavItemLinks: NavItemLinkProps[] = [
   },
   {
     title: {
-      'pt-BR': 'Desenvolvimento Pessoal',
+      br: 'Desenvolvimento Pessoal',
       en: 'Personal Development'
     },
     href: '/pdi',
@@ -59,7 +54,7 @@ export const userNavItemLinks: NavItemLinkProps[] = [
 export const managerNavItemLinks: NavItemLinkProps[] = [
   {
     title: {
-      'pt-BR': 'Visão Geral do Time',
+      br: 'Visão Geral do Time',
       en: 'Team Dashboard'
     },
     href: '/manager',
@@ -68,7 +63,7 @@ export const managerNavItemLinks: NavItemLinkProps[] = [
   },
   {
     title: {
-      'pt-BR': 'Avaliações do Time',
+      br: 'Avaliações do Time',
       en: 'Team Evaluations'
     },
     href: '/manager/evaluation',
@@ -76,7 +71,7 @@ export const managerNavItemLinks: NavItemLinkProps[] = [
   },
   {
     title: {
-      'pt-BR': 'Objetivos do Time',
+      br: 'Objetivos do Time',
       en: 'Team Goals'
     },
     href: '/manager/goals',
@@ -84,7 +79,7 @@ export const managerNavItemLinks: NavItemLinkProps[] = [
   },
   {
     title: {
-      'pt-BR': 'Desenvolvimento Pessoal do Time',
+      br: 'Desenvolvimento Pessoal do Time',
       en: 'Team Personal Development'
     },
     href: '/manager/pdi',

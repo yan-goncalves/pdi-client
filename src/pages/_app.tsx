@@ -1,5 +1,5 @@
 import { ApolloProvider } from '@apollo/client'
-import { MantineProvider } from '@mantine/core'
+import { DEFAULT_THEME, MantineProvider } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { NotificationsProvider } from '@mantine/notifications'
 import { createTheme, NextUIProvider } from '@nextui-org/react'
@@ -14,11 +14,11 @@ import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import Page404 from 'pages/404'
 import { useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
 import GlobalStyles from 'styles/globals'
 import { theme } from 'styles/theme'
-import Page404 from 'pages/404'
 
 export default function _App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const { locale } = useRouter()
@@ -56,12 +56,24 @@ export default function _App({ Component, pageProps: { session, ...pageProps } }
                 Button: { radius: 'md' },
                 Badge: { radius: 'md' },
                 ActionIcon: { radius: 'md' },
-                Card: { radius: 'lg' }
+                Card: {
+                  radius: 'lg'
+                },
+                Divider: {
+                  sx: {
+                    borderTopColor: DEFAULT_THEME.colors.gray[3]
+                  }
+                }
               }}
               styles={{
                 Title: {
                   root: {
                     fontFamily: 'Open Sans, Roboto, sans-serif'
+                  }
+                },
+                Card: {
+                  root: {
+                    borderColor: DEFAULT_THEME.colors.gray[3]
                   }
                 }
               }}
