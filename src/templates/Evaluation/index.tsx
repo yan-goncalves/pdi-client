@@ -2,6 +2,7 @@ import { Avatar, Group, Text, Title, useMantineTheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import ContentBase from 'components/ContentBase'
 import EvaluationItem from 'components/EvaluationItem'
+import EvaluationResult from 'components/EvaluationResult'
 import PerformedFeedback from 'components/Performed/Feedback'
 import PerformedGoal from 'components/Performed/Goal'
 import PerformedQuestion from 'components/Performed/Question'
@@ -9,7 +10,7 @@ import PerformedSkill from 'components/Performed/Skill'
 import { StepperProgress } from 'components/StepperProgress'
 import { FALLBACK_USER_PICTURE } from 'components/UserPicture'
 import { CommonConstants } from 'constants/common'
-import { EvaluationConstants, EVALUATION_PERIOD } from 'constants/evaluation'
+import { EvaluationConstants } from 'constants/evaluation'
 import { GoalsConstants } from 'constants/goals'
 import { QuestionI18n } from 'constants/questions'
 import { EVALUATION_ACTOR, useEvaluation } from 'contexts/EvaluationProvider'
@@ -180,7 +181,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
             ))
           )}
         </StepperProgress.Step>
-        {(actor === EVALUATION_ACTOR.MANAGER || periodMode !== EVALUATION_PERIOD.MID) && (
+        {(performedEvaluation.midFinished || actor === EVALUATION_ACTOR.MANAGER) && (
           <StepperProgress.Step label={EvaluationConstants.steps.feedbacks[locale]}>
             {feedbacks?.map((feedback) => (
               <React.Fragment key={`${feedback.id}-${feedback.inquire}`}>
@@ -207,29 +208,31 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
             <React.Fragment>
               <EvaluationItem
                 sectionColor={'indigo'}
-                sectionTitle={CommonConstants.pdiQuality[locale]}
+                sectionTitle={CommonConstants.pdiQuality.title[locale]}
               />
-              <PdiQuality pdi={performedEvaluation.pdiQuality} />
+              <PdiQuality actor={actor} pdi={performedEvaluation.pdiQuality} />
             </React.Fragment>
 
             <React.Fragment>
               <EvaluationItem
                 sectionColor={'indigo'}
-                sectionTitle={CommonConstants.pdiCompetence[locale]}
+                sectionTitle={CommonConstants.pdiCompetence.title[locale]}
               />
-              <PdiCompetence pdi={performedEvaluation.pdiCompetence} />
+              <PdiCompetence actor={actor} pdi={performedEvaluation.pdiCompetence} />
             </React.Fragment>
 
             <React.Fragment>
               <EvaluationItem
                 sectionColor={'indigo'}
-                sectionTitle={CommonConstants.pdiCoaching[locale]}
+                sectionTitle={CommonConstants.pdiCoaching.title[locale]}
               />
-              <PdiCoaching pdi={performedEvaluation.pdiCoaching} />
+              <PdiCoaching actor={actor} pdi={performedEvaluation.pdiCoaching} />
             </React.Fragment>
           </StepperProgress.Step>
         )}
-        <StepperProgress.Completed>Avaliação finalizada</StepperProgress.Completed>
+        <StepperProgress.Completed>
+          <EvaluationResult />
+        </StepperProgress.Completed>
       </StepperProgress>
     </ContentBase>
   )

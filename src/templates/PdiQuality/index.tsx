@@ -3,6 +3,7 @@ import {
   ActionIcon,
   Grid,
   Group,
+  Text,
   TextInput,
   Title,
   Transition,
@@ -11,14 +12,14 @@ import {
 import { IconCheck, IconTrash } from '@tabler/icons'
 import { CommonConstants } from 'constants/common'
 import { ErrorsConstants } from 'constants/errors'
-import { useEvaluation } from 'contexts/EvaluationProvider'
+import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import {
   CREATE_PDI_QUALITY,
   DELETE_PDI_QUALITY,
   UPDATE_PDI_QUALITY
 } from 'graphql/mutations/collection/PdiQuality'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   CreatePdiQualityType,
   PdiQualityType,
@@ -27,13 +28,15 @@ import {
 } from 'types/collection/PdiQuality'
 
 export type PdiQualityProps = {
+  actor: EVALUATION_ACTOR
   pdi?: PdiQualityType[]
 }
 
-const PdiQuality = ({ pdi }: PdiQualityProps) => {
+const PdiQuality = ({ pdi, actor }: PdiQualityProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
-  const { performedEvaluation, setPerformedEvaluation, isSaving, setIsSaving } = useEvaluation()
+  const { mode, performedEvaluation, setPerformedEvaluation, isSaving, setIsSaving } =
+    useEvaluation()
   const [strength, setStrength] = useState<PdiQualityType[]>([])
   const [weakness, setWeakness] = useState<PdiQualityType[]>([])
   const [strengthValue, setStrengthValue] = useState<string>()
@@ -86,7 +89,10 @@ const PdiQuality = ({ pdi }: PdiQualityProps) => {
   }, [weaknessValue])
 
   useEffect(() => {
-    if (strengthValue?.trim().length && strength.some((s) => s.description === strengthValue)) {
+    if (
+      strengthValue?.trim().length &&
+      strength.some((s) => s.description.toUpperCase() === strengthValue.toUpperCase())
+    ) {
       setIsDisabledStrength(true)
     } else {
       setIsDisabledStrength(false)
@@ -94,7 +100,10 @@ const PdiQuality = ({ pdi }: PdiQualityProps) => {
   }, [strengthValue])
 
   useEffect(() => {
-    if (weaknessValue?.trim().length && weakness.some((s) => s.description === weaknessValue)) {
+    if (
+      weaknessValue?.trim().length &&
+      weakness.some((s) => s.description.toUpperCase() === weaknessValue.toUpperCase())
+    ) {
       setIsDisabledWeakness(true)
     } else {
       setIsDisabledWeakness(false)
@@ -193,170 +202,194 @@ const PdiQuality = ({ pdi }: PdiQualityProps) => {
   }
 
   return (
-    <Grid p={10} gutter={50}>
+    <Grid p={10} gutter={50} sx={{ width: '100%' }}>
       <Grid.Col span={12} sm={6}>
-        <Title order={6}>{CommonConstants.pdiStrength[locale]}</Title>
-        <Group mt={20} align={'flex-start'}>
-          <TextInput
-            disabled={isSaving}
-            value={strengthValue}
-            onChange={({ currentTarget: { value } }) => setStrengthValue(value)}
-            onKeyDown={({ key }) => {
-              if (key === 'Enter' && !isDisabledStrength) {
-                handleAddStrength()
-              }
-            }}
-            error={isDisabledStrength && ErrorsConstants.pdiQuality.exists.strength[locale]}
-            radius={'md'}
-            sx={{ minWidth: 250 }}
-          />
-          <Transition mounted={isStrengthEditing} transition={'slide-left'}>
-            {(styles) => (
-              <ActionIcon
-                disabled={isDisabledStrength || isSaving}
-                onClick={handleAddStrength}
-                variant={'light'}
-                size={'lg'}
-                color={'green'}
-                style={styles}
-              >
-                <IconCheck />
-              </ActionIcon>
-            )}
-          </Transition>
-        </Group>
+        <Title order={6}>{CommonConstants.pdiQuality.strength[locale]}</Title>
+        {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER && (
+          <Group mt={20} align={'flex-start'}>
+            <TextInput
+              disabled={isSaving}
+              value={strengthValue || ''}
+              onChange={({ currentTarget: { value } }) => setStrengthValue(value)}
+              onKeyDown={({ key }) => {
+                if (key === 'Enter' && !isDisabledStrength) {
+                  handleAddStrength()
+                }
+              }}
+              error={isDisabledStrength && ErrorsConstants.pdiQuality.exists.strength[locale]}
+              radius={'md'}
+              sx={{ minWidth: 250 }}
+            />
+            <Transition mounted={isStrengthEditing} transition={'slide-left'}>
+              {(styles) => (
+                <ActionIcon
+                  disabled={isDisabledStrength || isSaving}
+                  onClick={handleAddStrength}
+                  variant={'light'}
+                  size={'lg'}
+                  color={'green'}
+                  style={styles}
+                >
+                  <IconCheck />
+                </ActionIcon>
+              )}
+            </Transition>
+          </Group>
+        )}
         <Group mt={20} spacing={5} direction={'column'} sx={{ width: 300 }}>
           {strength.map((pdi) => (
-            <Group
-              key={pdi.id}
-              onMouseEnter={() => strengthEdit?.id !== pdi.id && setStrengthHover(pdi.id)}
-              onMouseLeave={() => setStrengthHover(-1)}
-              onBlur={() => setStrengthEdit(undefined)}
-              onClick={() => setStrengthEdit(pdi)}
-              sx={{ width: '100%' }}
-            >
-              <TextInput
-                disabled={isSaving}
-                radius={'md'}
-                variant={
-                  strengthHover === pdi.id && strengthEdit?.id !== pdi.id
-                    ? 'filled'
-                    : strengthEdit?.id === pdi.id
-                    ? 'default'
-                    : 'unstyled'
-                }
-                onBlur={handleEditStrength}
-                value={strengthEdit?.id === pdi.id ? strengthEdit?.description : pdi.description}
-                onChange={({ currentTarget: { value } }) =>
-                  strengthEdit?.id === pdi.id &&
-                  setStrengthEdit({
-                    ...strengthEdit,
-                    description: value
-                  })
-                }
-                sx={{ width: 250 }}
-              />
-              <Transition
-                mounted={strengthEdit?.id !== pdi.id && strengthHover === pdi.id}
-                transition={'slide-left'}
-              >
-                {(styles) => (
-                  <ActionIcon
+            <React.Fragment key={pdi.id}>
+              {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER ? (
+                <Group
+                  key={pdi.id}
+                  onMouseEnter={() => strengthEdit?.id !== pdi.id && setStrengthHover(pdi.id)}
+                  onMouseLeave={() => setStrengthHover(-1)}
+                  onBlur={() => setStrengthEdit(undefined)}
+                  onClick={() => setStrengthEdit(pdi)}
+                  sx={{ width: '100%' }}
+                >
+                  <TextInput
                     disabled={isSaving}
-                    onClick={() => handleDelete(pdi)}
-                    variant={'light'}
-                    size={'lg'}
-                    color={'red'}
-                    style={styles}
+                    radius={'md'}
+                    variant={
+                      strengthHover === pdi.id && strengthEdit?.id !== pdi.id
+                        ? 'filled'
+                        : strengthEdit?.id === pdi.id
+                        ? 'default'
+                        : 'unstyled'
+                    }
+                    onBlur={handleEditStrength}
+                    value={
+                      strengthEdit?.id === pdi.id ? strengthEdit?.description : pdi.description
+                    }
+                    onChange={({ currentTarget: { value } }) =>
+                      strengthEdit?.id === pdi.id &&
+                      setStrengthEdit({
+                        ...strengthEdit,
+                        description: value
+                      })
+                    }
+                    sx={{ width: 250 }}
+                  />
+                  <Transition
+                    mounted={strengthEdit?.id !== pdi.id && strengthHover === pdi.id}
+                    transition={'slide-left'}
                   >
-                    <IconTrash size={20} />
-                  </ActionIcon>
-                )}
-              </Transition>
-            </Group>
+                    {(styles) => (
+                      <ActionIcon
+                        disabled={isSaving}
+                        onClick={() => handleDelete(pdi)}
+                        variant={'light'}
+                        size={'lg'}
+                        color={'red'}
+                        style={styles}
+                      >
+                        <IconTrash size={20} />
+                      </ActionIcon>
+                    )}
+                  </Transition>
+                </Group>
+              ) : (
+                <Text key={pdi.id} size={'md'}>
+                  {pdi.description}
+                </Text>
+              )}
+            </React.Fragment>
           ))}
         </Group>
       </Grid.Col>
       <Grid.Col span={12} sm={6}>
-        <Title order={6}>{CommonConstants.pdiWeakness[locale]}</Title>
-        <Group mt={20} align={'flex-start'}>
-          <TextInput
-            disabled={isSaving}
-            value={weaknessValue}
-            onChange={({ currentTarget: { value } }) => setWeaknessValue(value)}
-            onKeyDown={({ key }) => {
-              if (key === 'Enter' && !isDisabledWeakness) {
-                handleAddWeakness()
-              }
-            }}
-            error={isDisabledWeakness && ErrorsConstants.pdiQuality.exists.weakness[locale]}
-            radius={'md'}
-            sx={{ minWidth: 250 }}
-          />
-          <Transition mounted={isWeaknessEditing} transition={'slide-left'}>
-            {(styles) => (
-              <ActionIcon
-                disabled={isDisabledWeakness || isSaving}
-                onClick={handleAddWeakness}
-                variant={'light'}
-                size={'lg'}
-                color={'green'}
-                style={styles}
-              >
-                <IconCheck />
-              </ActionIcon>
-            )}
-          </Transition>
-        </Group>
+        <Title order={6}>{CommonConstants.pdiQuality.weakness[locale]}</Title>
+        {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER && (
+          <Group mt={20} align={'flex-start'}>
+            <TextInput
+              disabled={isSaving}
+              value={weaknessValue}
+              onChange={({ currentTarget: { value } }) => setWeaknessValue(value)}
+              onKeyDown={({ key }) => {
+                if (key === 'Enter' && !isDisabledWeakness) {
+                  handleAddWeakness()
+                }
+              }}
+              error={isDisabledWeakness && ErrorsConstants.pdiQuality.exists.weakness[locale]}
+              radius={'md'}
+              sx={{ minWidth: 250 }}
+            />
+            <Transition mounted={isWeaknessEditing} transition={'slide-left'}>
+              {(styles) => (
+                <ActionIcon
+                  disabled={isDisabledWeakness || isSaving}
+                  onClick={handleAddWeakness}
+                  variant={'light'}
+                  size={'lg'}
+                  color={'green'}
+                  style={styles}
+                >
+                  <IconCheck />
+                </ActionIcon>
+              )}
+            </Transition>
+          </Group>
+        )}
         <Group mt={20} spacing={5} direction={'column'} sx={{ maxWidth: 300 }}>
           {weakness.map((pdi) => (
-            <Group
-              key={pdi.id}
-              onMouseEnter={() => setWeaknessHover(pdi.id)}
-              onMouseLeave={() => setWeaknessHover(-1)}
-              onBlur={() => setWeaknessEdit(undefined)}
-              onClick={() => setWeaknessEdit(pdi)}
-              sx={{ width: '100%' }}
-            >
-              <TextInput
-                disabled={isSaving}
-                radius={'md'}
-                variant={
-                  weaknessHover === pdi.id && weaknessEdit?.id !== pdi.id
-                    ? 'filled'
-                    : weaknessEdit?.id === pdi.id
-                    ? 'default'
-                    : 'unstyled'
-                }
-                onBlur={handleEditWeakness}
-                value={weaknessEdit?.id === pdi.id ? weaknessEdit?.description : pdi.description}
-                onChange={({ currentTarget: { value } }) =>
-                  weaknessEdit?.id === pdi.id &&
-                  setWeaknessEdit({
-                    ...weaknessEdit,
-                    description: value
-                  })
-                }
-                sx={{ width: 250, color: !isSaving ? theme.black : theme.colors.gray[3] }}
-              />
-              <Transition
-                mounted={weaknessEdit?.id !== pdi.id && weaknessHover === pdi.id}
-                transition={'slide-left'}
-              >
-                {(styles) => (
-                  <ActionIcon
+            <React.Fragment key={pdi.id}>
+              {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER ? (
+                <Group
+                  key={pdi.id}
+                  onMouseEnter={() => setWeaknessHover(pdi.id)}
+                  onMouseLeave={() => setWeaknessHover(-1)}
+                  onBlur={() => setWeaknessEdit(undefined)}
+                  onClick={() => setWeaknessEdit(pdi)}
+                  sx={{ width: '100%' }}
+                >
+                  <TextInput
                     disabled={isSaving}
-                    onClick={() => handleDelete(pdi)}
-                    variant={'light'}
-                    size={'lg'}
-                    color={'red'}
-                    style={styles}
+                    radius={'md'}
+                    variant={
+                      weaknessHover === pdi.id && weaknessEdit?.id !== pdi.id
+                        ? 'filled'
+                        : weaknessEdit?.id === pdi.id
+                        ? 'default'
+                        : 'unstyled'
+                    }
+                    onBlur={handleEditWeakness}
+                    value={
+                      weaknessEdit?.id === pdi.id ? weaknessEdit?.description : pdi.description
+                    }
+                    onChange={({ currentTarget: { value } }) =>
+                      weaknessEdit?.id === pdi.id &&
+                      setWeaknessEdit({
+                        ...weaknessEdit,
+                        description: value
+                      })
+                    }
+                    sx={{ width: 250, color: !isSaving ? theme.black : theme.colors.gray[3] }}
+                  />
+                  <Transition
+                    mounted={weaknessEdit?.id !== pdi.id && weaknessHover === pdi.id}
+                    transition={'slide-left'}
                   >
-                    <IconTrash size={20} />
-                  </ActionIcon>
-                )}
-              </Transition>
-            </Group>
+                    {(styles) => (
+                      <ActionIcon
+                        disabled={isSaving}
+                        onClick={() => handleDelete(pdi)}
+                        variant={'light'}
+                        size={'lg'}
+                        color={'red'}
+                        style={styles}
+                      >
+                        <IconTrash size={20} />
+                      </ActionIcon>
+                    )}
+                  </Transition>
+                </Group>
+              ) : (
+                <Text key={pdi.id} size={'md'}>
+                  {pdi.description}
+                </Text>
+              )}
+            </React.Fragment>
           ))}
         </Group>
       </Grid.Col>

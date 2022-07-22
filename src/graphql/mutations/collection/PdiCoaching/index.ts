@@ -11,11 +11,20 @@ export const CREATE_PDI_COACHING = gql`
     }
   }
 `
+
 export const UPDATE_PDI_COACHING = gql`
   ${FRAGMENT_PDI_COACHING}
   mutation UpdatePdiCoaching($id: Int!, $category: String, $action: String) {
     updated: updatePdiCoaching(id: $id, input: { category: $category, action: $action }) {
       ...FragmentPdiCoaching
+    }
+  }
+`
+
+export const DELETE_PDI_COACHING = gql`
+  mutation UpdatePdiCoaching($id: Int!) {
+    deleted: removePdiCoaching(id: $id) {
+      id
     }
   }
 `

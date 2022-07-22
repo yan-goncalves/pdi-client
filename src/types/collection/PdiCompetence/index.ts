@@ -5,6 +5,7 @@ import { PdiCompetenceCategoryType } from './Category'
 export interface PdiCompetenceType extends BaseType {
   performed: PerformedEvaluationType
   category: PdiCompetenceCategoryType
+  name: string
   action: string
   deadline: Date
 }
@@ -15,4 +16,8 @@ export type CreatePdiCompetenceType = {
 
 export type UpdatePdiCompetenceType = {
   updated: PdiCompetenceType
+}
+
+export type DeletePdiCompetenceType = {
+  deleted: PdiCompetenceType
 }

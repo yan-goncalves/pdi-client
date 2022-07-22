@@ -19,3 +19,7 @@ export type CreatePdiCoachingType = {
 export type UpdatePdiCoachingType = {
   updated: PdiCoachingType
 }
+
+export type DeletePdiCoachingType = {
+  deleted: PdiCoachingType
+}

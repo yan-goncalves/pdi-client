@@ -241,6 +241,7 @@ export const FRAGMENT_PDI_COMPETENCE = gql`
     category {
       ...FragmentPdiCompetenceCategory
     }
+    name
     action
     deadline
   }
@@ -288,5 +289,16 @@ export const FRAGMENT_PERFORMED_EVALUATION = gql`
     pdiQuality {
       ...FragmentPdiQuality
     }
+  }
+`
+
+export const FRAGMENT_EVALUATION_RESULT_CONCEPT = gql`
+  fragment FragmentEvaluationResultConcept on EvaluationResultConceptModel {
+    id
+    concept
+    description
+    color
+    min
+    max
   }
 `

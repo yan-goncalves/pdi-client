@@ -7,3 +7,11 @@ export interface PdiCompetenceCategoryType extends BaseType {
 export type GetPdiCompetenceCategories = {
   categories: PdiCompetenceCategoryType[]
 }
+
+export type CreatePdiCompetenceCategoryType = {
+  created: PdiCompetenceCategoryType
+}
+
+export type DeletePdiCompetenceCategoryType = {
+  deleted: PdiCompetenceCategoryType
+}

@@ -15,12 +15,7 @@ export type NavItemLinkProps = {
   exact?: boolean
 }
 
-const NavItemLink = ({
-  title,
-  href,
-  icon: Icon,
-  exact = false
-}: NavItemLinkProps) => {
+const NavItemLink = ({ title, href, icon: Icon, exact = false }: NavItemLinkProps) => {
   const { locale } = useLocale()
   const { pathname } = useRouter()
   const active = exact ? pathname === href : pathname.startsWith(href)
