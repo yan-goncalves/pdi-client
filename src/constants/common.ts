@@ -144,6 +144,16 @@ export const CommonConstants = {
     en: 'Name'
   },
 
+  category: {
+    br: 'Categoria',
+    en: 'Category'
+  },
+
+  action: {
+    br: 'Ação',
+    en: 'Action'
+  },
+
   actions: {
     br: 'Ações',
     en: 'Actions'
@@ -195,28 +205,99 @@ export const CommonConstants = {
     en: 'Target achieved:'
   },
 
+  pdi: {
+    title: {
+      br: 'Plano de Desenvolvimento Individual',
+      en: 'Individual Development Plan'
+    }
+  },
+
   pdiCoaching: {
-    br: 'Coaching de Carreira e Crescimento',
-    en: 'Career and Growth Coaching'
+    title: {
+      br: 'Coaching de Carreira e Crescimento',
+      en: 'Career and Growth Coaching'
+    }
   },
 
   pdiCompetence: {
-    br: 'Desenvolvimento de Competências',
-    en: 'Skills Development'
+    title: {
+      br: 'Desenvolvimento de Competências',
+      en: 'Skills Development'
+    },
+
+    table: {
+      name: {
+        br: 'Competências a serem desenvolvidas',
+        en: 'Competences to be developed'
+      },
+      category: {
+        br: 'Categoria',
+        en: 'Category'
+      },
+      actions: {
+        br: 'Ações',
+        en: 'Actions'
+      },
+      deadline: {
+        br: 'Prazo',
+        en: 'Deadline'
+      }
+    },
+
+    empty: {
+      br: 'Nenhuma competência atribuída',
+      en: 'No competence assigned'
+    },
+
+    create: {
+      br: 'Adicionar Desenvolvimento de Competência',
+      en: 'Add Competence Development'
+    },
+
+    edit: {
+      br: 'Editar Desenvolvimento de Competência',
+      en: 'Edit Competence Development'
+    }
   },
 
   pdiQuality: {
-    br: 'Pontos Fortes e Melhorias',
-    en: 'Strengths and Improvements'
+    title: {
+      br: 'Pontos Fortes e Melhorias',
+      en: 'Strengths and Improvements'
+    },
+
+    strength: {
+      br: 'Pontos Fortes',
+      en: 'Strong Points'
+    },
+
+    weakness: {
+      br: 'Pontos de Melhoria',
+      en: 'Improvement Points'
+    }
   },
 
-  pdiStrength: {
-    br: 'Pontos Fortes',
-    en: 'Strong Points'
+  deadline: {
+    br: 'Prazo',
+    en: 'Deadline'
   },
 
-  pdiWeakness: {
-    br: 'Pontos de Melhoria',
-    en: 'Improvement Points'
+  result: {
+    title: {
+      br: 'Resultado final',
+      en: 'Final result'
+    },
+
+    finished: {
+      title: {
+        br: 'Avaliação finalizada!',
+        en: 'Evaluation finished!'
+      },
+
+      description: {
+        br: 'Aguarde o gestor finalizar sua avaliação para poder ver sua nota final',
+        en: 'Wait for the manager to finish your evaluation so you can see your final grade'
+      }
+    }
   }
 }

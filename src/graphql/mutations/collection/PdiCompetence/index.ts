@@ -6,6 +6,7 @@ export const CREATE_PDI_COMPETENCE = gql`
   mutation CreatePdiCompetence(
     $idPerformed: Int!
     $idCategory: Int!
+    $name: String!
     $action: String!
     $deadline: DateTime!
   ) {
@@ -13,6 +14,7 @@ export const CREATE_PDI_COMPETENCE = gql`
       input: {
         idPerformed: $idPerformed
         idCategory: $idCategory
+        name: $name
         action: $action
         deadline: $deadline
       }
@@ -24,17 +26,26 @@ export const CREATE_PDI_COMPETENCE = gql`
 
 export const UPDATE_PDI_COMPETENCE = gql`
   ${FRAGMENT_PDI_COMPETENCE}
-  mutation UpdatePdiCompetence($id: Int!, $action: String!, $deadline: DateTime!) {
+  mutation UpdatePdiCompetence(
+    $id: Int!
+    $idCategory: Int
+    $name: String
+    $action: String
+    $deadline: DateTime
+  ) {
     updated: updatePdiCompetence(
       id: $id
-      input: {
-        idPerformed: $idPerformed
-        idCategory: $idCategory
-        action: $action
-        deadline: $deadline
-      }
+      input: { idCategory: $idCategory, name: $name, action: $action, deadline: $deadline }
     ) {
       ...FragmentPdiCompetence
+    }
+  }
+`
+
+export const DELETE_PDI_COMPETENCE = gql`
+  mutation DeletePdiCompetence($id: Int!) {
+    deleted: removePdiCompetence(id: $id) {
+      id
     }
   }
 `

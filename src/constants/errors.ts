@@ -44,5 +44,19 @@ export const ErrorsConstants = {
         en: '* Improvement point already defined'
       }
     }
+  },
+
+  pdiCompetence: {
+    exists: {
+      br: '* Desenvolvimento de competência já definida',
+      en: '* Competence development already defined'
+    }
+  },
+
+  pdiCoaching: {
+    exists: {
+      br: '* Coaching de carreira já definida',
+      en: '* Career coaching already defined'
+    }
   }
 }
