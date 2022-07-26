@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/client'
 import { Avatar, Group, Text, Title, useMantineTheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import ContentBase from 'components/ContentBase'
@@ -10,20 +11,24 @@ import PerformedSkill from 'components/Performed/Skill'
 import { StepperProgress } from 'components/StepperProgress'
 import { FALLBACK_USER_PICTURE } from 'components/UserPicture'
 import { CommonConstants } from 'constants/common'
-import { EvaluationConstants } from 'constants/evaluation'
+import { EvaluationConstants, EVALUATION_PERIOD } from 'constants/evaluation'
 import { GoalsConstants } from 'constants/goals'
 import { QuestionI18n } from 'constants/questions'
-import { EVALUATION_ACTOR, useEvaluation } from 'contexts/EvaluationProvider'
+import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
+import { UPDATE_PERFORMED_EVALUATION } from 'graphql/mutations/collection/PerformedEvaluation'
 import React, { useEffect, useState } from 'react'
 import PdiCoaching from 'templates/PdiCoaching'
 import PdiCompetence from 'templates/PdiCompetence'
 import PdiQuality from 'templates/PdiQuality'
 import { FeedbackType } from 'types/collection/Feedback'
 import { GoalType } from 'types/collection/Goal'
+import { UpdatePerformedEvaluationType } from 'types/collection/PerformedEvaluation'
 import { QuestionType } from 'types/collection/Question'
 import { SkillType } from 'types/collection/Skill'
 import { sortById } from 'utils/helpers'
+
+export type PerformedEvaluationFieldType = 'midFinished' | 'endFinished'
 
 export type EvaluationTemplateProps = {
   actor: EVALUATION_ACTOR
@@ -32,12 +37,27 @@ export type EvaluationTemplateProps = {
 const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
-  const { evaluationModel, appraisee, periodMode, performedEvaluation, isSaving } = useEvaluation()
+  const {
+    evaluationModel,
+    appraisee,
+    periodMode,
+    mode,
+    performedEvaluation,
+    setPerformedEvaluation,
+    isSaving,
+    setIsSaving
+  } = useEvaluation()
   const [questions, setQuestions] = useState<QuestionType[]>()
   const [skills, setSkills] = useState<SkillType[]>()
   const [goals, setGoals] = useState<GoalType[]>()
   const [feedbacks, setFeedbacks] = useState<FeedbackType[]>()
+  const [field, setField] = useState<PerformedEvaluationFieldType>()
+  const [finished, setFinished] = useState<boolean>(false)
   const match = useMediaQuery(`(max-width: ${theme.breakpoints.xs}px)`, false)
+
+  const [update] = useMutation<UpdatePerformedEvaluationType>(UPDATE_PERFORMED_EVALUATION, {
+    onCompleted: () => updatePerformedEvaluation()
+  })
 
   useEffect(() => {
     const arrayQuestions: QuestionType[] = []
@@ -55,6 +75,39 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
     setGoals(evaluationModel.goals)
     setFeedbacks(evaluationModel.feedbacks)
   }, [evaluationModel])
+
+  useEffect(() => {
+    if (mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER) {
+      if (periodMode === EVALUATION_PERIOD.MID && !performedEvaluation?.midFinished) {
+        setField('midFinished')
+      } else if (periodMode === EVALUATION_PERIOD.END && !performedEvaluation?.endFinished) {
+        setField('endFinished')
+      }
+    }
+  }, [mode, periodMode])
+
+  const handleFinish = async () => {
+    if (field && actor === EVALUATION_ACTOR.MANAGER) {
+      setIsSaving(true)
+      await update({
+        variables: {
+          id: performedEvaluation.id,
+          [field]: true
+        }
+      })
+    }
+    setFinished(true)
+  }
+
+  const updatePerformedEvaluation = () => {
+    if (field && actor === EVALUATION_ACTOR.MANAGER) {
+      setPerformedEvaluation((pe) => ({
+        ...pe,
+        [field]: true
+      }))
+      setIsSaving(false)
+    }
+  }
 
   if (!evaluationModel || !skills || !goals || !feedbacks) {
     return null
@@ -86,7 +139,8 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
     >
       <StepperProgress
         allowStepSelect
-        disabled={isSaving}
+        onFinish={handleFinish}
+        disabled={isSaving || finished}
         radius={'md'}
         groupButtonProps={{
           group: {
@@ -157,11 +211,16 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
         )}
         <StepperProgress.Step label={EvaluationConstants.steps.goals[locale]}>
           {!goals.length ? (
-            <div key={'no-one-goal'}>
-              <Text size={'md'} color={'gray'}>
+            <>
+              <EvaluationItem
+                sectionTitle={EvaluationConstants.steps.goals[locale]}
+                sectionColor={'green'}
+              />
+
+              <Text mt={30} size={'lg'} sx={{ color: theme.colors.gray[4] }}>
                 {GoalsConstants.empty[locale]}
               </Text>
-            </div>
+            </>
           ) : (
             goals?.map((goal) => (
               <React.Fragment key={`${goal.id}-${goal.name}`}>
@@ -230,9 +289,11 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
             </React.Fragment>
           </StepperProgress.Step>
         )}
-        <StepperProgress.Completed>
-          <EvaluationResult />
-        </StepperProgress.Completed>
+        {(periodMode !== EVALUATION_PERIOD.OUT || mode !== EVALUATION_MODE.VIEW) && (
+          <StepperProgress.Completed>
+            <EvaluationResult actor={actor} />
+          </StepperProgress.Completed>
+        )}
       </StepperProgress>
     </ContentBase>
   )

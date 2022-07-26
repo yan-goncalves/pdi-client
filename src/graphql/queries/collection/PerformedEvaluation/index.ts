@@ -20,3 +20,11 @@ export const GET_PERFORMED_EVALUATION_RELATION = gql`
     }
   }
 `
+
+export const GET_PERFORMED_EVALUATION_GRADE = gql`
+  query GetPerformedEvaluationGrade($id: Int!) {
+    performedEvaluation: performedEvaluationGrade(id: $id) {
+      grade
+    }
+  }
+`

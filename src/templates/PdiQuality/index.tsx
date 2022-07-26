@@ -52,14 +52,14 @@ const PdiQuality = ({ pdi, actor }: PdiQualityProps) => {
 
   const [create] = useMutation<CreatePdiQualityType>(CREATE_PDI_QUALITY, {
     onCompleted: ({ created }) => updatePerformedEvaluation(created),
-    onError: (e) => console.log('ERROR ON CREATING PERFORMED QUESTION', { ...e })
+    onError: (e) => console.log('ERROR ON CREATING PDI QUALITY', { ...e })
   })
   const [update] = useMutation<UpdatePdiQualityType>(UPDATE_PDI_QUALITY, {
     onCompleted: ({ updated }) => updatePerformedEvaluation(updated),
-    onError: (e) => console.log('ERROR ON UPDATING PERFORMED QUESTION', { ...e })
+    onError: (e) => console.log('ERROR ON UPDATING PDI QUALITY', { ...e })
   })
   const [deletePdi] = useMutation<UpdatePdiQualityType>(DELETE_PDI_QUALITY, {
-    onError: (e) => console.log('ERROR ON DELETING PERFORMED QUESTION', { ...e })
+    onError: (e) => console.log('ERROR ON DELETING PDI QUALITY', { ...e })
   })
 
   useEffect(() => {

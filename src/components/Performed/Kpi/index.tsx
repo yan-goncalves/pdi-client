@@ -1,11 +1,13 @@
 import { useMutation } from '@apollo/client'
-import { Divider, Grid, Group, Text, Title, useMantineTheme } from '@mantine/core'
+import { Divider, Grid, Group, Loader, Text, Title, useMantineTheme } from '@mantine/core'
+import { useNotifications } from '@mantine/notifications'
 import { Rating } from '@mui/material'
-import { IconStar } from '@tabler/icons'
+import { IconChecks, IconStar } from '@tabler/icons'
 import Accordion from 'components/Accordion'
 import Comment from 'components/Comment'
 import { CommonConstants } from 'constants/common'
 import { EvaluationConstants, EVALUATION_PERIOD } from 'constants/evaluation'
+import { NotificationsConstants } from 'constants/notifications'
 import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import {
@@ -62,6 +64,7 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider }: PerformedKpiPro
   const [labels, setLabels] = useState<string[]>()
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [isRated, setIsRated] = useState<boolean>(false)
+  const notifications = useNotifications()
 
   // queries / mutations
   const [create] = useMutation<CreatePerformedKpiType>(CREATE_PERFORMED_KPI, {
@@ -160,7 +163,51 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider }: PerformedKpiPro
   const handleChange = async (_: React.SyntheticEvent, newRating: number | null) => {
     setRating(newRating || -1)
     setIsSaving(true)
-    await handleSave(ratingField, newRating || -1).then(() => setIsSaving(false))
+
+    notifications.showNotification({
+      message: (
+        <Title order={5} p={2}>
+          <Group>
+            <Loader size={'sm'} />
+            {NotificationsConstants.saving.answer[locale]}
+          </Group>
+        </Title>
+      ),
+      radius: 'md',
+      autoClose: 850,
+      styles: {
+        root: {
+          borderColor: theme.colors.blue[6],
+          '&::before': { backgroundColor: theme.colors.blue[6] }
+        }
+      }
+    })
+    setTimeout(
+      async () =>
+        await handleSave(ratingField, newRating || -1).then(() => {
+          notifications.showNotification({
+            message: (
+              <Title order={5} p={2}>
+                <Group>
+                  <IconChecks size={22} color={theme.colors.green[9]} />
+                  {NotificationsConstants.saved.answer[locale]}
+                </Group>
+              </Title>
+            ),
+            color: 'green',
+            radius: 'md',
+
+            autoClose: 1500,
+            styles: (theme) => ({
+              root: {
+                borderColor: theme.colors.green[6],
+                '&::before': { backgroundColor: theme.colors.green[6] }
+              }
+            })
+          })
+        }),
+      1000
+    )
   }
 
   const handleSaveComment = async () => {
@@ -191,6 +238,8 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider }: PerformedKpiPro
       ...pe,
       goals: goalIndex < 0 ? [...pe.goals, updated] : goals
     }))
+
+    setIsSaving(false)
   }
 
   return (

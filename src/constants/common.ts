@@ -295,8 +295,15 @@ export const CommonConstants = {
       },
 
       description: {
-        br: 'Aguarde o gestor finalizar sua avaliação para poder ver sua nota final',
-        en: 'Wait for the manager to finish your evaluation so you can see your final grade'
+        mid: {
+          br: 'Obrigado por realizar a avaliação de meio de ano!',
+          en: 'Thank you for doing the mid-year evaluation'
+        },
+
+        end: {
+          br: 'Aguarde o gestor finalizar sua avaliação para poder ver sua nota final',
+          en: 'Wait for the manager to finish your evaluation so you can see your final grade'
+        }
       }
     }
   }

@@ -37,11 +37,11 @@ const PerformedFeedback = ({ feedback, performed, actor }: PerformedFeedbackProp
 
   const [create] = useMutation<CreatePerformedFeedbackType>(CREATE_PERFORMED_FEEDBACK, {
     onCompleted: ({ created }) => updatePerformedEvaluation(created),
-    onError: (e) => console.log('ERROR ON CREATING PERFORMED QUESTION', { ...e })
+    onError: (e) => console.log('ERROR ON CREATING PERFORMED FEEDBACK', { ...e })
   })
   const [update] = useMutation<UpdatePerformedFeedbackType>(UPDATE_PERFORMED_FEEDBACK, {
     onCompleted: ({ updated }) => updatePerformedEvaluation(updated),
-    onError: (e) => console.log('ERROR ON UPDATING PERFORMED QUESTION', { ...e })
+    onError: (e) => console.log('ERROR ON UPDATING PERFORMED FEEDBACK', { ...e })
   })
 
   useLayoutEffect(() => {

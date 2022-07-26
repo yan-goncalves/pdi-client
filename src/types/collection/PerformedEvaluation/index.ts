@@ -31,3 +31,7 @@ export type GetPerformedEvaluationType = {
 export type CreatePerformedEvaluationType = {
   created: PerformedEvaluationType
 }
+
+export type UpdatePerformedEvaluationType = {
+  updated: PerformedEvaluationType
+}

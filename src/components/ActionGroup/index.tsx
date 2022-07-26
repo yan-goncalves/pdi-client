@@ -52,8 +52,6 @@ const ActionGroup = ({
     setTimeout(
       async () =>
         await handleSave().then(() => {
-          // setSaving(false)
-          setIsSaving(false)
           notifications.showNotification({
             message: (
               <Title order={5} p={2}>

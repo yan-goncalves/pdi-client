@@ -2,17 +2,13 @@ import { Button, Image, Title, useMantineTheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { Grid } from '@nextui-org/react'
 import { IconArrowBackUp } from '@tabler/icons'
+import { useLocale } from 'contexts/LocaleProvider'
 import { useRouter } from 'next/router'
-import { ButtonApiProps } from 'types/common'
 import { useStyles } from './styles'
 
-export type Template404Props = {
-  message: string
-  button: ButtonApiProps
-}
-
-const Template404 = ({ message, button }: Template404Props) => {
+const Template404 = () => {
   const theme = useMantineTheme()
+  const { locale } = useLocale()
   const { classes } = useStyles()
   const { push } = useRouter()
   const match = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`, false)
@@ -22,20 +18,8 @@ const Template404 = ({ message, button }: Template404Props) => {
   }
 
   return (
-    <Grid.Container
-      className={classes.root}
-      justify={'center'}
-      alignItems={'flex-start'}
-      gap={1}
-    >
-      <Grid
-        xl={3}
-        lg={3}
-        md={3}
-        sm={3}
-        xs={5}
-        className={classes.imageContainer}
-      >
+    <Grid.Container className={classes.root} justify={'center'} alignItems={'flex-start'} gap={1}>
+      <Grid xl={3} lg={3} md={3} sm={3} xs={5} className={classes.imageContainer}>
         <Image src={theme.other.images.error404} />
       </Grid>
       <Grid.Container
@@ -46,7 +30,7 @@ const Template404 = ({ message, button }: Template404Props) => {
         gap={2}
       >
         <Grid>
-          <Title order={2}>{message}</Title>
+          <Title order={2}>{locale === 'br' ? 'Página não encontrada' : 'Page not found'}</Title>
         </Grid>
         <Grid>
           <Button
@@ -55,7 +39,7 @@ const Template404 = ({ message, button }: Template404Props) => {
             onClick={goBack}
             size={match ? 'xs' : 'sm'}
           >
-            {button.label}
+            {locale === 'br' ? 'Voltar à página inicial' : 'Go to home'}
           </Button>
         </Grid>
       </Grid.Container>

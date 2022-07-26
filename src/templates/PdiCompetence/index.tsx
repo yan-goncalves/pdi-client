@@ -183,13 +183,13 @@ const PdiCompetence = ({ actor, pdi }: PdiCompetenceProps) => {
       )}
       {!pdiCompetences.length ? (
         <Group
-          mt={200}
-          spacing={25}
+          spacing={15}
           direction={'column'}
           align={'center'}
           sx={{
             justifyContent: 'center',
             width: '100%',
+            height: '100%',
             cursor: !isLocaleLoading ? 'auto' : 'not-allowed'
           }}
         >

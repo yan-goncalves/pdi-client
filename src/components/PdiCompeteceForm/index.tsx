@@ -54,7 +54,7 @@ const PdiCompetenceForm = ({
   editMode
 }: PdiCompetenceFormProps) => {
   const { locale } = useLocale()
-  const { isSaving } = useEvaluation()
+  const { isSaving, setIsSaving } = useEvaluation()
   const [name, setName] = useState<string>()
   const [categoryName, setCategoryName] = useState<string>()
   const [action, setAction] = useState<string>()
@@ -159,7 +159,10 @@ const PdiCompetenceForm = ({
         })
       )
         .catch((err) => console.log('ERROR ON DELETING PDI COMPETENCE CATEGORY', { ...err }))
-        .finally(() => handleClose())
+        .finally(() => {
+          setIsSaving(false)
+          handleClose()
+        })
     }
   }
 

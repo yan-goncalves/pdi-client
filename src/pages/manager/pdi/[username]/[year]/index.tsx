@@ -25,15 +25,8 @@ const EvaluationPage = ({
   evaluation: EvaluationModelType
   performed: PerformedEvaluationType
 }) => {
-  const {
-    setEvaluationModel,
-    setPerformedEvaluation,
-    setAppraisee,
-    setMode,
-    mode,
-    periodMode,
-    setIsLocaleLoading
-  } = useEvaluation()
+  const { setEvaluationModel, setPerformedEvaluation, setAppraisee, setMode, setIsLocaleLoading } =
+    useEvaluation()
 
   useEffect(() => {
     if (user) {

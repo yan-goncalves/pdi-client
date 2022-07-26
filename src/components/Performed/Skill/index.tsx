@@ -1,11 +1,13 @@
 import { useMutation } from '@apollo/client'
-import { Grid, Group, Text, Title, useMantineTheme } from '@mantine/core'
+import { Grid, Group, Loader, Text, Title, useMantineTheme } from '@mantine/core'
+import { useNotifications } from '@mantine/notifications'
 import { Rating } from '@mui/material'
-import { IconStar } from '@tabler/icons'
+import { IconChecks, IconStar } from '@tabler/icons'
 import Accordion from 'components/Accordion'
 import Comment from 'components/Comment'
 import { CommonConstants } from 'constants/common'
 import { EvaluationConstants, EVALUATION_PERIOD } from 'constants/evaluation'
+import { NotificationsConstants } from 'constants/notifications'
 import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import {
@@ -43,7 +45,9 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
     periodMode,
     ratings,
     isLocaleLoading,
-    mode
+    mode,
+    isSaving,
+    setIsSaving
   } = useEvaluation()
   const [performedSkill, setPerformedSkill] = useState<PerformedSkillType>()
   const [rating, setRating] = useState<number>(-1)
@@ -54,15 +58,16 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
   const [labels, setLabels] = useState<string[]>()
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [isRated, setIsRated] = useState<boolean>(false)
+  const notifications = useNotifications()
 
   // queries/mutations
   const [create] = useMutation<CreatePerformedSkillType>(CREATE_PERFORMED_SKILL, {
     onCompleted: ({ created }) => updatePerformedEvaluation(created),
-    onError: (e) => console.log('ERROR ON CREATING PERFORMED QUESTION', { ...e })
+    onError: (e) => console.log('ERROR ON CREATING PERFORMED SKILL', { ...e })
   })
   const [update] = useMutation<UpdatePerformedSkillType>(UPDATE_PERFORMED_SKILL, {
     onCompleted: ({ updated }) => updatePerformedEvaluation(updated),
-    onError: (e) => console.log('ERROR ON UPDATING PERFORMED QUESTION', { ...e })
+    onError: (e) => console.log('ERROR ON UPDATING PERFORMED SKILL', { ...e })
   })
 
   useLayoutEffect(() => {
@@ -127,9 +132,63 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
       ...pe,
       skills: skillIndex < 0 ? [...pe.skills, skill] : skills
     }))
+
+    setIsSaving(false)
   }
 
   const handleSave = async (
+    field: PerformedSkillCommentType | PerformedSkillRatingType,
+    value: number | string
+  ) => {
+    setIsSaving(true)
+
+    notifications.showNotification({
+      message: (
+        <Title order={5} p={2}>
+          <Group>
+            <Loader size={'sm'} />
+            {NotificationsConstants.saving.answer[locale]}
+          </Group>
+        </Title>
+      ),
+      radius: 'md',
+      autoClose: 850,
+      styles: {
+        root: {
+          borderColor: theme.colors.blue[6],
+          '&::before': { backgroundColor: theme.colors.blue[6] }
+        }
+      }
+    })
+    setTimeout(
+      async () =>
+        await handleCreateUpdate(field, value).then(() => {
+          notifications.showNotification({
+            message: (
+              <Title order={5} p={2}>
+                <Group>
+                  <IconChecks size={22} color={theme.colors.green[9]} />
+                  {NotificationsConstants.saved.answer[locale]}
+                </Group>
+              </Title>
+            ),
+            color: 'green',
+            radius: 'md',
+
+            autoClose: 1500,
+            styles: (theme) => ({
+              root: {
+                borderColor: theme.colors.green[6],
+                '&::before': { backgroundColor: theme.colors.green[6] }
+              }
+            })
+          })
+        }),
+      1000
+    )
+  }
+
+  const handleCreateUpdate = async (
     field: PerformedSkillCommentType | PerformedSkillRatingType,
     value: number | string
   ) => {
@@ -166,11 +225,13 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
         <Grid.Col span={12} xs={3} xl={2}>
           <Group align={'center'} direction={'column'} spacing={'xs'}>
             <Title order={6}>{CommonConstants.rating.title[locale]}</Title>
-            <Group sx={{ cursor: !isLocaleLoading && !isDisabled ? 'auto' : 'not-allowed' }}>
+            <Group
+              sx={{ cursor: !isLocaleLoading && !isDisabled && !isSaving ? 'auto' : 'not-allowed' }}
+            >
               <Rating
                 icon={<IconStar size={30} fill={theme.colors.yellow[6]} style={{ padding: 2 }} />}
                 emptyIcon={<IconStar size={30} style={{ padding: 2 }} />}
-                disabled={isLocaleLoading}
+                disabled={isSaving || isLocaleLoading}
                 size={'large'}
                 max={ratings.length}
                 value={!isLocaleLoading ? rating : -1}
