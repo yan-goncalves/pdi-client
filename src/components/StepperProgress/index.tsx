@@ -275,6 +275,7 @@ export const StepperProgress: StepperComponent = forwardRef<HTMLDivElement, Step
     items.push(
       <Step
         __staticSelector={'StepperProgress'}
+        disabled={disabled}
         icon={finishStepIcon || filteredChildren.length + 1}
         key={filteredChildren.length}
         state={
