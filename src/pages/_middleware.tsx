@@ -49,9 +49,9 @@ export async function middleware(req: NextApiRequest & NextRequest) {
     }
   }
 
-  const isPublic = PUBLIC_ROUTES.some((route) => req.nextUrl.pathname.includes(route))
+  const isPublic = PUBLIC_ROUTES.some((route) => pathname.includes(route))
 
-  if (!isPublic && req.nextUrl.pathname !== '/') {
+  if (!isPublic && pathname !== '/') {
     if (!session) {
       const callbackUrl = encodeURIComponent('/dashboard')
       const redirect = stripDefaultLocale(`/${locale}/signin?callbackUrl=`)
