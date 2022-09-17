@@ -25,6 +25,7 @@ const PerformedGoal = ({ goal, performed, actor }: PerformedGoalProps) => {
 
   // queries/mutations
   const { refetch: getPerformedGoal } = useQuery<GetPerformedGoalType>(GET_PERFORMED_GOAL, {
+    skip: true,
     onCompleted: ({ performed }) => setPerformedGoal(performed)
   })
 

@@ -53,7 +53,7 @@ export async function middleware(req: NextApiRequest & NextRequest) {
 
   if (!isPublic && req.nextUrl.pathname !== '/') {
     if (!session) {
-      const callbackUrl = encodeURIComponent(pathname)
+      const callbackUrl = encodeURIComponent('/dashboard')
       const redirect = stripDefaultLocale(`/${locale}/signin?callbackUrl=`)
       const res = NextResponse.redirect(`${redirect}${callbackUrl}`)
       res.cookie('NEXT_LOCALE', locale)

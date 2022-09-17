@@ -44,18 +44,19 @@ export default NextAuth({
 
   callbacks: {
     session: async ({ session, token }) => {
-      session.jwt = token.jwt
-      session.user = token.user
+      session.jwt = token.jwt as string
+      session.user = token.user as UserType
 
       return session
     },
 
-    jwt: async ({ token, user }) => {
-      if (user) {
-        const { jwt, ...userProps } = user
+    jwt: async ({ token, user: data }) => {
+      if (data) {
+        const { jwt, user } = data
 
         token.jwt = jwt as string
-        token.user = userProps.user as unknown as UserType
+        token.user = user as UserType
+        token.access_token = jwt
       }
 
       return token

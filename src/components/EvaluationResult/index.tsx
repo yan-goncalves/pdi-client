@@ -44,22 +44,29 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
   const [concepts, setConcepts] = useState<EvaluationResultConceptType[]>([])
   const match = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`, false)
 
-  const {
-    data: dataPerformed,
-    loading: loadingPerformed,
-    error: errorPerformed
-  } = useQuery<GetPerformedEvaluationType>(GET_PERFORMED_EVALUATION_GRADE, {
-    skip: !performedEvaluation.endFinished,
-    variables: {
-      id: performedEvaluation.id
+  const { loading, refetch: refetchGrade } = useQuery<GetPerformedEvaluationType>(
+    GET_PERFORMED_EVALUATION_GRADE,
+    {
+      skip: !performedEvaluation.endFinished,
+      variables: {
+        id: performedEvaluation.id
+      },
+      onCompleted: ({ performedEvaluation }) => {
+        setGrade(performedEvaluation.grade)
+        setPerformedEvaluation((pe) => ({
+          ...pe,
+          grade: performedEvaluation.grade
+        }))
+      },
+      onError: (error) => console.log('ERROR ON GETTING PERFORMED EVALUATION', { ...error })
     }
-  })
+  )
 
   const {
     data: dataConcepts,
     loading: loadingConcepts,
     error: errorConcepts,
-    refetch
+    refetch: refetchConcepts
   } = useQuery<GetEvaluationResultConceptsType>(GET_EVALUATION_RESULT_CONCEPTS, {
     skip: !performedEvaluation.endFinished,
     context: {
@@ -70,22 +77,8 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
   })
 
   useEffect(() => {
-    const abortController = new AbortController()
-
-    if (errorPerformed) {
-      console.log('ERROR ON GETTING PERFORMED EVALUATION', { ...errorPerformed })
-    } else if (dataPerformed && !loadingPerformed) {
-      setGrade(dataPerformed.performedEvaluation.grade)
-      setPerformedEvaluation((pe) => ({
-        ...pe,
-        grade: dataPerformed.performedEvaluation.grade
-      }))
-    }
-
-    return () => {
-      abortController.abort()
-    }
-  }, [dataPerformed, loadingPerformed, errorPerformed])
+    refetchGrade()
+  }, [])
 
   useEffect(() => {
     if (typeof grade === 'number') {
@@ -104,7 +97,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
   }, [dataConcepts, loadingConcepts, errorConcepts, grade])
 
   useEffect(() => {
-    refetch()
+    refetchConcepts()
   }, [locale])
 
   useEffect(() => {
@@ -155,7 +148,10 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                   align={'center'}
                   sx={{ height: '100%', justifyContent: 'center' }}
                 >
-                  {!appraiseeConcept || typeof grade === 'undefined' ? (
+                  {loading ||
+                  loadingConcepts ||
+                  !appraiseeConcept ||
+                  typeof grade === 'undefined' ? (
                     <>
                       <Skeleton height={!match ? 100 : 60} radius={!match ? 'lg' : 'md'} />
                       <Skeleton mt={10} height={!match ? 40 : 20} radius={!match ? 'lg' : 'md'} />
@@ -192,7 +188,10 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                   align={'center'}
                   sx={{ height: '100%', justifyContent: 'center' }}
                 >
-                  {!appraiseeConcept || typeof grade === 'undefined' ? (
+                  {loading ||
+                  loadingConcepts ||
+                  !appraiseeConcept ||
+                  typeof grade === 'undefined' ? (
                     <>
                       <Skeleton height={!match ? 100 : 60} radius={!match ? 'lg' : 'md'} />
                       <Skeleton mt={10} height={!match ? 40 : 20} radius={!match ? 'lg' : 'md'} />

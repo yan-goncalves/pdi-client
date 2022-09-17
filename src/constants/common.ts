@@ -6,6 +6,11 @@ export const CommonConstants = {
     en: 'Add'
   },
 
+  logout: {
+    br: 'Sair',
+    en: 'Logout'
+  },
+
   actor: {
     [EVALUATION_ACTOR.USER]: {
       br: 'Usuário(a)',

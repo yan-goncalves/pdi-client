@@ -2,7 +2,7 @@ import { IconChartInfographic, IconStars, IconTarget, IconTrendingUp } from '@ta
 import { NavItemLinkProps } from 'components/NavItemLink'
 import { NavLinkWrapperProps } from 'components/NavLinkWrapper'
 
-export const PUBLIC_ROUTES = ['/api/auth', '/signin', '/favicon', '/img/']
+export const PUBLIC_ROUTES = ['/api/auth', '/signin', '/favicon', '/img/', '/_next']
 
 export const navLinkWrapperTitles: NavLinkWrapperProps = {
   userSectionTitle: {

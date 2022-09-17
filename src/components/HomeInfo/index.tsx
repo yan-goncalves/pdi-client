@@ -17,14 +17,14 @@ export type HomeInfoProps = {
 
 const HomeInfo = ({ title, description, button, hero }: HomeInfoProps) => {
   const { push } = useRouter()
-  const { status } = useSession()
+  const { data: session, status } = useSession()
   const { classes, cx } = useStyles()
   const dispatch = useAppDispatch()
   const splitDescription = description.split(/<[^>]*>/g).filter((p) => p.trim() !== '')
 
   const handleClick = async () => {
-    if (status === 'authenticated') {
-      push('dashboard')
+    if (!!session && status === 'authenticated') {
+      await push('dashboard')
     } else {
       dispatch(
         setLoadingOverlayVisibility({
@@ -32,7 +32,7 @@ const HomeInfo = ({ title, description, button, hero }: HomeInfoProps) => {
         })
       )
 
-      await push('dashboard').then(() => {
+      await push('signin?callbackUrl=%2Fdashboard').then(() => {
         dispatch(
           setLoadingOverlayVisibility({
             loadingOverlayVisible: false

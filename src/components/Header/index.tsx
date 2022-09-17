@@ -93,7 +93,7 @@ const Header = () => {
           <LocaleSwitcher />
 
           {status === 'authenticated' && pathname !== '/' && (
-            <Tooltip label={'Sair'} position={'left'}>
+            <Tooltip label={CommonConstants.logout[locale]} position={'left'}>
               <ActionIcon onClick={handleClick} variant={'light'} color={'red'}>
                 <IconPower size={20} />
               </ActionIcon>
