@@ -29,7 +29,8 @@ export type PerformedFeedbackCommentType = 'midReply' | 'endReply'
 
 const PerformedFeedback = ({ feedback, performed, actor }: PerformedFeedbackProps) => {
   const { locale } = useLocale()
-  const { performedEvaluation, setPerformedEvaluation, periodMode, mode } = useEvaluation()
+  const { performedEvaluation, setPerformedEvaluation, periodMode, mode, setIsSaving } =
+    useEvaluation()
   const [performedFeedback, setPerformedFeedback] = useState<PerformedFeedbackType>()
   const [comment, setComment] = useState<string>()
   const [commentField, setCommentField] = useState<PerformedFeedbackCommentType>('midReply')
@@ -81,6 +82,8 @@ const PerformedFeedback = ({ feedback, performed, actor }: PerformedFeedbackProp
       ...pe,
       feedbacks: feedbackIndex < 0 ? [...pe.feedbacks, feedback] : feedbacks
     }))
+
+    setIsSaving(false)
   }
 
   const handleSave = async (field: PerformedFeedbackCommentType, value: string) => {

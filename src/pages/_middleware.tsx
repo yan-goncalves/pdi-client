@@ -8,8 +8,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { GetTeamMembersType } from 'types/collection/Team'
 
 const stripDefaultLocale = (str: string): string => {
-  const stripped = str.replace('/pt-BR', '')
-  return stripped
+  return str.replace('/br', '')
 }
 
 /** @param {import("next/server").NextRequest} req */
