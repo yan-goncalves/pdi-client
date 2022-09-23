@@ -131,12 +131,20 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider }: PerformedKpiPro
   }, [ratings])
 
   useEffect(() => {
-    if ((hover > -1 || rating > -1) && !isLocaleLoading) {
+    if (rating > -1) {
       setIsRated(true)
     } else {
       setIsRated(false)
     }
-  }, [hover, rating, isLocaleLoading])
+  }, [rating])
+
+  useEffect(() => {
+    if (hover > -1 || rating > -1) {
+      setIsRated(true)
+    } else {
+      setIsRated(false)
+    }
+  }, [hover])
 
   const handleSave = async (
     field: PerformedGoalCommentType | PerformedGoalRatingType | PerformedGoalAchievedType,
@@ -162,6 +170,7 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider }: PerformedKpiPro
 
   const handleChange = async (_: React.SyntheticEvent, newRating: number | null) => {
     setRating(newRating || -1)
+    setHover(-1)
     setIsSaving(true)
 
     notifications.showNotification({

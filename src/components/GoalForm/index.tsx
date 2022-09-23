@@ -59,7 +59,7 @@ const GoalForm = ({
   const theme = useMantineTheme()
   const { classes, cx } = useStyles()
   const { locale } = useLocale()
-  const { isSaving } = useEvaluation()
+  const { isSaving, setIsSaving } = useEvaluation()
   const [goalName, setGoalName] = useState<string>()
   const [evaluationKpis, setEvaluationKpis] = useState<EvaluationKpiInput[]>([])
   const [, setOptions] = useState<GoalType[]>([])
@@ -162,6 +162,7 @@ const GoalForm = ({
           await handleUpdate(goalName, evaluationKpis, evaluationGoal).then(() => handleClose())
         }
       })
+      setIsSaving(false)
     }
   }
 

@@ -30,7 +30,13 @@ const Template404 = () => {
         gap={2}
       >
         <Grid>
-          <Title order={2}>{locale === 'br' ? 'Página não encontrada' : 'Page not found'}</Title>
+          <Title order={2}>
+            {locale === 'br'
+              ? 'Desculpe, a página que você procura não pode ser encontrada'
+              : 'Sorry, the page you were looking for can’t be found'}
+          </Title>
+          {/* Sorry, the page you were looking for can’t be found. */}
+          {/* Desculpa, a página que você procura não pode ser encontrada. */}
         </Grid>
         <Grid>
           <Button

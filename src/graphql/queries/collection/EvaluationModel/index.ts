@@ -7,6 +7,14 @@ export const GET_EVALUATION_MODELS = gql`
       id
       year
       period
+      midDate {
+        start
+        deadline
+      }
+      endDate {
+        start
+        deadline
+      }
     }
   }
 `

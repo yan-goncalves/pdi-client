@@ -232,7 +232,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
                 <PerformedGoal
                   goal={goal}
                   actor={actor}
-                  performed={performedEvaluation.goals.find(
+                  performed={performedEvaluation.goals?.find(
                     (performed) => performed && performed.goal?.id === goal.id
                   )}
                 />
@@ -252,7 +252,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
                 <PerformedFeedback
                   feedback={feedback}
                   actor={actor}
-                  performed={performedEvaluation.feedbacks.find(
+                  performed={performedEvaluation.feedbacks?.find(
                     (performed) => performed && performed.feedback.id === feedback.id
                   )}
                 />

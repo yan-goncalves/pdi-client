@@ -116,12 +116,20 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
   }, [ratings])
 
   useEffect(() => {
-    if ((hover > -1 || rating > -1) && !isLocaleLoading) {
+    if (rating > -1) {
       setIsRated(true)
     } else {
       setIsRated(false)
     }
-  }, [hover, rating, isLocaleLoading])
+  }, [rating])
+
+  useEffect(() => {
+    if (hover > -1 || rating > -1) {
+      setIsRated(true)
+    } else {
+      setIsRated(false)
+    }
+  }, [hover])
 
   const updatePerformedEvaluation = async (skill: PerformedSkillType) => {
     const skillIndex = performedEvaluation.skills.findIndex((s) => s.id === skill.id)
@@ -212,6 +220,7 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
 
   const handleChange = async (_: React.SyntheticEvent, newRating: number | null) => {
     setRating(newRating || -1)
+    setHover(-1)
     await handleSave(ratingField, newRating || -1)
   }
 

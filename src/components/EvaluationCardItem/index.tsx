@@ -17,25 +17,35 @@ import { EvaluationConstants, EVALUATION_PERIOD } from 'constants/evaluation'
 import { ROLES } from 'constants/role'
 import { EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
+import dayjs from 'dayjs'
 import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import Countdown from 'react-countdown'
 
 export type EvaluationCardItemProps = {
   year: string
   period: EVALUATION_PERIOD
-  // midFinished: boolean
-  // endFinished: boolean
+  midDate: {
+    start: Date
+    deadline: Date
+  }
+  endDate: {
+    start: Date
+    deadline: Date
+  }
 }
 
-const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
+const EvaluationCardItem = ({ year, period, midDate, endDate }: EvaluationCardItemProps) => {
   const theme = useMantineTheme()
   const { data: session } = useSession()
   const { push, asPath } = useRouter()
   const { locale } = useLocale()
   const { setMode, setPeriodMode } = useEvaluation()
   const dispatch = useAppDispatch()
+  const [endCountdown, setEndCountdown] = useState<boolean>(false)
+  const [midCountdown, setMidCountdown] = useState<boolean>(false)
 
   const validPeriods = (periods: string[], validAccessRole = true) => {
     return !validAccessRole
@@ -93,7 +103,9 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
         <Divider mx={-10} style={{ borderTopColor: theme.colors.gray[3] }} />
       </Card.Section>
       <Card.Section p={20}>
-        {validPeriods([EVALUATION_PERIOD.OUT], session?.user.role !== ROLES.DIRECTOR) ? (
+        {(dayjs(midDate.deadline).diff(new Date()) < 0 &&
+          dayjs(endDate.deadline).diff(new Date()) < 0) ||
+        validPeriods([EVALUATION_PERIOD.OUT], session?.user.role !== ROLES.DIRECTOR) ? (
           <Group mb={15} style={{ justifyContent: 'space-between' }}>
             <Text color={'gray'} style={{ fontWeight: 500 }}>
               {EvaluationConstants.description.finished[locale]}
@@ -115,47 +127,26 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
                 {EvaluationConstants.status[EVALUATION_PERIOD.MID].name[locale]}
               </Text>
               <Group>
-                {validPeriods([EVALUATION_PERIOD.FREE, EVALUATION_PERIOD.MID]) && (
-                  <Tooltip color={'cyan'} label={CommonConstants.edit[locale]}>
-                    <ActionIcon
-                      variant={'light'}
-                      color={'cyan'}
-                      onClick={() => handleClick(EVALUATION_PERIOD.MID, EVALUATION_MODE.EDIT)}
-                    >
-                      <IconEdit size={20} />
-                    </ActionIcon>
-                  </Tooltip>
-                )}
-                <Tooltip color={'violet'} label={CommonConstants.view[locale]}>
-                  <ActionIcon
-                    variant={'light'}
-                    color={'violet'}
-                    onClick={() => handleClick(EVALUATION_PERIOD.MID, EVALUATION_MODE.VIEW)}
-                  >
-                    <IconSearch size={20} />
-                  </ActionIcon>
-                </Tooltip>
-              </Group>
-            </Group>
-            <Group style={{ justifyContent: 'space-between' }}>
-              <Text style={{ fontWeight: 500 }}>
-                {EvaluationConstants.status[EVALUATION_PERIOD.END].name[locale]}
-              </Text>
-              <Group>
-                {validPeriods([EVALUATION_PERIOD.MID], false) ? (
+                {!midCountdown &&
+                dayjs().diff(midDate.start) < 0 &&
+                validPeriods([EVALUATION_PERIOD.FREE, EVALUATION_PERIOD.MID]) ? (
                   <Tooltip color={'gray'} label={CommonConstants.soon[locale]}>
                     <Badge color={'gray'}>
-                      <Countdown date={Date.now() + Math.random() * 99999999} />
+                      <Countdown
+                        date={midDate.start}
+                        autoStart
+                        onComplete={() => setMidCountdown(true)}
+                      />
                     </Badge>
                   </Tooltip>
                 ) : (
                   <>
-                    {validPeriods([EVALUATION_PERIOD.FREE, EVALUATION_PERIOD.END]) && (
+                    {dayjs().diff(midDate.start) > 0 && dayjs().diff(midDate.deadline) < 0 && (
                       <Tooltip color={'cyan'} label={CommonConstants.edit[locale]}>
                         <ActionIcon
                           variant={'light'}
                           color={'cyan'}
-                          onClick={() => handleClick(EVALUATION_PERIOD.END, EVALUATION_MODE.EDIT)}
+                          onClick={() => handleClick(EVALUATION_PERIOD.MID, EVALUATION_MODE.EDIT)}
                         >
                           <IconEdit size={20} />
                         </ActionIcon>
@@ -165,11 +156,54 @@ const EvaluationCardItem = ({ year, period }: EvaluationCardItemProps) => {
                       <ActionIcon
                         variant={'light'}
                         color={'violet'}
-                        onClick={() => handleClick(EVALUATION_PERIOD.END, EVALUATION_MODE.VIEW)}
+                        onClick={() => handleClick(EVALUATION_PERIOD.MID, EVALUATION_MODE.VIEW)}
                       >
                         <IconSearch size={20} />
                       </ActionIcon>
                     </Tooltip>
+                  </>
+                )}
+              </Group>
+            </Group>
+            <Group style={{ justifyContent: 'space-between' }}>
+              <Text style={{ fontWeight: 500 }}>
+                {EvaluationConstants.status[EVALUATION_PERIOD.END].name[locale]}
+              </Text>
+              <Group>
+                {!endCountdown && dayjs().diff(endDate.start) < 0 ? (
+                  <Tooltip color={'gray'} label={CommonConstants.soon[locale]}>
+                    <Badge color={'gray'}>
+                      <Countdown
+                        date={endDate.start}
+                        autoStart
+                        onComplete={() => setEndCountdown(true)}
+                      />
+                    </Badge>
+                  </Tooltip>
+                ) : (
+                  <>
+                    {validPeriods([EVALUATION_PERIOD.FREE, EVALUATION_PERIOD.END]) && (
+                      <>
+                        <Tooltip color={'cyan'} label={CommonConstants.edit[locale]}>
+                          <ActionIcon
+                            variant={'light'}
+                            color={'cyan'}
+                            onClick={() => handleClick(EVALUATION_PERIOD.END, EVALUATION_MODE.EDIT)}
+                          >
+                            <IconEdit size={20} />
+                          </ActionIcon>
+                        </Tooltip>
+                        <Tooltip color={'violet'} label={CommonConstants.view[locale]}>
+                          <ActionIcon
+                            variant={'light'}
+                            color={'violet'}
+                            onClick={() => handleClick(EVALUATION_PERIOD.END, EVALUATION_MODE.VIEW)}
+                          >
+                            <IconSearch size={20} />
+                          </ActionIcon>
+                        </Tooltip>
+                      </>
+                    )}
                   </>
                 )}
               </Group>

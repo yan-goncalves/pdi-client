@@ -7,13 +7,21 @@ import { GoalType } from '../Goal'
 export interface EvaluationModelType extends BaseType {
   year: string
   period: EVALUATION_PERIOD
+  midDate: {
+    start: Date
+    deadline: Date
+  }
+  endDate: {
+    start: Date
+    deadline: Date
+  }
   sections?: SectionType[]
   feedbacks?: FeedbackType[]
   goals?: GoalType[]
 }
 
 export type GetEvaluationModelsType = {
-  evaluations: Pick<EvaluationModelType, 'id' | 'year' | 'period'>[]
+  evaluations: Pick<EvaluationModelType, 'id' | 'year' | 'period' | 'midDate' | 'endDate'>[]
 }
 
 export type GetEvaluationModelType = {

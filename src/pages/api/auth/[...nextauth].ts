@@ -60,16 +60,6 @@ export default NextAuth({
       }
 
       return token
-    },
-
-    redirect: async ({ url, baseUrl }) => {
-      if (url.startsWith(baseUrl)) {
-        const newUrl = new URL(url)
-        const callbackUrl = newUrl.searchParams.get('callbackUrl')
-
-        return Promise.resolve(callbackUrl || newUrl.toString())
-      }
-      return Promise.resolve(url)
     }
   }
 })
