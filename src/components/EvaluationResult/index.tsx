@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client'
 import {
+  Badge,
   Card,
   DefaultMantineColor,
   Divider,
@@ -38,7 +39,8 @@ export type EvaluationResultProps = {
 const EvaluationResult = ({ actor }: EvaluationResultProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
-  const { performedEvaluation, setPerformedEvaluation, ratings, periodMode } = useEvaluation()
+  const { evaluationModel, performedEvaluation, setPerformedEvaluation, ratings, periodMode } =
+    useEvaluation()
   const [appraiseeConcept, setAppraiseeConcept] = useState<AppraiseeConceptType>()
   const [grade, setGrade] = useState<number>()
   const [concepts, setConcepts] = useState<EvaluationResultConceptType[]>([])
@@ -47,15 +49,14 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
   const { loading, refetch: refetchGrade } = useQuery<GetPerformedEvaluationType>(
     GET_PERFORMED_EVALUATION_GRADE,
     {
-      skip: !performedEvaluation.endFinished,
       variables: {
         id: performedEvaluation.id
       },
       onCompleted: ({ performedEvaluation }) => {
-        setGrade(performedEvaluation.grade)
+        setGrade(performedEvaluation?.grade || 0.0)
         setPerformedEvaluation((pe) => ({
           ...pe,
-          grade: performedEvaluation.grade
+          grade: performedEvaluation.grade || 0.0
         }))
       },
       onError: (error) => console.log('ERROR ON GETTING PERFORMED EVALUATION', { ...error })
@@ -68,7 +69,6 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
     error: errorConcepts,
     refetch: refetchConcepts
   } = useQuery<GetEvaluationResultConceptsType>(GET_EVALUATION_RESULT_CONCEPTS, {
-    skip: !performedEvaluation.endFinished,
     context: {
       headers: {
         locale
@@ -127,7 +127,8 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
         )}
         <Card.Section p={25}>
           {(periodMode === EVALUATION_PERIOD.MID || !performedEvaluation.endFinished) &&
-          actor === EVALUATION_ACTOR.USER ? (
+          actor === EVALUATION_ACTOR.USER &&
+          evaluationModel.period !== EVALUATION_PERIOD.OUT ? (
             <Group spacing={15} px={50} py={30} direction={'column'} align={'center'}>
               <IconCheck size={50} color={theme.colors.green[6]} />
               <Text align={'center'} size={'xl'} weight={500}>
@@ -158,6 +159,9 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                     </>
                   ) : (
                     <>
+                      <Badge size={'lg'} color={'cyan'} p={12}>
+                        {CommonConstants.result.concept[locale]}
+                      </Badge>
                       <Text
                         weight={900}
                         color={!appraiseeConcept ? undefined : appraiseeConcept.color}
@@ -198,13 +202,16 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                     </>
                   ) : (
                     <>
+                      <Badge size={'lg'} color={'cyan'} p={12}>
+                        {CommonConstants.result.grade[locale]}
+                      </Badge>
                       <Text weight={900} sx={{ fontSize: !match ? 80 : 40 }}>
                         {grade}
                       </Text>
                       <Rating
                         readOnly
                         precision={0.1}
-                        value={2}
+                        value={grade}
                         max={ratings.length}
                         size={!match ? 'large' : 'medium'}
                       />
