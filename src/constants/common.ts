@@ -293,6 +293,16 @@ export const CommonConstants = {
       en: 'Final result'
     },
 
+    concept: {
+      br: 'Conceito',
+      en: 'Concept'
+    },
+
+    grade: {
+      br: 'Nota',
+      en: 'Grade'
+    },
+
     finished: {
       title: {
         br: 'Avaliação finalizada!',
