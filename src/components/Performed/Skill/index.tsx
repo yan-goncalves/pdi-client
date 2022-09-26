@@ -132,8 +132,8 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
   }, [hover])
 
   const updatePerformedEvaluation = async (skill: PerformedSkillType) => {
-    const skillIndex = performedEvaluation.skills.findIndex((s) => s.id === skill.id)
-    const skills = performedEvaluation.skills.map((currSkill) => {
+    const skillIndex = performedEvaluation.skills?.findIndex((s) => s.id === skill.id)
+    const skills = performedEvaluation.skills?.map((currSkill) => {
       return currSkill.id === skill.id ? { ...currSkill, ...skill } : { ...currSkill }
     })
     setPerformedEvaluation((pe) => ({
