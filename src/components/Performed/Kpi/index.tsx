@@ -248,6 +248,8 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider }: PerformedKpiPro
       goals: goalIndex < 0 ? [...pe.goals, updated] : goals
     }))
 
+    setPerformedKpi(kpi)
+
     setIsSaving(false)
   }
 
