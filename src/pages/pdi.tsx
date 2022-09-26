@@ -1,8 +1,8 @@
 import { EVALUATION_ACTOR } from 'contexts/EvaluationProvider'
 import Dashboard from 'templates/Dashboard'
 
-const UserHomePage = () => {
+const UserPdiPage = () => {
   return <Dashboard actor={EVALUATION_ACTOR.USER} />
 }
 
-export default UserHomePage
+export default UserPdiPage

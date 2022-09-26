@@ -189,7 +189,9 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
             </React.Fragment>
           ))}
         </StepperProgress.Step>
-        {(performedEvaluation.midFinished || actor === EVALUATION_ACTOR.MANAGER) && (
+        {(performedEvaluation.midFinished ||
+          actor === EVALUATION_ACTOR.MANAGER ||
+          evaluationModel.period === EVALUATION_PERIOD.OUT) && (
           <StepperProgress.Step label={EvaluationConstants.steps.skills[locale]}>
             {skills?.map((skill) => (
               <React.Fragment key={`${skill.id}-${skill.title}`}>
@@ -240,7 +242,9 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
             ))
           )}
         </StepperProgress.Step>
-        {(performedEvaluation.midFinished || actor === EVALUATION_ACTOR.MANAGER) && (
+        {(performedEvaluation.midFinished ||
+          actor === EVALUATION_ACTOR.MANAGER ||
+          evaluationModel.period === EVALUATION_PERIOD.OUT) && (
           <StepperProgress.Step label={EvaluationConstants.steps.feedbacks[locale]}>
             {feedbacks?.map((feedback) => (
               <React.Fragment key={`${feedback.id}-${feedback.inquire}`}>
@@ -262,7 +266,8 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
         )}
         {(actor === EVALUATION_ACTOR.MANAGER ||
           performedEvaluation.midFinished ||
-          performedEvaluation.endFinished) && (
+          performedEvaluation.endFinished ||
+          evaluationModel.period === EVALUATION_PERIOD.OUT) && (
           <StepperProgress.Step label={EvaluationConstants.steps.pdi[locale]}>
             <React.Fragment>
               <EvaluationItem
@@ -289,11 +294,14 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
             </React.Fragment>
           </StepperProgress.Step>
         )}
-        {(periodMode !== EVALUATION_PERIOD.OUT || mode !== EVALUATION_MODE.VIEW) && (
-          <StepperProgress.Completed>
-            <EvaluationResult actor={actor} />
-          </StepperProgress.Completed>
-        )}
+
+        <StepperProgress.Completed>
+          <EvaluationItem
+            sectionColor={'green'}
+            sectionTitle={CommonConstants.result.title[locale]}
+          />
+          <EvaluationResult actor={actor} />
+        </StepperProgress.Completed>
       </StepperProgress>
     </ContentBase>
   )
