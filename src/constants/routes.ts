@@ -1,4 +1,10 @@
-import { IconChartInfographic, IconStars, IconTarget, IconTrendingUp } from '@tabler/icons'
+import {
+  IconChartInfographic,
+  IconReport,
+  IconStars,
+  IconTarget,
+  IconTrendingUp
+} from '@tabler/icons'
 import { NavItemLinkProps } from 'components/NavItemLink'
 import { NavLinkWrapperProps } from 'components/NavLinkWrapper'
 
@@ -13,6 +19,11 @@ export const navLinkWrapperTitles: NavLinkWrapperProps = {
   managerSectionTitle: {
     br: 'Área do Gestor',
     en: 'Manager Area'
+  },
+
+  extraSectionTitle: {
+    br: 'Exportação de Dados',
+    en: 'Data Export'
   }
 }
 
@@ -84,5 +95,16 @@ export const managerNavItemLinks: NavItemLinkProps[] = [
     },
     href: '/manager/pdi',
     icon: IconTrendingUp
+  }
+]
+
+export const extraNavItemLinks: NavItemLinkProps[] = [
+  {
+    title: {
+      br: 'Relatórios',
+      en: 'Reports'
+    },
+    href: '/report',
+    icon: IconReport
   }
 ]
