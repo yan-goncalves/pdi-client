@@ -1,7 +1,12 @@
 import { LoadingOverlay, Navbar as MantineNavbar } from '@mantine/core'
 import NavItemSection from 'components/NavItemSection'
 import { ROLES } from 'constants/role'
-import { managerNavItemLinks, navLinkWrapperTitles, userNavItemLinks } from 'constants/routes'
+import {
+  extraNavItemLinks,
+  managerNavItemLinks,
+  navLinkWrapperTitles,
+  userNavItemLinks
+} from 'constants/routes'
 import { LocaleType, useLocale } from 'contexts/LocaleProvider'
 import { useSession } from 'next-auth/react'
 
@@ -12,12 +17,15 @@ export type NavLinkWrapperProps = {
   managerSectionTitle: {
     [key in LocaleType]: string
   }
+  extraSectionTitle: {
+    [key in LocaleType]: string
+  }
 }
 
 const NavLinkWrapper = () => {
   const { locale } = useLocale()
   const { data: session } = useSession()
-  const { userSectionTitle, managerSectionTitle } = navLinkWrapperTitles
+  const { userSectionTitle, managerSectionTitle, extraSectionTitle } = navLinkWrapperTitles
 
   if (!session) {
     return <LoadingOverlay visible />
@@ -30,6 +38,9 @@ const NavLinkWrapper = () => {
       )}
       {session?.user?.role !== ROLES.USER && (
         <NavItemSection sectionTitle={managerSectionTitle[locale]} items={managerNavItemLinks} />
+      )}
+      {session?.user.department.key === 'rh' && (
+        <NavItemSection sectionTitle={extraSectionTitle[locale]} items={extraNavItemLinks} />
       )}
     </MantineNavbar.Section>
   )
