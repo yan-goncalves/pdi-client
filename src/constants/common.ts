@@ -321,5 +321,12 @@ export const CommonConstants = {
         }
       }
     }
+  },
+
+  reports: {
+    title: {
+      br: 'Relatórios',
+      en: 'Reports'
+    }
   }
 }
