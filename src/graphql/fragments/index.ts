@@ -23,6 +23,7 @@ export const FRAGMENT_INFO_MODEL = gql`
 export const FRAGMENT_USER_MODEL = gql`
   ${FRAGMENT_INFO_MODEL}
   ${FRAGMENT_DEPARTMENT_MODEL}
+  ${FRAGMENT_INFO_MODEL}
   fragment FragmentUserModel on UserModel {
     id
     info {
@@ -31,6 +32,9 @@ export const FRAGMENT_USER_MODEL = gql`
     manager {
       id
       username
+      info {
+        ...FragmentInfoModel
+      }
     }
     department {
       ...FragmentDepartmentModel
