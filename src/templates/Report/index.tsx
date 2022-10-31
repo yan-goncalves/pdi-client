@@ -1,5 +1,6 @@
-import EvaluationCardListTemplate from 'templates/EvaluationCardList'
-import { EvaluationListTemplateProps } from 'templates/EvaluationList'
+import EvaluationCardListTemplate, {
+  EvaluationListTemplateProps
+} from 'templates/EvaluationCardList'
 
 const Report = (props: EvaluationListTemplateProps) => {
   return <EvaluationCardListTemplate {...props} />
