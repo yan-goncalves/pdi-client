@@ -39,7 +39,7 @@ const NavLinkWrapper = () => {
       {session?.user?.role !== ROLES.USER && (
         <NavItemSection sectionTitle={managerSectionTitle[locale]} items={managerNavItemLinks} />
       )}
-      {session?.user.department.key === 'rh' && (
+      {(session?.user?.role === ROLES.ADMIN || session?.user.department.key === 'rh') && (
         <NavItemSection sectionTitle={extraSectionTitle[locale]} items={extraNavItemLinks} />
       )}
     </MantineNavbar.Section>
