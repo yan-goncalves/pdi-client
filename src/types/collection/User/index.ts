@@ -9,12 +9,10 @@ export interface UserType extends BaseType {
   blocked: boolean | null
   confirmed: boolean
   role: ROLES
-  picture?: {
-    url: string
-  }
+  picture?: string
   department: DepartmentType
   info: UserInfoType
-  manager: Pick<UserType, 'id' | 'username'>
+  manager: Pick<UserType, 'id' | 'username' | 'info'>
 }
 
 export type GetUsersType = {
