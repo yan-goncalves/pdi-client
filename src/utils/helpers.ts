@@ -56,6 +56,12 @@ export const orderMembersByDepartments = (team: UserType[], departments: Departm
         }
       }
       ordered[key].members.push(member)
+      ordered[key] = {
+        ...ordered[key],
+        members: ordered[key].members.sort((userA, userB) => {
+          return userA.username > userB.username ? 1 : userA.username < userB.username ? -1 : 0
+        })
+      }
     })
 
   return ordered
