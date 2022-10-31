@@ -126,7 +126,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
               src={
                 !appraisee?.picture
                   ? FALLBACK_USER_PICTURE
-                  : `${process.env.NEXT_PUBLIC_API_URL}${appraisee.picture.url}`
+                  : `${process.env.NEXT_PUBLIC_API_URL}${appraisee.picture}`
               }
               sx={{ backgroundColor: theme.colors.gray[3] }}
             />

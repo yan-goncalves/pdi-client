@@ -33,9 +33,9 @@ const PageEvaluationList = ({ items, user }: PageEvaluationListUserProps) => {
             <Avatar
               size={!match ? 'sm' : 'xs'}
               src={
-                !user.picture?.url
+                !user.picture
                   ? FALLBACK_USER_PICTURE
-                  : `${process.env.NEXT_PUBLIC_API_URL}${user.picture.url}`
+                  : `${process.env.NEXT_PUBLIC_API_URL}/${user.picture}`
               }
               sx={{ backgroundColor: theme.colors.gray[3] }}
             />

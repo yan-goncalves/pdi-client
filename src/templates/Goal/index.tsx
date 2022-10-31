@@ -229,7 +229,7 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
                 src={
                   !appraisee?.picture
                     ? FALLBACK_USER_PICTURE
-                    : `${process.env.NEXT_PUBLIC_API_URL}${appraisee.picture.url}`
+                    : `${process.env.NEXT_PUBLIC_API_URL}${appraisee.picture}`
                 }
               />
               <Text size={!match ? 'md' : 'xs'}>

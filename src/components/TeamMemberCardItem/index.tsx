@@ -32,9 +32,7 @@ const TeamMemberCardItem = ({ id, username, info, picture }: UserType) => {
           objectFit={'cover'}
           width={140}
           alt={'team-member-picture'}
-          src={
-            !picture ? FALLBACK_USER_PICTURE : `${process.env.NEXT_PUBLIC_API_URL}${picture.url}`
-          }
+          src={!picture ? FALLBACK_USER_PICTURE : `${process.env.NEXT_PUBLIC_API_URL}${picture}`}
         />
       </Card.Body>
       <Card.Footer style={{ justifyContent: 'center' }}>

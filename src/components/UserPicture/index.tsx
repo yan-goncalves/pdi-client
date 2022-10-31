@@ -23,8 +23,8 @@ const UserPicture = ({ width = 80, height = 80 }: UserPictureProps) => {
   })
 
   useEffect(() => {
-    if (session && session.user?.picture?.url) {
-      setPicture(`${process.env.NEXT_PUBLIC_API_URL}${session.user.picture.url}`)
+    if (session && session.user?.picture) {
+      setPicture(`${process.env.NEXT_PUBLIC_API_URL}${session.user.picture}`)
     } else {
       setPicture(FALLBACK_USER_PICTURE)
     }
