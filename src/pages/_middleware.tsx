@@ -23,7 +23,11 @@ export async function middleware(req: NextApiRequest & NextRequest) {
   const nextLocale = req.nextUrl.locale
   const locale = nextLocale !== cookieLocale ? nextLocale : cookieLocale
 
-  if (pathname.includes('report') && session?.user.department.key !== 'rh') {
+  if (
+    pathname.includes('report') &&
+    session?.user.role !== ROLES.ADMIN &&
+    session?.user?.department?.key !== 'rh'
+  ) {
     return NextResponse.redirect(stripDefaultLocale(`/${locale}/dashboard`))
   }
 
