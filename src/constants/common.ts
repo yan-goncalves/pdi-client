@@ -327,6 +327,16 @@ export const CommonConstants = {
     title: {
       br: 'Relatórios',
       en: 'Reports'
+    },
+
+    userListTitle: {
+      br: 'Selecione abaixo os usuários para exportação:',
+      en: 'Select below users for export:'
+    },
+
+    button: {
+      br: 'Gerar relatório',
+      en: 'Generate report'
     }
   }
 }
