@@ -135,6 +135,8 @@ const PdiCompetence = ({ actor, pdi }: PdiCompetenceProps) => {
         }
       })
     }
+
+    await refetch()
   }
 
   const handleEdit = (pdiCompetence: PdiCompetenceType) => {
