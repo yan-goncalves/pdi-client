@@ -1,13 +1,12 @@
 import { useMutation } from '@apollo/client'
-import { Grid, Group, Loader, Text, Title, useMantineTheme } from '@mantine/core'
+import { Grid, Group, Text, Title, useMantineTheme } from '@mantine/core'
 import { useNotifications } from '@mantine/notifications'
 import { Rating } from '@mui/material'
-import { IconChecks, IconStar } from '@tabler/icons'
+import { IconStar } from '@tabler/icons'
 import Accordion from 'components/Accordion'
 import Comment from 'components/Comment'
 import { CommonConstants } from 'constants/common'
 import { EvaluationConstants, EVALUATION_PERIOD } from 'constants/evaluation'
-import { NotificationsConstants } from 'constants/notifications'
 import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import {
@@ -149,51 +148,7 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
     value: number | string
   ) => {
     setIsSaving(true)
-
-    notifications.showNotification({
-      message: (
-        <Title order={5} p={2}>
-          <Group>
-            <Loader size={'sm'} />
-            {NotificationsConstants.saving.answer[locale]}
-          </Group>
-        </Title>
-      ),
-      radius: 'md',
-      autoClose: 850,
-      styles: {
-        root: {
-          borderColor: theme.colors.blue[6],
-          '&::before': { backgroundColor: theme.colors.blue[6] }
-        }
-      }
-    })
-    setTimeout(
-      async () =>
-        await handleCreateUpdate(field, value).then(() => {
-          notifications.showNotification({
-            message: (
-              <Title order={5} p={2}>
-                <Group>
-                  <IconChecks size={22} color={theme.colors.green[9]} />
-                  {NotificationsConstants.saved.answer[locale]}
-                </Group>
-              </Title>
-            ),
-            color: 'green',
-            radius: 'md',
-
-            autoClose: 1500,
-            styles: (theme) => ({
-              root: {
-                borderColor: theme.colors.green[6],
-                '&::before': { backgroundColor: theme.colors.green[6] }
-              }
-            })
-          })
-        }),
-      1000
-    )
+    await handleCreateUpdate(field, value)
   }
 
   const handleCreateUpdate = async (
