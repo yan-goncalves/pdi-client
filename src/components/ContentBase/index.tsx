@@ -5,14 +5,15 @@ import { useStyles } from './styles'
 type ContentBaseProps = {
   children: React.ReactNode
   title?: React.ReactNode
+  hasSticky?: boolean
 }
 
-const ContentBase = ({ children, title }: ContentBaseProps) => {
+const ContentBase = ({ children, title, hasSticky = false }: ContentBaseProps) => {
   const { classes } = useStyles()
 
   return (
     <div className={classes.root}>
-      <Card withBorder mx={15} sx={{ height: '100%' }}>
+      <Card withBorder mx={15} sx={{ height: '100%', ...(hasSticky && { overflow: 'unset' }) }}>
         <Card.Section>
           <ContentHeader title={title} />
         </Card.Section>
