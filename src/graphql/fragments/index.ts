@@ -23,7 +23,6 @@ export const FRAGMENT_INFO_MODEL = gql`
 export const FRAGMENT_USER_MODEL = gql`
   ${FRAGMENT_INFO_MODEL}
   ${FRAGMENT_DEPARTMENT_MODEL}
-  ${FRAGMENT_INFO_MODEL}
   fragment FragmentUserModel on UserModel {
     id
     info {
@@ -148,30 +147,19 @@ export const FRAGMENT_PERFORMED_SKILL = gql`
 `
 
 export const FRAGMENT_KPI_MODEL = gql`
-  ${FRAGMENT_USER_MODEL}
   fragment FragmentKpiModel on KpiModel {
     id
     name
     target
     weight
-    manager {
-      ...FragmentUserModel
-    }
   }
 `
 
 export const FRAGMENT_GOAL_MODEL = gql`
-  ${FRAGMENT_USER_MODEL}
   ${FRAGMENT_KPI_MODEL}
   fragment FragmentGoalModel on GoalModel {
     id
     name
-    manager {
-      ...FragmentUserModel
-    }
-    user {
-      ...FragmentUserModel
-    }
     kpis {
       ...FragmentKpiModel
     }
