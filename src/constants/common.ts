@@ -11,6 +11,11 @@ export const CommonConstants = {
     en: 'Logout'
   },
 
+  download: {
+    br: 'Baixar',
+    en: 'Download'
+  },
+
   actor: {
     [EVALUATION_ACTOR.USER]: {
       br: 'Usuário(a)',
@@ -330,13 +335,56 @@ export const CommonConstants = {
     },
 
     userListTitle: {
-      br: 'Selecione abaixo os usuários para exportação:',
-      en: 'Select below users for export:'
+      br: 'Selecione os usuários para exportação:',
+      en: 'Select users for export:'
     },
 
     button: {
       br: 'Gerar relatório',
       en: 'Generate report'
+    },
+
+    status: {
+      generate: {
+        title: {
+          br: 'Por favor, aguarde...',
+          en: 'Please, wait...'
+        },
+
+        label: {
+          br: 'Gerando relatório...',
+          en: 'Generating report...'
+        },
+
+        button: {
+          br: 'Processando...',
+          en: 'Processing...'
+        }
+      },
+
+      ready: {
+        title: {
+          br: 'Relatório pronto',
+          en: 'Report is ready'
+        },
+
+        label: {
+          br: 'O relatório está pronto para ser baixado',
+          en: 'Report is ready to download'
+        }
+      },
+
+      error: {
+        title: {
+          br: 'Solicitação incompleta',
+          en: 'Incomplete request'
+        },
+
+        label: {
+          br: 'Não foi possível atender a solicitação',
+          en: 'Unable to fulfill the request'
+        }
+      }
     }
   }
 }
