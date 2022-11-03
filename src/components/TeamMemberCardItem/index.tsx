@@ -26,13 +26,13 @@ const TeamMemberCardItem = ({ id, username, info, picture }: UserType) => {
       isPressable
       className={useCardStyles()}
     >
-      <Card.Body css={{ p: 0, backgroundColor: '#ddd' }}>
+      <Card.Body css={{ p: 0, backgroundColor: '#ddd', height: 200, maxHeight: 200 }}>
         <Card.Image
           css={{ objectPosition: 'center center' }}
-          objectFit={'cover'}
-          width={140}
+          objectFit={!picture ? 'scale-down' : 'cover'}
+          width={'100%'}
           alt={'team-member-picture'}
-          src={!picture ? FALLBACK_USER_PICTURE : `${process.env.NEXT_PUBLIC_API_URL}${picture}`}
+          src={!picture ? FALLBACK_USER_PICTURE : `${process.env.NEXT_PUBLIC_API_URL}/${picture}`}
         />
       </Card.Body>
       <Card.Footer style={{ justifyContent: 'center' }}>
