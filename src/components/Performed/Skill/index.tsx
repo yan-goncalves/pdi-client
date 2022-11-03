@@ -1,6 +1,5 @@
 import { useMutation } from '@apollo/client'
 import { Grid, Group, Text, Title, useMantineTheme } from '@mantine/core'
-import { useNotifications } from '@mantine/notifications'
 import { Rating } from '@mui/material'
 import { IconStar } from '@tabler/icons'
 import Accordion from 'components/Accordion'
@@ -57,7 +56,6 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
   const [labels, setLabels] = useState<string[]>()
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [isRated, setIsRated] = useState<boolean>(false)
-  const notifications = useNotifications()
 
   // queries/mutations
   const [create] = useMutation<CreatePerformedSkillType>(CREATE_PERFORMED_SKILL, {
