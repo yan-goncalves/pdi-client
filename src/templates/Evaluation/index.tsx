@@ -191,7 +191,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
         </StepperProgress.Step>
         {(performedEvaluation.midFinished ||
           actor === EVALUATION_ACTOR.MANAGER ||
-          evaluationModel.period === EVALUATION_PERIOD.OUT) && (
+          [EVALUATION_PERIOD.OUT, EVALUATION_PERIOD.END].includes(evaluationModel.period)) && (
           <StepperProgress.Step label={EvaluationConstants.steps.skills[locale]}>
             {skills?.map((skill) => (
               <React.Fragment key={`${skill.id}-${skill.title}`}>
