@@ -69,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
 
   const team = users
     .filter((user) => {
-      return user.id !== session?.user.id && ![ROLES.ADMIN, ROLES.DIRECTOR].includes(user.role)
+      return ![ROLES.ADMIN, ROLES.DIRECTOR].includes(user.role)
     })
     .sort((userA, userB) => {
       return userA.username > userB.username ? 1 : userA.username < userB.username ? -1 : 0
