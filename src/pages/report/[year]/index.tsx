@@ -100,7 +100,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
 
   return {
     props: {
-      users: team,
+      users: team.filter((user) => !user.username.includes('pdi')),
       year: params?.year,
       evaluationModel: evaluation,
       usersGoals
