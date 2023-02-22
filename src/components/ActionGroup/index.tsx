@@ -72,6 +72,7 @@ const ActionGroup = ({
               }
             })
           })
+          setIsSaving(false)
         }),
       1000
     )
