@@ -3,8 +3,8 @@ import { PerformedEvaluationType } from '../PerformedEvaluation'
 import { QuestionType } from '../Question'
 
 export enum REPLY_OPTION {
-  YES = 'yes',
-  NO = 'no'
+  YES = 'YES',
+  NO = 'NO'
 }
 
 export interface PerformedQuestionType extends BaseType {
