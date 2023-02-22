@@ -207,9 +207,13 @@ const PdiCompetence = ({ actor, pdi }: PdiCompetenceProps) => {
       ) : (
         <>
           <Group mb={20} direction={'column'} align={'flex-end'}>
-            <Button loading={isLocaleLoading} onClick={() => setOpenCompetenceModal(true)}>
-              {!isLocaleLoading ? CommonConstants.create[locale] : CommonConstants.loading[locale]}
-            </Button>
+            {actor === EVALUATION_ACTOR.MANAGER && (
+              <Button loading={isLocaleLoading} onClick={() => setOpenCompetenceModal(true)}>
+                {!isLocaleLoading
+                  ? CommonConstants.create[locale]
+                  : CommonConstants.loading[locale]}
+              </Button>
+            )}
           </Group>
           <Table aria-labelledby={'pdi-competence-categories'}>
             <Table.Header>
@@ -237,28 +241,30 @@ const PdiCompetence = ({ actor, pdi }: PdiCompetenceProps) => {
                     {new Date(pdiCompetence.deadline).toLocaleDateString('pt-BR')}
                   </Table.Cell>
                   <Table.Cell>
-                    <Group sx={{ justifyContent: 'end' }}>
-                      <Tooltip color={'cyan'} label={CommonConstants.edit[locale]}>
-                        <ActionIcon
-                          disabled={isSaving}
-                          variant={'light'}
-                          color={'cyan'}
-                          onClick={() => handleEdit(pdiCompetence)}
-                        >
-                          <IconEdit size={!match ? 20 : 14} />
-                        </ActionIcon>
-                      </Tooltip>
-                      <Tooltip color={'red'} label={CommonConstants.delete[locale]}>
-                        <ActionIcon
-                          disabled={isSaving}
-                          variant={'light'}
-                          color={'red'}
-                          onClick={async () => await handleDelete(pdiCompetence)}
-                        >
-                          <IconTrash size={!match ? 20 : 14} />
-                        </ActionIcon>
-                      </Tooltip>
-                    </Group>
+                    {actor === EVALUATION_ACTOR.MANAGER && (
+                      <Group sx={{ justifyContent: 'end' }}>
+                        <Tooltip color={'cyan'} label={CommonConstants.edit[locale]}>
+                          <ActionIcon
+                            disabled={isSaving}
+                            variant={'light'}
+                            color={'cyan'}
+                            onClick={() => handleEdit(pdiCompetence)}
+                          >
+                            <IconEdit size={!match ? 20 : 14} />
+                          </ActionIcon>
+                        </Tooltip>
+                        <Tooltip color={'red'} label={CommonConstants.delete[locale]}>
+                          <ActionIcon
+                            disabled={isSaving}
+                            variant={'light'}
+                            color={'red'}
+                            onClick={async () => await handleDelete(pdiCompetence)}
+                          >
+                            <IconTrash size={!match ? 20 : 14} />
+                          </ActionIcon>
+                        </Tooltip>
+                      </Group>
+                    )}
                   </Table.Cell>
                 </Table.Row>
               ))}
