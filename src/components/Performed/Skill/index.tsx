@@ -221,17 +221,19 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
         </Grid.Col>
       )}
 
-      <Grid.Col span={12} xs={8}>
-        <Group direction={'column'}>
-          <Title order={6}>{CommonConstants.comment[locale]}</Title>
-          <Comment
-            isDisabled={isDisabled}
-            value={comment}
-            onChange={setComment}
-            handleSave={handleSaveComment}
-          />
-        </Group>
-      </Grid.Col>
+      {actor === EVALUATION_ACTOR.MANAGER && (
+        <Grid.Col span={12} xs={8}>
+          <Group direction={'column'}>
+            <Title order={6}>{CommonConstants.comment[locale]}</Title>
+            <Comment
+              isDisabled={isDisabled}
+              value={comment}
+              onChange={setComment}
+              handleSave={handleSaveComment}
+            />
+          </Group>
+        </Grid.Col>
+      )}
 
       {(performedEvaluation.midFinished || performedEvaluation.endFinished) && (
         <Grid.Col mt={15} span={12}>
