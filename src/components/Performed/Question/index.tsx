@@ -53,7 +53,7 @@ const PerformedQuestion = ({ question, performed, actor }: PerformedQuestionProp
   useEffect(() => {
     if (performedEvaluation) {
       const performedQuestionFound = performedEvaluation.questions?.find(
-        ({ question }) => question.id === question.id
+        ({ question: q }) => q.id === question.id
       )
       setPerformedQuestion(performedQuestionFound)
     }
