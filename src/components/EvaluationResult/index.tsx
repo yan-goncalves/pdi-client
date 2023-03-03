@@ -36,11 +36,10 @@ export type EvaluationResultProps = {
   actor: EVALUATION_ACTOR
 }
 
-const EvaluationResult = ({ actor }: EvaluationResultProps) => {
+const EvaluationResult = () => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
-  const { evaluationModel, performedEvaluation, setPerformedEvaluation, ratings, periodMode } =
-    useEvaluation()
+  const { performedEvaluation, setPerformedEvaluation, ratings, periodMode } = useEvaluation()
   const [appraiseeConcept, setAppraiseeConcept] = useState<AppraiseeConceptType>()
   const [grade, setGrade] = useState<number>()
   const [concepts, setConcepts] = useState<EvaluationResultConceptType[]>([])

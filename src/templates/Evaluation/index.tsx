@@ -300,7 +300,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
             sectionColor={'green'}
             sectionTitle={CommonConstants.result.title[locale]}
           />
-          <EvaluationResult actor={actor} />
+          <EvaluationResult />
         </StepperProgress.Completed>
       </StepperProgress>
     </ContentBase>
