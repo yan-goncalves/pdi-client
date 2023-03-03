@@ -71,6 +71,9 @@ export default function _App({ Component, pageProps: { session, ...pageProps } }
                     fontFamily: 'Open Sans, Roboto, sans-serif'
                   }
                 },
+                Text: {
+                  root: {}
+                },
                 Card: {
                   root: {
                     borderColor: DEFAULT_THEME.colors.gray[3]

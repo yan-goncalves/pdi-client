@@ -1,7 +1,9 @@
 import { useMutation, useQuery } from '@apollo/client'
-import { Badge, Grid, Text } from '@mantine/core'
+import { Badge, Grid, Group, Text } from '@mantine/core'
 import LoadingOverlay from 'components/LoadingOverlay'
+import { CommonConstants } from 'constants/common'
 import { EVALUATION_ACTOR, useEvaluation } from 'contexts/EvaluationProvider'
+import { useLocale } from 'contexts/LocaleProvider'
 import { CREATE_PERFORMED_GOAL } from 'graphql/mutations/collection/PerformedGoal'
 import { GET_PERFORMED_GOAL } from 'graphql/queries/collection/PerformedGoal'
 import React, { useEffect, useState } from 'react'
@@ -21,6 +23,7 @@ export type PerformedGoalProps = {
 
 const PerformedGoal = ({ goal, performed, actor }: PerformedGoalProps) => {
   const { performedEvaluation } = useEvaluation()
+  const { locale } = useLocale()
   const [performedGoal, setPerformedGoal] = useState<PerformedGoalType>()
 
   // queries/mutations
@@ -67,11 +70,29 @@ const PerformedGoal = ({ goal, performed, actor }: PerformedGoalProps) => {
         <React.Fragment key={`${kpi.id}-${kpi.name}`}>
           <Grid.Col span={12}>
             <Badge size={'md'} mb={10}>
-              KPI - {index + 1}
+              KPI
             </Badge>
-            <Text size={'md'} weight={500} mb={20}>
+            <Text size={'md'} weight={500} mb={5}>
               {index + 1} - {kpi.name}
             </Text>
+
+            <Group spacing={5}>
+              <Text size={'sm'} color={'gray'} style={{ minWidth: 50 }}>
+                {CommonConstants.target[locale]}:
+              </Text>
+              <Text size={'sm'} color={'gray'} weight={500}>
+                {kpi.target}
+              </Text>
+            </Group>
+
+            <Group spacing={5} mb={20}>
+              <Text size={'sm'} color={'gray'} style={{ minWidth: 50 }}>
+                {CommonConstants.weight[locale]}:
+              </Text>
+              <Text size={'sm'} color={'gray'} weight={500}>
+                {kpi.weight}%
+              </Text>
+            </Group>
           </Grid.Col>
           <PerformedKpi
             kpi={kpi}

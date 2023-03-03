@@ -1,4 +1,5 @@
 import { Badge, DefaultMantineColor, Grid, Skeleton, Title, useMantineTheme } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import { useEvaluation } from 'contexts/EvaluationProvider'
 
 export type EvaluationItemProps = {
@@ -10,6 +11,7 @@ export type EvaluationItemProps = {
 const EvaluationItem = ({ sectionTitle, sectionColor, title }: EvaluationItemProps) => {
   const theme = useMantineTheme()
   const { isLocaleLoading } = useEvaluation()
+  const isMobile = useMediaQuery(`(max-width:  ${theme.breakpoints.sm}px)`)
 
   return (
     <Grid mt={15} mb={15} gutter={'xl'}>
@@ -35,26 +37,26 @@ const EvaluationItem = ({ sectionTitle, sectionColor, title }: EvaluationItemPro
           </Skeleton>
         </Grid.Col>
       )}
-      {title && (
-        <Grid.Col>
+      <Grid.Col>
+        {isLocaleLoading ? (
           <Skeleton
             visible={isLocaleLoading}
-            height={32}
+            height={50}
             radius={'md'}
-            width={!isLocaleLoading ? 'auto' : 300}
+            width={!isMobile ? '70%' : 'auto'}
+          />
+        ) : (
+          <Title
+            p={10}
+            order={4}
+            sx={{
+              color: !isLocaleLoading ? theme.black : theme.colors.gray[4]
+            }}
           >
-            <Title
-              p={10}
-              order={4}
-              sx={{
-                color: !isLocaleLoading ? theme.black : theme.colors.gray[4]
-              }}
-            >
-              {title}
-            </Title>
-          </Skeleton>
-        </Grid.Col>
-      )}
+            {title}
+          </Title>
+        )}
+      </Grid.Col>
     </Grid>
   )
 }

@@ -9,6 +9,7 @@ import {
 } from 'constants/routes'
 import { LocaleType, useLocale } from 'contexts/LocaleProvider'
 import { useSession } from 'next-auth/react'
+import reportConfig from '../../../config.json'
 
 export type NavLinkWrapperProps = {
   userSectionTitle: {
@@ -39,7 +40,8 @@ const NavLinkWrapper = () => {
       {session?.user?.role !== ROLES.USER && (
         <NavItemSection sectionTitle={managerSectionTitle[locale]} items={managerNavItemLinks} />
       )}
-      {(session?.user?.role === ROLES.ADMIN || session?.user.department.key === 'rh') && (
+      {(session?.user?.role === ROLES.ADMIN ||
+        reportConfig.report.users.includes(session.user.username)) && (
         <NavItemSection sectionTitle={extraSectionTitle[locale]} items={extraNavItemLinks} />
       )}
     </MantineNavbar.Section>

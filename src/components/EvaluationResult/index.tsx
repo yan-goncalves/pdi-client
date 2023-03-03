@@ -126,9 +126,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
           </>
         )}
         <Card.Section p={25}>
-          {(periodMode === EVALUATION_PERIOD.MID || !performedEvaluation.endFinished) &&
-          actor === EVALUATION_ACTOR.USER &&
-          evaluationModel.period !== EVALUATION_PERIOD.OUT ? (
+          {periodMode === EVALUATION_PERIOD.MID ? (
             <Group spacing={15} px={50} py={30} direction={'column'} align={'center'}>
               <IconCheck size={50} color={theme.colors.green[6]} />
               <Text align={'center'} size={'xl'} weight={500}>
