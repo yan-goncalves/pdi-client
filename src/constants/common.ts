@@ -226,6 +226,11 @@ export const CommonConstants = {
     title: {
       br: 'Coaching de Carreira e Crescimento',
       en: 'Career and Growth Coaching'
+    },
+
+    empty: {
+      br: 'Nenhum coaching de carreira e crescimento inserido',
+      en: 'No career and growth coaching entered'
     }
   },
 
@@ -284,6 +289,18 @@ export const CommonConstants = {
     weakness: {
       br: 'Pontos de Melhoria',
       en: 'Improvement Points'
+    },
+
+    empty: {
+      strength: {
+        br: 'Nenhum ponto forte inserido',
+        en: 'No strengths entered'
+      },
+
+      weakness: {
+        br: 'Nenhum ponto de melhoria inserido',
+        en: 'No improvement point entered'
+      }
     }
   },
 

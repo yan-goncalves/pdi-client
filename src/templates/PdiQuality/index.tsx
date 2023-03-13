@@ -237,65 +237,71 @@ const PdiQuality = ({ pdi, actor }: PdiQualityProps) => {
           </Group>
         )}
         <Group mt={20} spacing={5} direction={'column'} sx={{ width: 300 }}>
-          {strength.map((pdi) => (
-            <React.Fragment key={pdi.id}>
-              {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER ? (
-                <Group
-                  key={pdi.id}
-                  onMouseEnter={() => strengthEdit?.id !== pdi.id && setStrengthHover(pdi.id)}
-                  onMouseLeave={() => setStrengthHover(-1)}
-                  onBlur={() => setStrengthEdit(undefined)}
-                  onClick={() => setStrengthEdit(pdi)}
-                  sx={{ width: '100%' }}
-                >
-                  <TextInput
-                    disabled={isSaving}
-                    radius={'md'}
-                    variant={
-                      strengthHover === pdi.id && strengthEdit?.id !== pdi.id
-                        ? 'filled'
-                        : strengthEdit?.id === pdi.id
-                        ? 'default'
-                        : 'unstyled'
-                    }
-                    onBlur={handleEditStrength}
-                    value={
-                      strengthEdit?.id === pdi.id ? strengthEdit?.description : pdi.description
-                    }
-                    onChange={({ currentTarget: { value } }) =>
-                      strengthEdit?.id === pdi.id &&
-                      setStrengthEdit({
-                        ...strengthEdit,
-                        description: value
-                      })
-                    }
-                    sx={{ width: 250 }}
-                  />
-                  <Transition
-                    mounted={strengthEdit?.id !== pdi.id && strengthHover === pdi.id}
-                    transition={'slide-left'}
+          {!strength.length ? (
+            <Text size={'sm'} weight={400} sx={{ color: theme.colors.gray[3] }}>
+              {CommonConstants.pdiQuality.empty.strength[locale]}
+            </Text>
+          ) : (
+            strength.map((pdi) => (
+              <React.Fragment key={pdi.id}>
+                {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER ? (
+                  <Group
+                    key={pdi.id}
+                    onMouseEnter={() => strengthEdit?.id !== pdi.id && setStrengthHover(pdi.id)}
+                    onMouseLeave={() => setStrengthHover(-1)}
+                    onBlur={() => setStrengthEdit(undefined)}
+                    onClick={() => setStrengthEdit(pdi)}
+                    sx={{ width: '100%' }}
                   >
-                    {(styles) => (
-                      <ActionIcon
-                        disabled={isSaving}
-                        onClick={() => handleDelete(pdi)}
-                        variant={'light'}
-                        size={'lg'}
-                        color={'red'}
-                        style={styles}
-                      >
-                        <IconTrash size={20} />
-                      </ActionIcon>
-                    )}
-                  </Transition>
-                </Group>
-              ) : (
-                <Text key={pdi.id} size={'md'}>
-                  {pdi.description}
-                </Text>
-              )}
-            </React.Fragment>
-          ))}
+                    <TextInput
+                      disabled={isSaving}
+                      radius={'md'}
+                      variant={
+                        strengthHover === pdi.id && strengthEdit?.id !== pdi.id
+                          ? 'filled'
+                          : strengthEdit?.id === pdi.id
+                          ? 'default'
+                          : 'unstyled'
+                      }
+                      onBlur={handleEditStrength}
+                      value={
+                        strengthEdit?.id === pdi.id ? strengthEdit?.description : pdi.description
+                      }
+                      onChange={({ currentTarget: { value } }) =>
+                        strengthEdit?.id === pdi.id &&
+                        setStrengthEdit({
+                          ...strengthEdit,
+                          description: value
+                        })
+                      }
+                      sx={{ width: 250 }}
+                    />
+                    <Transition
+                      mounted={strengthEdit?.id !== pdi.id && strengthHover === pdi.id}
+                      transition={'slide-left'}
+                    >
+                      {(styles) => (
+                        <ActionIcon
+                          disabled={isSaving}
+                          onClick={() => handleDelete(pdi)}
+                          variant={'light'}
+                          size={'lg'}
+                          color={'red'}
+                          style={styles}
+                        >
+                          <IconTrash size={20} />
+                        </ActionIcon>
+                      )}
+                    </Transition>
+                  </Group>
+                ) : (
+                  <Text key={pdi.id} size={'md'}>
+                    {pdi.description}
+                  </Text>
+                )}
+              </React.Fragment>
+            ))
+          )}
         </Group>
       </Grid.Col>
       <Grid.Col span={12} sm={6}>
@@ -332,65 +338,71 @@ const PdiQuality = ({ pdi, actor }: PdiQualityProps) => {
           </Group>
         )}
         <Group mt={20} spacing={5} direction={'column'} sx={{ maxWidth: 300 }}>
-          {weakness.map((pdi) => (
-            <React.Fragment key={pdi.id}>
-              {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER ? (
-                <Group
-                  key={pdi.id}
-                  onMouseEnter={() => setWeaknessHover(pdi.id)}
-                  onMouseLeave={() => setWeaknessHover(-1)}
-                  onBlur={() => setWeaknessEdit(undefined)}
-                  onClick={() => setWeaknessEdit(pdi)}
-                  sx={{ width: '100%' }}
-                >
-                  <TextInput
-                    disabled={isSaving}
-                    radius={'md'}
-                    variant={
-                      weaknessHover === pdi.id && weaknessEdit?.id !== pdi.id
-                        ? 'filled'
-                        : weaknessEdit?.id === pdi.id
-                        ? 'default'
-                        : 'unstyled'
-                    }
-                    onBlur={handleEditWeakness}
-                    value={
-                      weaknessEdit?.id === pdi.id ? weaknessEdit?.description : pdi.description
-                    }
-                    onChange={({ currentTarget: { value } }) =>
-                      weaknessEdit?.id === pdi.id &&
-                      setWeaknessEdit({
-                        ...weaknessEdit,
-                        description: value
-                      })
-                    }
-                    sx={{ width: 250, color: !isSaving ? theme.black : theme.colors.gray[3] }}
-                  />
-                  <Transition
-                    mounted={weaknessEdit?.id !== pdi.id && weaknessHover === pdi.id}
-                    transition={'slide-left'}
+          {!weakness.length ? (
+            <Text size={'sm'} weight={400} sx={{ color: theme.colors.gray[3] }}>
+              {CommonConstants.pdiQuality.empty.weakness[locale]}
+            </Text>
+          ) : (
+            weakness.map((pdi) => (
+              <React.Fragment key={pdi.id}>
+                {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER ? (
+                  <Group
+                    key={pdi.id}
+                    onMouseEnter={() => setWeaknessHover(pdi.id)}
+                    onMouseLeave={() => setWeaknessHover(-1)}
+                    onBlur={() => setWeaknessEdit(undefined)}
+                    onClick={() => setWeaknessEdit(pdi)}
+                    sx={{ width: '100%' }}
                   >
-                    {(styles) => (
-                      <ActionIcon
-                        disabled={isSaving}
-                        onClick={() => handleDelete(pdi)}
-                        variant={'light'}
-                        size={'lg'}
-                        color={'red'}
-                        style={styles}
-                      >
-                        <IconTrash size={20} />
-                      </ActionIcon>
-                    )}
-                  </Transition>
-                </Group>
-              ) : (
-                <Text key={pdi.id} size={'md'}>
-                  {pdi.description}
-                </Text>
-              )}
-            </React.Fragment>
-          ))}
+                    <TextInput
+                      disabled={isSaving}
+                      radius={'md'}
+                      variant={
+                        weaknessHover === pdi.id && weaknessEdit?.id !== pdi.id
+                          ? 'filled'
+                          : weaknessEdit?.id === pdi.id
+                          ? 'default'
+                          : 'unstyled'
+                      }
+                      onBlur={handleEditWeakness}
+                      value={
+                        weaknessEdit?.id === pdi.id ? weaknessEdit?.description : pdi.description
+                      }
+                      onChange={({ currentTarget: { value } }) =>
+                        weaknessEdit?.id === pdi.id &&
+                        setWeaknessEdit({
+                          ...weaknessEdit,
+                          description: value
+                        })
+                      }
+                      sx={{ width: 250, color: !isSaving ? theme.black : theme.colors.gray[3] }}
+                    />
+                    <Transition
+                      mounted={weaknessEdit?.id !== pdi.id && weaknessHover === pdi.id}
+                      transition={'slide-left'}
+                    >
+                      {(styles) => (
+                        <ActionIcon
+                          disabled={isSaving}
+                          onClick={() => handleDelete(pdi)}
+                          variant={'light'}
+                          size={'lg'}
+                          color={'red'}
+                          style={styles}
+                        >
+                          <IconTrash size={20} />
+                        </ActionIcon>
+                      )}
+                    </Transition>
+                  </Group>
+                ) : (
+                  <Text key={pdi.id} size={'md'}>
+                    {pdi.description}
+                  </Text>
+                )}
+              </React.Fragment>
+            ))
+          )}
         </Group>
       </Grid.Col>
     </Grid>

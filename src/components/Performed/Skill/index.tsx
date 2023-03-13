@@ -1,11 +1,12 @@
 import { useMutation } from '@apollo/client'
 import { Grid, Group, Text, Title, useMantineTheme } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import { Rating } from '@mui/material'
 import { IconStar } from '@tabler/icons'
-import Accordion from 'components/Accordion'
 import Comment from 'components/Comment'
+import HistoricEvaluation from 'components/HistoricEvaluation'
 import { CommonConstants } from 'constants/common'
-import { EvaluationConstants, EVALUATION_PERIOD } from 'constants/evaluation'
+import { EVALUATION_PERIOD } from 'constants/evaluation'
 import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import {
@@ -19,7 +20,6 @@ import {
   UpdatePerformedSkillType
 } from 'types/collection/PerformedSkill'
 import { SkillType } from 'types/collection/Skill'
-import PerformedView from '../View'
 
 export type PerformedSkillProps = {
   skill: SkillType
@@ -30,6 +30,7 @@ export type PerformedSkillProps = {
 export type PerformedSkillCommentType =
   | 'midFeedbackManager'
   | 'endFeedbackManager'
+  | 'midFeedbackUser'
   | 'endFeedbackUser'
 
 export type PerformedSkillRatingType = 'ratingUser' | 'ratingManager'
@@ -45,7 +46,8 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
     isLocaleLoading,
     mode,
     isSaving,
-    setIsSaving
+    setIsSaving,
+    appraisee
   } = useEvaluation()
   const [performedSkill, setPerformedSkill] = useState<PerformedSkillType>()
   const [rating, setRating] = useState<number>(-1)
@@ -56,6 +58,8 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
   const [labels, setLabels] = useState<string[]>()
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [isRated, setIsRated] = useState<boolean>(false)
+  const [segmented, setSegmented] = useState<EVALUATION_ACTOR>(EVALUATION_ACTOR.MANAGER)
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`, false)
 
   // queries/mutations
   const [create] = useMutation<CreatePerformedSkillType>(CREATE_PERFORMED_SKILL, {
@@ -75,13 +79,14 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
 
   useEffect(() => {
     if (periodMode && actor) {
-      setCommentField(
-        periodMode === EVALUATION_PERIOD.MID
-          ? 'midFeedbackManager'
-          : actor === EVALUATION_ACTOR.MANAGER
-          ? 'endFeedbackManager'
-          : 'endFeedbackUser'
-      )
+      let _commentField: PerformedSkillCommentType
+      const isMid = periodMode === EVALUATION_PERIOD.MID
+      if (actor === EVALUATION_ACTOR.MANAGER) {
+        _commentField = isMid ? 'midFeedbackManager' : 'endFeedbackManager'
+      } else {
+        _commentField = isMid ? 'midFeedbackUser' : 'endFeedbackUser'
+      }
+      setCommentField(_commentField)
       setRatingField(actor === EVALUATION_ACTOR.MANAGER ? 'ratingManager' : 'ratingUser')
     }
   }, [periodMode, actor])
@@ -182,125 +187,76 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
   }
 
   return (
-    <Grid p={10} gutter={50}>
-      {periodMode !== EVALUATION_PERIOD.MID && (
-        <Grid.Col span={12} xs={3} xl={2}>
-          <Group align={'center'} direction={'column'} spacing={'xs'}>
-            <Title order={6}>{CommonConstants.rating.title[locale]}</Title>
-            <Group
-              sx={{ cursor: !isLocaleLoading && !isDisabled && !isSaving ? 'auto' : 'not-allowed' }}
-            >
-              <Rating
-                icon={<IconStar size={30} fill={theme.colors.yellow[6]} style={{ padding: 2 }} />}
-                emptyIcon={<IconStar size={30} style={{ padding: 2 }} />}
-                disabled={isSaving || isLocaleLoading}
-                size={'large'}
-                max={ratings.length}
-                value={!isLocaleLoading ? rating : -1}
-                onChange={(_, newRating) => !isDisabled && handleChange(_, newRating)}
-                onChangeActive={(_, newHover) => !isDisabled && setHover(newHover)}
-                sx={{ pointerEvents: !isLocaleLoading && !isDisabled ? 'auto' : 'none' }}
+    <Grid p={10}>
+      {mode === EVALUATION_MODE.EDIT && (
+        <>
+          {periodMode !== EVALUATION_PERIOD.MID && (
+            <Grid.Col span={12} xs={3} xl={2}>
+              <Group align={'center'} direction={'column'} spacing={'xs'}>
+                <Title order={6}>{CommonConstants.rating.title[locale]}</Title>
+                <Group
+                  sx={{
+                    cursor: !isLocaleLoading && !isDisabled && !isSaving ? 'auto' : 'not-allowed'
+                  }}
+                >
+                  <Rating
+                    icon={
+                      <IconStar size={30} fill={theme.colors.yellow[6]} style={{ padding: 2 }} />
+                    }
+                    emptyIcon={<IconStar size={30} style={{ padding: 2 }} />}
+                    disabled={isSaving || isLocaleLoading}
+                    size={'large'}
+                    max={ratings.length}
+                    value={!isLocaleLoading ? rating : -1}
+                    onChange={(_, newRating) => !isDisabled && handleChange(_, newRating)}
+                    onChangeActive={(_, newHover) => !isDisabled && setHover(newHover)}
+                    sx={{ pointerEvents: !isLocaleLoading && !isDisabled ? 'auto' : 'none' }}
+                  />
+                </Group>
+                <Text
+                  align={'center'}
+                  weight={isRated ? 'bold' : 'normal'}
+                  size={isRated ? 'md' : 'xs'}
+                  sx={(theme) => ({
+                    color: isRated ? 'dark' : theme.colors.gray[4],
+                    minHeight: 25
+                  })}
+                >
+                  {!isLocaleLoading
+                    ? isRated
+                      ? labels?.[hover > -1 ? hover - 1 : rating - 1]
+                      : CommonConstants.rating.label[locale]
+                    : CommonConstants.loading[locale]}
+                </Text>
+              </Group>
+            </Grid.Col>
+          )}
+
+          <Grid.Col span={12} xs={8}>
+            <Group direction={'column'}>
+              <Title order={6}>{CommonConstants.comment[locale]}</Title>
+              <Comment
+                isDisabled={isDisabled}
+                value={comment}
+                onChange={setComment}
+                handleSave={handleSaveComment}
               />
             </Group>
-            <Text
-              align={'center'}
-              weight={isRated ? 'bold' : 'normal'}
-              size={isRated ? 'md' : 'xs'}
-              sx={(theme) => ({
-                color: isRated ? 'dark' : theme.colors.gray[4],
-                minHeight: 25
-              })}
-            >
-              {!isLocaleLoading
-                ? isRated
-                  ? labels?.[hover > -1 ? hover - 1 : rating - 1]
-                  : CommonConstants.rating.label[locale]
-                : CommonConstants.loading[locale]}
-            </Text>
-          </Group>
-        </Grid.Col>
+          </Grid.Col>
+        </>
       )}
-
-      {actor === EVALUATION_ACTOR.MANAGER && (
-        <Grid.Col span={12} xs={8}>
-          <Group direction={'column'}>
-            <Title order={6}>{CommonConstants.comment[locale]}</Title>
-            <Comment
-              isDisabled={isDisabled}
-              value={comment}
-              onChange={setComment}
-              handleSave={handleSaveComment}
-            />
-          </Group>
-        </Grid.Col>
-      )}
-
-      {(performedEvaluation.midFinished || performedEvaluation.endFinished) && (
-        <Grid.Col mt={15} span={12}>
-          <Text
-            size={'sm'}
-            p={10}
-            mb={5}
-            weight={500}
-            hidden={actor === EVALUATION_ACTOR.MANAGER && periodMode === EVALUATION_PERIOD.MID}
-          >
-            {CommonConstants.historic[locale]}:
-          </Text>
-          {performedEvaluation.midFinished &&
-            (actor !== EVALUATION_ACTOR.MANAGER || periodMode !== EVALUATION_PERIOD.MID) && (
-              <Accordion>
-                <Accordion.Item
-                  label={
-                    <Group>
-                      <Text>
-                        {CommonConstants.actor.manager[locale]} -{' '}
-                        {EvaluationConstants.title.MID[locale]}
-                      </Text>
-                    </Group>
-                  }
-                >
-                  <PerformedView comment={performed?.midFeedbackManager} />
-                </Accordion.Item>
-              </Accordion>
-            )}
-          {(performedEvaluation.endFinished || actor === EVALUATION_ACTOR.MANAGER) &&
-            periodMode !== EVALUATION_PERIOD.MID && (
-              <Accordion mt={10}>
-                <Accordion.Item
-                  label={
-                    <Group>
-                      <Text>
-                        {
-                          CommonConstants.actor[
-                            actor === EVALUATION_ACTOR.USER
-                              ? EVALUATION_ACTOR.MANAGER
-                              : EVALUATION_ACTOR.USER
-                          ][locale]
-                        }{' '}
-                        - {EvaluationConstants.title.END[locale]}
-                      </Text>
-                    </Group>
-                  }
-                >
-                  <PerformedView
-                    rating={{
-                      labels,
-                      value:
-                        actor === EVALUATION_ACTOR.MANAGER
-                          ? performed?.ratingUser?.value
-                          : performed?.ratingManager?.value
-                    }}
-                    comment={
-                      actor === EVALUATION_ACTOR.MANAGER
-                        ? performed?.endFeedbackUser
-                        : performed?.endFeedbackManager
-                    }
-                  />
-                </Accordion.Item>
-              </Accordion>
-            )}
-        </Grid.Col>
-      )}
+      <HistoricEvaluation
+        manager={{
+          midYear: performed?.midFeedbackManager || '',
+          endYear: performed?.endFeedbackManager || '',
+          rating: performed?.ratingManager?.value || -1
+        }}
+        user={{
+          midYear: performed?.midFeedbackUser || '',
+          endYear: performed?.endFeedbackUser || '',
+          rating: performed?.ratingUser?.value || -1
+        }}
+      />
     </Grid>
   )
 }

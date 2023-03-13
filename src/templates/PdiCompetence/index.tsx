@@ -190,8 +190,6 @@ const PdiCompetence = ({ actor, pdi }: PdiCompetenceProps) => {
           align={'center'}
           sx={{
             justifyContent: 'center',
-            width: '100%',
-            height: '100%',
             cursor: !isLocaleLoading ? 'auto' : 'not-allowed'
           }}
         >
@@ -207,7 +205,7 @@ const PdiCompetence = ({ actor, pdi }: PdiCompetenceProps) => {
       ) : (
         <>
           <Group mb={20} direction={'column'} align={'flex-end'}>
-            {actor === EVALUATION_ACTOR.MANAGER && (
+            {actor === EVALUATION_ACTOR.MANAGER && mode === EVALUATION_MODE.EDIT && (
               <Button loading={isLocaleLoading} onClick={() => setOpenCompetenceModal(true)}>
                 {!isLocaleLoading
                   ? CommonConstants.create[locale]
@@ -241,7 +239,7 @@ const PdiCompetence = ({ actor, pdi }: PdiCompetenceProps) => {
                     {new Date(pdiCompetence.deadline).toLocaleDateString('pt-BR')}
                   </Table.Cell>
                   <Table.Cell>
-                    {actor === EVALUATION_ACTOR.MANAGER && (
+                    {actor === EVALUATION_ACTOR.MANAGER && mode === EVALUATION_MODE.EDIT && (
                       <Group sx={{ justifyContent: 'end' }}>
                         <Tooltip color={'cyan'} label={CommonConstants.edit[locale]}>
                           <ActionIcon

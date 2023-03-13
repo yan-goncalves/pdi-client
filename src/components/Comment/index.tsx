@@ -11,6 +11,7 @@ export type CommentProps = {
   placeholder?: string
   isDisabled: boolean
   onChange: (value?: string) => void
+  hidden?: boolean
 }
 
 const Comment = ({
@@ -19,7 +20,8 @@ const Comment = ({
   placeholder,
   isDisabled,
   onChange,
-  handleSave
+  handleSave,
+  hidden = false
 }: CommentProps & Pick<ActionGroupProps, 'handleSave'>) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
@@ -68,6 +70,7 @@ const Comment = ({
           minRows={!isEditing && !value ? 1 : 5}
           maxRows={!isEditing ? 1 : 5}
           sx={{ width: 'min(30rem, 100%)' }}
+          hidden={hidden}
         />
       ) : (
         <TextInput
@@ -81,6 +84,7 @@ const Comment = ({
           }}
           onFocus={() => setIsEditing(true)}
           sx={{ width: 'min(30rem, 100%)' }}
+          hidden={hidden}
         />
       )}
       {isEditing && (
@@ -96,6 +100,7 @@ const Comment = ({
       size={!value ? 'sm' : 'lg'}
       weight={400}
       sx={{ color: !value ? theme.colors.gray[3] : 'dark' }}
+      hidden={hidden}
     >
       {!value ? CommonConstants.empty.comment[locale] : <i> - {value}</i>}
     </Text>

@@ -1,9 +1,9 @@
 import { useMutation } from '@apollo/client'
-import { Grid, Group, Text, Title } from '@mantine/core'
-import Accordion from 'components/Accordion'
+import { Grid, Group, Title } from '@mantine/core'
 import Comment from 'components/Comment'
+import HistoricEvaluation from 'components/HistoricEvaluation'
 import { CommonConstants } from 'constants/common'
-import { EvaluationConstants, EVALUATION_PERIOD } from 'constants/evaluation'
+import { EVALUATION_PERIOD } from 'constants/evaluation'
 import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import {
@@ -17,7 +17,6 @@ import {
   PerformedFeedbackType,
   UpdatePerformedFeedbackType
 } from 'types/collection/PerformedFeedback'
-import PerformedView from '../View'
 
 export type PerformedFeedbackProps = {
   feedback: FeedbackType
@@ -111,60 +110,27 @@ const PerformedFeedback = ({ feedback, performed, actor }: PerformedFeedbackProp
 
   return (
     <Grid p={10} gutter={50}>
-      {actor === EVALUATION_ACTOR.MANAGER && (
-        <Grid.Col span={12} xs={8}>
-          <Group direction={'column'}>
-            <Title order={6}>{CommonConstants.comment[locale]}</Title>
-            <Comment
-              isDisabled={isDisabled}
-              value={comment}
-              onChange={setComment}
-              handleSave={handleSaveComment}
-            />
-          </Group>
-        </Grid.Col>
-      )}
-      {(mode === EVALUATION_MODE.VIEW || actor === EVALUATION_ACTOR.USER) &&
-        performedEvaluation.midFinished && (
-          <Accordion mt={10}>
-            <Accordion.Item
-              label={
-                <Group>
-                  <Text>
-                    {CommonConstants.actor.manager[locale]} -{' '}
-                    {EvaluationConstants.title.MID[locale]}
-                  </Text>
-                </Group>
-              }
-            >
-              <PerformedView
-                title={CommonConstants.comment[locale]}
-                comment={performedFeedback?.midReply}
-              />
-            </Accordion.Item>
-          </Accordion>
-        )}
-      {(mode === EVALUATION_MODE.VIEW || actor === EVALUATION_ACTOR.USER) &&
-        periodMode !== EVALUATION_PERIOD.MID &&
-        performedEvaluation.endFinished && (
-          <Accordion mt={10}>
-            <Accordion.Item
-              label={
-                <Group>
-                  <Text>
-                    {CommonConstants.actor.manager[locale]} -{' '}
-                    {EvaluationConstants.title.END[locale]}
-                  </Text>
-                </Group>
-              }
-            >
-              <PerformedView
-                title={CommonConstants.comment[locale]}
-                comment={performedFeedback?.endReply}
-              />
-            </Accordion.Item>
-          </Accordion>
-        )}
+      <Grid.Col
+        span={12}
+        xs={8}
+        hidden={actor === EVALUATION_ACTOR.USER || mode === EVALUATION_MODE.VIEW}
+      >
+        <Group direction={'column'}>
+          <Title order={6}>{CommonConstants.comment[locale]}</Title>
+          <Comment
+            isDisabled={isDisabled}
+            value={comment}
+            onChange={setComment}
+            handleSave={handleSaveComment}
+          />
+        </Group>
+      </Grid.Col>
+      <HistoricEvaluation
+        manager={{
+          midYear: performedFeedback?.midReply || '',
+          endYear: performedFeedback?.endReply || ''
+        }}
+      />
     </Grid>
   )
 }

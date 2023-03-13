@@ -44,32 +44,6 @@ export const getServerSideProps: GetServerSideProps<EvaluationListTemplateProps>
     }
   }
 
-  // const items = await Promise.all(
-  //   evaluations.map(
-  //     async (evaluation): Promise<EvaluationCardItemProps> =>
-  //       await apolloClient
-  //         .query<GetPerformedEvaluationType>({
-  //           query: GET_PERFORMED_EVALUATION_BY_RELATON,
-  //           variables: {
-  //             idEvaluation: evaluation.id,
-  //             idUser: session?.user.id
-  //           }
-  //         })
-  //         .then(({ data: { performedEvaluation } }) => ({
-  //           year: evaluation.year,
-  //           period: evaluation.period,
-  //           midFinished: performedEvaluation.midFinished,
-  //           endFinished: performedEvaluation.endFinished
-  //         }))
-  //         .catch(() => ({
-  //           year: evaluation.year,
-  //           period: evaluation.period,
-  //           midFinished: false,
-  //           endFinished: false
-  //         }))
-  //   )
-  // )
-
   return {
     props: {
       items: [...evaluations]

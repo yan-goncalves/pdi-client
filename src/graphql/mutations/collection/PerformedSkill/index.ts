@@ -11,6 +11,7 @@ export const CREATE_PERFORMED_SKILL = gql`
     $midFeedbackManager: String
     $endFeedbackManager: String
     $endFeedbackUser: String
+    $midFeedbackUser: String
   ) {
     created: createPerformedSkill(
       input: {
@@ -21,6 +22,7 @@ export const CREATE_PERFORMED_SKILL = gql`
         midFeedbackManager: $midFeedbackManager
         endFeedbackManager: $endFeedbackManager
         endFeedbackUser: $endFeedbackUser
+        midFeedbackUser: $midFeedbackUser
       }
     ) {
       ...FragmentPerformedSkill
@@ -37,6 +39,7 @@ export const UPDATE_PERFORMED_SKILL = gql`
     $midFeedbackManager: String
     $endFeedbackManager: String
     $endFeedbackUser: String
+    $midFeedbackUser: String
   ) {
     updated: updatePerformedSkill(
       id: $id
@@ -46,6 +49,7 @@ export const UPDATE_PERFORMED_SKILL = gql`
         midFeedbackManager: $midFeedbackManager
         endFeedbackManager: $endFeedbackManager
         endFeedbackUser: $endFeedbackUser
+        midFeedbackUser: $midFeedbackUser
       }
     ) {
       ...FragmentPerformedSkill

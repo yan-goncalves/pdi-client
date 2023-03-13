@@ -1,5 +1,13 @@
 import { useMutation } from '@apollo/client'
-import { ActionIcon, Group, Text, TextInput, Title, Transition } from '@mantine/core'
+import {
+  ActionIcon,
+  Group,
+  Text,
+  TextInput,
+  Title,
+  Transition,
+  useMantineTheme
+} from '@mantine/core'
 import { IconCheck, IconTrash } from '@tabler/icons'
 import { CommonConstants } from 'constants/common'
 import { ErrorsConstants } from 'constants/errors'
@@ -25,6 +33,7 @@ export type PdiCoachingProps = {
 }
 
 const PdiCoaching = ({ actor, pdi }: PdiCoachingProps) => {
+  const theme = useMantineTheme()
   const { locale } = useLocale()
   const { performedEvaluation, setPerformedEvaluation, mode, isSaving, setIsSaving } =
     useEvaluation()
@@ -160,65 +169,71 @@ const PdiCoaching = ({ actor, pdi }: PdiCoachingProps) => {
           </Transition>
         </Group>
       )}
-      <Group mt={20} spacing={5} direction={'column'} sx={{ width: 300 }}>
-        {pdiCoachings.map((pdi) => (
-          <React.Fragment key={pdi.id}>
-            {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER ? (
-              <Group
-                key={pdi.id}
-                onMouseEnter={() => edit?.id !== pdi.id && setHover(pdi.id)}
-                onMouseLeave={() => setHover(-1)}
-                onBlur={() => setEdit(undefined)}
-                onClick={() => setEdit(pdi)}
-                sx={{ width: '100%' }}
-              >
-                <TextInput
-                  disabled={isSaving}
-                  radius={'md'}
-                  variant={
-                    hover === pdi.id && edit?.id !== pdi.id
-                      ? 'filled'
-                      : edit?.id === pdi.id
-                      ? 'default'
-                      : 'unstyled'
-                  }
-                  onBlur={handleUpdate}
-                  value={edit?.id === pdi.id ? edit?.action : pdi.action}
-                  onChange={({ currentTarget: { value } }) =>
-                    edit?.id === pdi.id &&
-                    setEdit({
-                      ...edit,
-                      action: value
-                    })
-                  }
-                  sx={{ width: 250 }}
-                />
-                <Transition
-                  mounted={edit?.id !== pdi.id && hover === pdi.id}
-                  transition={'slide-left'}
+      {!pdiCoachings.length ? (
+        <Text size={'sm'} weight={400} sx={{ color: theme.colors.gray[3] }}>
+          {CommonConstants.pdiCoaching.empty[locale]}
+        </Text>
+      ) : (
+        <Group mt={20} spacing={5} direction={'column'} sx={{ width: 300 }}>
+          {pdiCoachings.map((pdi) => (
+            <React.Fragment key={pdi.id}>
+              {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER ? (
+                <Group
+                  key={pdi.id}
+                  onMouseEnter={() => edit?.id !== pdi.id && setHover(pdi.id)}
+                  onMouseLeave={() => setHover(-1)}
+                  onBlur={() => setEdit(undefined)}
+                  onClick={() => setEdit(pdi)}
+                  sx={{ width: '100%' }}
                 >
-                  {(styles) => (
-                    <ActionIcon
-                      disabled={isSaving}
-                      onClick={() => handleDelete(pdi)}
-                      variant={'light'}
-                      size={'lg'}
-                      color={'red'}
-                      style={styles}
-                    >
-                      <IconTrash size={20} />
-                    </ActionIcon>
-                  )}
-                </Transition>
-              </Group>
-            ) : (
-              <Text key={pdi.id} size={'md'}>
-                {pdi.action}
-              </Text>
-            )}
-          </React.Fragment>
-        ))}
-      </Group>
+                  <TextInput
+                    disabled={isSaving}
+                    radius={'md'}
+                    variant={
+                      hover === pdi.id && edit?.id !== pdi.id
+                        ? 'filled'
+                        : edit?.id === pdi.id
+                        ? 'default'
+                        : 'unstyled'
+                    }
+                    onBlur={handleUpdate}
+                    value={edit?.id === pdi.id ? edit?.action : pdi.action}
+                    onChange={({ currentTarget: { value } }) =>
+                      edit?.id === pdi.id &&
+                      setEdit({
+                        ...edit,
+                        action: value
+                      })
+                    }
+                    sx={{ width: 250 }}
+                  />
+                  <Transition
+                    mounted={edit?.id !== pdi.id && hover === pdi.id}
+                    transition={'slide-left'}
+                  >
+                    {(styles) => (
+                      <ActionIcon
+                        disabled={isSaving}
+                        onClick={() => handleDelete(pdi)}
+                        variant={'light'}
+                        size={'lg'}
+                        color={'red'}
+                        style={styles}
+                      >
+                        <IconTrash size={20} />
+                      </ActionIcon>
+                    )}
+                  </Transition>
+                </Group>
+              ) : (
+                <Text key={pdi.id} size={'md'}>
+                  {pdi.action}
+                </Text>
+              )}
+            </React.Fragment>
+          ))}
+        </Group>
+      )}
     </Group>
   )
 }

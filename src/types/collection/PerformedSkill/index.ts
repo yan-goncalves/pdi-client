@@ -10,6 +10,7 @@ export interface PerformedSkillType extends BaseType {
   ratingManager?: RatingType
   midFeedbackManager?: string
   endFeedbackManager?: string
+  midFeedbackUser?: string
   endFeedbackUser?: string
 }
 

@@ -1,29 +1,42 @@
+import { useQuery } from '@apollo/client'
 import { Grid, Group, Text, Title, useMantineTheme } from '@mantine/core'
 import { Rating } from '@mui/material'
 import { CommonConstants } from 'constants/common'
 import { useLocale } from 'contexts/LocaleProvider'
+import { GET_RATINGS } from 'graphql/queries/collection/Rating'
 import { useEffect, useState } from 'react'
+import { GetRatings } from 'types/collection/Rating'
 
 export type PerformedViewProps = {
   title?: string
   emptyMessage?: string
   comment?: string
-  rating?: {
-    value?: number
-    labels?: string[]
-  }
+  target?: string
+  rating?: number
 }
 
-const PerformedView = ({ title, emptyMessage, comment, rating }: PerformedViewProps) => {
+const PerformedView = ({ title, emptyMessage, comment, rating, target }: PerformedViewProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
   const [value, setValue] = useState<number>(-1)
   const [labels, setLabels] = useState<string[]>([])
+  const { data } = useQuery<GetRatings>(GET_RATINGS, {
+    context: {
+      headers: {
+        locale
+      }
+    }
+  })
 
   useEffect(() => {
-    if (rating) {
-      setValue(rating?.value || -1)
-      setLabels(rating?.labels || [])
+    if (data) {
+      setLabels(data?.ratings.map((rating) => rating.description) || [])
+    }
+  }, [data])
+
+  useEffect(() => {
+    if (typeof rating === 'number') {
+      setValue(rating || -1)
     }
   }, [rating])
 
@@ -59,8 +72,24 @@ const PerformedView = ({ title, emptyMessage, comment, rating }: PerformedViewPr
         </Grid.Col>
       )}
 
-      <Grid.Col span={12} xs={8}>
+      <Grid.Col span={12} xs={!rating ? 12 : 8}>
         <Group direction={'column'}>
+          {typeof target === 'string' && (
+            <>
+              <Title order={6}>{CommonConstants.achieved[locale]}</Title>
+              <Text
+                size={!comment ? 'sm' : 'lg'}
+                weight={400}
+                sx={{ color: !comment ? theme.colors.gray[3] : 'dark' }}
+              >
+                {!target.length ? (
+                  emptyMessage ?? CommonConstants.empty.comment[locale]
+                ) : (
+                  <i> - {target}</i>
+                )}
+              </Text>
+            </>
+          )}
           <Title order={6}>{title ?? CommonConstants.comment[locale]}</Title>
           <Text
             size={!comment ? 'sm' : 'lg'}

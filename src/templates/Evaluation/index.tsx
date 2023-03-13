@@ -189,28 +189,25 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
             </React.Fragment>
           ))}
         </StepperProgress.Step>
-        {(performedEvaluation.midFinished ||
-          actor === EVALUATION_ACTOR.MANAGER ||
-          [EVALUATION_PERIOD.OUT, EVALUATION_PERIOD.END].includes(evaluationModel.period)) && (
-          <StepperProgress.Step label={EvaluationConstants.steps.skills[locale]}>
-            {skills?.map((skill) => (
-              <React.Fragment key={`${skill.id}-${skill.title}`}>
-                <EvaluationItem
-                  sectionTitle={skill.title}
-                  sectionColor={'grape'}
-                  title={skill.description}
-                />
-                <PerformedSkill
-                  skill={skill}
-                  actor={actor}
-                  performed={performedEvaluation.skills?.find(
-                    (performed) => performed && performed.skill.id === skill.id
-                  )}
-                />
-              </React.Fragment>
-            ))}
-          </StepperProgress.Step>
-        )}
+
+        <StepperProgress.Step label={EvaluationConstants.steps.skills[locale]}>
+          {skills?.map((skill) => (
+            <React.Fragment key={`${skill.id}-${skill.title}`}>
+              <EvaluationItem
+                sectionTitle={skill.title}
+                sectionColor={'grape'}
+                title={skill.description}
+              />
+              <PerformedSkill
+                skill={skill}
+                actor={actor}
+                performed={performedEvaluation.skills?.find(
+                  (performed) => performed && performed.skill.id === skill.id
+                )}
+              />
+            </React.Fragment>
+          ))}
+        </StepperProgress.Step>
         <StepperProgress.Step label={EvaluationConstants.steps.goals[locale]}>
           {!goals.length ? (
             <>

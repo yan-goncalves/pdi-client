@@ -3,10 +3,10 @@ import { Divider, Grid, Group, Loader, Text, Title, useMantineTheme } from '@man
 import { useNotifications } from '@mantine/notifications'
 import { Rating } from '@mui/material'
 import { IconChecks, IconStar } from '@tabler/icons'
-import Accordion from 'components/Accordion'
 import Comment from 'components/Comment'
+import HistoricEvaluation from 'components/HistoricEvaluation'
 import { CommonConstants } from 'constants/common'
-import { EvaluationConstants, EVALUATION_PERIOD } from 'constants/evaluation'
+import { EVALUATION_PERIOD } from 'constants/evaluation'
 import { NotificationsConstants } from 'constants/notifications'
 import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
@@ -22,7 +22,6 @@ import {
   PerformedKpiType,
   UpdatePerformedKpiType
 } from 'types/collection/PerformedKpi'
-import PerformedView from '../View'
 
 export type PerformedKpiProps = {
   kpi: KpiType
@@ -255,53 +254,53 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider }: PerformedKpiPro
 
   return (
     <React.Fragment>
-      {periodMode !== EVALUATION_PERIOD.MID && actor === EVALUATION_ACTOR.MANAGER && (
-        <Grid.Col span={12} xs={3} xl={2}>
-          <Group align={'center'} direction={'column'} spacing={'xs'}>
-            <Title order={6}>{CommonConstants.rating.title[locale]}</Title>
-            <Group
-              sx={{
-                cursor: !isSaving && !isLocaleLoading && !isDisabled ? 'auto' : 'not-allowed'
-              }}
-            >
-              <Rating
-                icon={<IconStar size={30} fill={theme.colors.yellow[6]} style={{ padding: 2 }} />}
-                emptyIcon={<IconStar size={30} style={{ padding: 2 }} />}
-                disabled={isLocaleLoading}
-                size={'large'}
-                max={ratings.length}
-                value={!isLocaleLoading ? rating : -1}
-                onChange={(_, newRating) => !isSaving && !isDisabled && handleChange(_, newRating)}
-                onChangeActive={(_, newHover) => !isSaving && !isDisabled && setHover(newHover)}
+      {mode === EVALUATION_MODE.EDIT && (
+        <>
+          <Grid.Col hidden={actor === EVALUATION_ACTOR.USER} span={12} xs={3} xl={2}>
+            <Group align={'center'} direction={'column'} spacing={'xs'}>
+              <Title order={6}>{CommonConstants.rating.title[locale]}</Title>
+              <Group
                 sx={{
-                  pointerEvents: !isSaving && !isLocaleLoading && !isDisabled ? 'auto' : 'none'
+                  cursor: !isSaving && !isLocaleLoading && !isDisabled ? 'auto' : 'not-allowed'
                 }}
-              />
+              >
+                <Rating
+                  icon={<IconStar size={30} fill={theme.colors.yellow[6]} style={{ padding: 2 }} />}
+                  emptyIcon={<IconStar size={30} style={{ padding: 2 }} />}
+                  disabled={isLocaleLoading}
+                  size={'large'}
+                  max={ratings.length}
+                  value={!isLocaleLoading ? rating : -1}
+                  onChange={(_, newRating) =>
+                    !isSaving && !isDisabled && handleChange(_, newRating)
+                  }
+                  onChangeActive={(_, newHover) => !isSaving && !isDisabled && setHover(newHover)}
+                  sx={{
+                    pointerEvents: !isSaving && !isLocaleLoading && !isDisabled ? 'auto' : 'none'
+                  }}
+                />
+              </Group>
+              <Text
+                align={'center'}
+                weight={isRated ? 'bold' : 'normal'}
+                size={isRated ? 'md' : 'xs'}
+                sx={(theme) => ({
+                  color: isRated ? 'dark' : theme.colors.gray[4],
+                  minHeight: 25
+                })}
+              >
+                {!isLocaleLoading
+                  ? isRated
+                    ? labels?.[hover > -1 ? hover - 1 : rating - 1]
+                    : CommonConstants.rating.label[locale]
+                  : CommonConstants.loading[locale]}
+              </Text>
             </Group>
-            <Text
-              align={'center'}
-              weight={isRated ? 'bold' : 'normal'}
-              size={isRated ? 'md' : 'xs'}
-              sx={(theme) => ({
-                color: isRated ? 'dark' : theme.colors.gray[4],
-                minHeight: 25
-              })}
-            >
-              {!isLocaleLoading
-                ? isRated
-                  ? labels?.[hover > -1 ? hover - 1 : rating - 1]
-                  : CommonConstants.rating.label[locale]
-                : CommonConstants.loading[locale]}
-            </Text>
-          </Group>
-        </Grid.Col>
-      )}
+          </Grid.Col>
 
-      <Grid.Col span={12} xs={8}>
-        <Group direction={'column'}>
-          {periodMode !== EVALUATION_PERIOD.MID && actor === EVALUATION_ACTOR.MANAGER && (
-            <>
-              <Text size={'sm'} weight={500}>
+          <Grid.Col span={12} xs={8}>
+            <Group direction={'column'}>
+              <Text size={'sm'} weight={500} hidden={actor === EVALUATION_ACTOR.USER}>
                 {CommonConstants.achieved[locale]}
               </Text>
               <Comment
@@ -311,88 +310,87 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider }: PerformedKpiPro
                 onChange={setAchieved}
                 handleSave={handleSaveAchieved}
                 placeholder={CommonConstants.placeholder.target[locale]}
+                hidden={actor === EVALUATION_ACTOR.USER}
               />
-            </>
-          )}
-          <Text size={'sm'} weight={500}>
-            {CommonConstants.comment[locale]}
-          </Text>
-          <Comment
-            isDisabled={isDisabled}
-            value={comment}
-            onChange={setComment}
-            handleSave={handleSaveComment}
-          />
-        </Group>
-      </Grid.Col>
+              <Text size={'sm'} weight={500}>
+                {CommonConstants.comment[locale]}
+              </Text>
+              <Comment
+                isDisabled={isDisabled}
+                value={comment}
+                onChange={setComment}
+                handleSave={handleSaveComment}
+              />
+            </Group>
+          </Grid.Col>
+        </>
+      )}
 
-      {(performedEvaluation.midFinished || performedEvaluation.endFinished) && (
-        <Grid.Col mt={15} span={12}>
-          <Text
-            size={'sm'}
-            p={10}
-            mb={5}
-            weight={500}
-            hidden={actor === EVALUATION_ACTOR.MANAGER && periodMode === EVALUATION_PERIOD.MID}
-          >
-            {CommonConstants.historic[locale]}:
-          </Text>
-          {performedEvaluation.midFinished && (
-            <Accordion>
+      <HistoricEvaluation
+        manager={{
+          midYear: performedKpi?.midFeedbackManager || '',
+          endYear: performedKpi?.midFeedbackManager || '',
+          target: performedKpi?.achieved || '',
+          rating: performedKpi?.ratingManager?.value || -1
+        }}
+        user={{
+          midYear: performedKpi?.midFeedbackUser || '',
+          endYear: performedKpi?.endFeedbackUser || ''
+        }}
+      />
+      <Grid.Col mt={15} span={12}>
+        {/* {performedEvaluation.midFinished && (
+          <Accordion>
+            <Accordion.Item
+              label={
+                <Group>
+                  <Text>
+                    {
+                      CommonConstants.actor[
+                        actor === EVALUATION_ACTOR.USER
+                          ? EVALUATION_ACTOR.MANAGER
+                          : EVALUATION_ACTOR.USER
+                      ][locale]
+                    }{' '}
+                    - {EvaluationConstants.title.MID[locale]}
+                  </Text>
+                </Group>
+              }
+            >
+              <PerformedView
+                comment={
+                  actor === EVALUATION_ACTOR.MANAGER
+                    ? performedKpi?.midFeedbackUser
+                    : performedKpi?.midFeedbackManager
+                }
+              />
+            </Accordion.Item>
+          </Accordion>
+        )}
+        {performedEvaluation.endFinished &&
+          actor === EVALUATION_ACTOR.USER &&
+          periodMode !== EVALUATION_PERIOD.MID && (
+            <Accordion mt={10}>
               <Accordion.Item
                 label={
                   <Group>
                     <Text>
-                      {
-                        CommonConstants.actor[
-                          actor === EVALUATION_ACTOR.USER
-                            ? EVALUATION_ACTOR.MANAGER
-                            : EVALUATION_ACTOR.USER
-                        ][locale]
-                      }{' '}
-                      - {EvaluationConstants.title.MID[locale]}
+                      {CommonConstants.actor.manager[locale]} -{' '}
+                      {EvaluationConstants.title.END[locale]}
                     </Text>
                   </Group>
                 }
               >
                 <PerformedView
-                  comment={
-                    actor === EVALUATION_ACTOR.MANAGER
-                      ? performedKpi?.midFeedbackUser
-                      : performedKpi?.midFeedbackManager
-                  }
+                  title={CommonConstants.achieved[locale]}
+                  rating={performedKpi?.ratingManager?.value}
+                  comment={performedKpi?.achieved}
                 />
+                <PerformedView comment={performedKpi?.endFeedbackManager} />
               </Accordion.Item>
             </Accordion>
-          )}
-          {performedEvaluation.endFinished &&
-            actor === EVALUATION_ACTOR.USER &&
-            periodMode !== EVALUATION_PERIOD.MID && (
-              <Accordion mt={10}>
-                <Accordion.Item
-                  label={
-                    <Group>
-                      <Text>
-                        {CommonConstants.actor.manager[locale]} -{' '}
-                        {EvaluationConstants.title.END[locale]}
-                      </Text>
-                    </Group>
-                  }
-                >
-                  <PerformedView
-                    title={CommonConstants.achieved[locale]}
-                    rating={{
-                      labels,
-                      value: performedKpi?.ratingManager?.value
-                    }}
-                    comment={performedKpi?.achieved}
-                  />
-                  <PerformedView comment={performedKpi?.endFeedbackManager} />
-                </Accordion.Item>
-              </Accordion>
-            )}
-        </Grid.Col>
-      )}
+          )} */}
+      </Grid.Col>
 
       <Divider hidden={!hasDivider} mb={20} mt={80} sx={{ width: '100%' }} />
     </React.Fragment>

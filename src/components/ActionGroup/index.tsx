@@ -84,7 +84,7 @@ const ActionGroup = ({
         {CommonConstants.save[`${isSaving}`][locale]}
       </Button>
       {!isSaving && (
-        <Button color={'gray'} variant={'subtle'} onClick={handleCancel} sx={{ minWidth: 100 }}>
+        <Button color={'red'} variant={'subtle'} onClick={handleCancel} sx={{ minWidth: 100 }}>
           {CommonConstants.cancel[locale]}
         </Button>
       )}

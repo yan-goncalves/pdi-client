@@ -142,6 +142,7 @@ export const FRAGMENT_PERFORMED_SKILL = gql`
     }
     midFeedbackManager
     endFeedbackManager
+    midFeedbackUser
     endFeedbackUser
   }
 `
