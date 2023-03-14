@@ -1,6 +1,11 @@
 import { EVALUATION_ACTOR } from 'contexts/EvaluationProvider'
 
 export const CommonConstants = {
+  search: {
+    br: 'Buscar usuário',
+    en: 'Search user'
+  },
+
   add: {
     br: 'Adicionar',
     en: 'Add'

@@ -5,12 +5,13 @@ import {
   Loader,
   Modal,
   SimpleGrid,
+  TextInput,
   Title,
   useMantineTheme
 } from '@mantine/core'
 import { useMediaQuery, useWindowScroll } from '@mantine/hooks'
 import { SortDescriptor, Table, useAsyncList, useCollator, User } from '@nextui-org/react'
-import { IconCheck, IconFileDownload, IconX } from '@tabler/icons'
+import { IconCheck, IconFileDownload, IconSearch, IconX } from '@tabler/icons'
 import ContentBase from 'components/ContentBase'
 import LoadingOverlay from 'components/LoadingOverlay'
 import { FALLBACK_USER_PICTURE } from 'components/UserPicture'
@@ -19,7 +20,7 @@ import { ReportConstants } from 'constants/report'
 import { useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import FileSaver from 'file-saver'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { GoalType } from 'types/collection/Goal'
 import { UserType } from 'types/collection/User'
 import { useStyles } from './styles'
@@ -47,6 +48,23 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
   const [ready, setReady] = useState<boolean>(false)
   const [inError, setInError] = useState<boolean>(false)
   const [UUID, setUUID] = useState<string>()
+  const [search, setSearch] = useState<string>()
+  const [filteredUsers, setFilteredUsers] = useState<UserType[]>([])
+
+  useEffect(() => {
+    if (search?.length) {
+      setFilteredUsers(
+        users.filter(({ username, info: { name, lastname } }) => {
+          return (
+            username.toLowerCase().includes(search.toLowerCase()) ||
+            `${name} ${lastname}`.toLowerCase().includes(search.toLowerCase())
+          )
+        })
+      )
+    } else {
+      setFilteredUsers(users)
+    }
+  }, [search])
 
   const renderCell = (user: UserType, columnKey: React.Key) => {
     switch (columnKey) {
@@ -98,15 +116,9 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
     }
   }
 
-  const sort = ({
-    items,
-    sortDescriptor
-  }: {
-    items: UserType[]
-    sortDescriptor: SortDescriptor
-  }) => {
+  const sort = ({ sortDescriptor }: { sortDescriptor: SortDescriptor }) => {
     return {
-      items: items.sort((userA, userB) => {
+      items: filteredUsers.sort((userA, userB) => {
         if (sortDescriptor.column) {
           const first = getColumnField(userA, sortDescriptor.column)
           const second = getColumnField(userB, sortDescriptor.column)
@@ -122,12 +134,13 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
     }
   }
 
-  const list = useAsyncList({ load: async () => ({ items: users }), sort })
+  const list = useAsyncList({ load: async () => ({ items: filteredUsers }), sort })
 
   const handleReport = async () => {
     setOpenModal(true)
     setGenerating(true)
-    const selected = selectedKeys === 'all' ? users : users.filter((u) => selectedKeys?.has(u.id))
+    const selected =
+      selectedKeys === 'all' ? filteredUsers : filteredUsers.filter((u) => selectedKeys?.has(u.id))
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reports`, {
       method: 'POST',
@@ -242,6 +255,14 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
       <ContentBase title={`${CommonConstants.reports.title[locale]} / ${year}`} hasSticky>
         <Group position={'apart'} className={!openModal ? classes.mainHeader : undefined}>
           <Title order={!match ? 4 : 6}>{CommonConstants.reports.userListTitle[locale]}</Title>
+          <TextInput
+            icon={<IconSearch size={20} />}
+            placeholder={CommonConstants.search[locale]}
+            radius={'md'}
+            sx={{ width: 'min(30rem, 100%)' }}
+            value={search}
+            onChange={({ currentTarget: { value } }) => setSearch(value)}
+          />
           <Button
             size={!match ? 'md' : 'xs'}
             disabled={(selectedKeys !== 'all' && !selectedKeys?.size) || openModal}
@@ -262,7 +283,11 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
             selectedKeys={selectedKeys}
             onSelectionChange={(keys) => {
               if (keys === 'all') {
-                setSelectedKeys('all')
+                if (search?.length) {
+                  setSelectedKeys(new Set([...filteredUsers.map(({ id }) => id)]))
+                } else {
+                  setSelectedKeys('all')
+                }
               } else {
                 const values: number[] = []
                 new Set(keys).forEach((value) => values.push(Number(value.toString())))
@@ -277,7 +302,7 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
                 </Table.Column>
               )}
             </Table.Header>
-            <Table.Body items={list.items}>
+            <Table.Body items={filteredUsers}>
               {(item) => (
                 <Table.Row>
                   {(columnKey) => <Table.Cell>{renderCell(item, columnKey)}</Table.Cell>}
