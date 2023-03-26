@@ -15,12 +15,10 @@ import CountdownRenderer from 'components/CountdownRenderer'
 import LoadingOverlay from 'components/LoadingOverlay'
 import { CommonConstants } from 'constants/common'
 import { EvaluationConstants, EVALUATION_PERIOD } from 'constants/evaluation'
-import { ROLES } from 'constants/role'
 import { EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import dayjs from 'dayjs'
 import { setLoadingOverlayVisibility } from 'features/LoadingOverlay/loading-overlay-slice'
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import Countdown from 'react-countdown'
@@ -40,7 +38,6 @@ export type EvaluationCardItemProps = {
 
 const EvaluationCardItem = ({ year, period, midDate, endDate }: EvaluationCardItemProps) => {
   const theme = useMantineTheme()
-  const { data: session } = useSession()
   const { push, asPath } = useRouter()
   const { locale } = useLocale()
   const { setMode, setPeriodMode } = useEvaluation()
@@ -48,10 +45,8 @@ const EvaluationCardItem = ({ year, period, midDate, endDate }: EvaluationCardIt
   const [endCountdown, setEndCountdown] = useState<boolean>(false)
   const [midCountdown, setMidCountdown] = useState<boolean>(false)
 
-  const validPeriods = (periods: string[], validAccessRole = true) => {
-    return !validAccessRole
-      ? periods.includes(period)
-      : periods.includes(period) && session?.user.role !== ROLES.DIRECTOR
+  const validPeriods = (periods: string[]) => {
+    return periods.includes(period)
   }
 
   const handleClick = async (periodMode: EVALUATION_PERIOD, action: EVALUATION_MODE) => {
@@ -105,7 +100,7 @@ const EvaluationCardItem = ({ year, period, midDate, endDate }: EvaluationCardIt
       </Card.Section>
       <Card.Section p={20}>
         {(dayjs().diff(midDate.deadline) > 0 && dayjs().diff(endDate.deadline) > 0) ||
-        validPeriods([EVALUATION_PERIOD.OUT], session?.user.role !== ROLES.DIRECTOR) ? (
+        validPeriods([EVALUATION_PERIOD.OUT]) ? (
           <Group mb={15} style={{ justifyContent: 'space-between' }}>
             <Text color={'gray'} style={{ fontWeight: 500 }}>
               {EvaluationConstants.description.finished[locale]}
