@@ -1,6 +1,5 @@
 import { useMutation } from '@apollo/client'
 import { Grid, Group, Text, Title, useMantineTheme } from '@mantine/core'
-import { useMediaQuery } from '@mantine/hooks'
 import { Rating } from '@mui/material'
 import { IconStar } from '@tabler/icons'
 import Comment from 'components/Comment'
@@ -46,8 +45,7 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
     isLocaleLoading,
     mode,
     isSaving,
-    setIsSaving,
-    appraisee
+    setIsSaving
   } = useEvaluation()
   const [performedSkill, setPerformedSkill] = useState<PerformedSkillType>()
   const [rating, setRating] = useState<number>(-1)
@@ -58,8 +56,6 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
   const [labels, setLabels] = useState<string[]>()
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [isRated, setIsRated] = useState<boolean>(false)
-  const [segmented, setSegmented] = useState<EVALUATION_ACTOR>(EVALUATION_ACTOR.MANAGER)
-  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`, false)
 
   // queries/mutations
   const [create] = useMutation<CreatePerformedSkillType>(CREATE_PERFORMED_SKILL, {
