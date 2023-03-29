@@ -114,10 +114,10 @@ const GoalForm = ({
 
   useLayoutEffect(() => {
     if (
-      !editMode &&
       goalName &&
-      evaluationGoals.find(({ name }) => {
-        return name.toLowerCase().trim() === goalName.toLowerCase().trim()
+      evaluationGoals.find(({ id, name }) => {
+        const isSameName = name.toLowerCase().trim() === goalName.toLowerCase().trim()
+        return !editMode ? isSameName : isSameName && id !== editMode.evaluationGoal.id
       })
     ) {
       setInError(true)
