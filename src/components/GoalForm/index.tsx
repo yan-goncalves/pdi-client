@@ -377,7 +377,7 @@ const GoalForm = ({
             saving: NotificationsConstants.saving.goal[locale],
             saved: NotificationsConstants.saved.goal[locale]
           }}
-          disabled={isDisabled}
+          disabled={isDisabled || inError}
           handleCancel={handleClose}
           handleSave={handleSave}
           groupProps={{
