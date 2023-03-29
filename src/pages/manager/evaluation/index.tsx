@@ -42,11 +42,9 @@ export const getServerSideProps: GetServerSideProps<TeamMembersTemplateProps> = 
     }
   })
 
-  await Promise.all(
-    team.map(async (member) => {
-      await getMembersRecursively(member, apolloClient, team)
-    })
-  )
+  for (const member of team) {
+    await getMembersRecursively(member, apolloClient, team)
+  }
 
   const orderedTeams = orderMembersByDepartments(team, departments)
 

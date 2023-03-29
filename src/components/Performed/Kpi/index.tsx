@@ -256,62 +256,69 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider }: PerformedKpiPro
     <React.Fragment>
       {mode === EVALUATION_MODE.EDIT && (
         <>
-          <Grid.Col hidden={actor === EVALUATION_ACTOR.USER} span={12} xs={3} xl={2}>
-            <Group align={'center'} direction={'column'} spacing={'xs'}>
-              <Title order={6}>{CommonConstants.rating.title[locale]}</Title>
-              <Group
-                sx={{
-                  cursor: !isSaving && !isLocaleLoading && !isDisabled ? 'auto' : 'not-allowed'
-                }}
-              >
-                <Rating
-                  icon={<IconStar size={30} fill={theme.colors.yellow[6]} style={{ padding: 2 }} />}
-                  emptyIcon={<IconStar size={30} style={{ padding: 2 }} />}
-                  disabled={isLocaleLoading}
-                  size={'large'}
-                  max={ratings.length}
-                  value={!isLocaleLoading ? rating : -1}
-                  onChange={(_, newRating) =>
-                    !isSaving && !isDisabled && handleChange(_, newRating)
-                  }
-                  onChangeActive={(_, newHover) => !isSaving && !isDisabled && setHover(newHover)}
+          {actor === EVALUATION_ACTOR.MANAGER && periodMode !== EVALUATION_PERIOD.MID && (
+            <Grid.Col span={12} xs={3} xl={2}>
+              <Group align={'center'} direction={'column'} spacing={'xs'}>
+                <Title order={6}>{CommonConstants.rating.title[locale]}</Title>
+                <Group
                   sx={{
-                    pointerEvents: !isSaving && !isLocaleLoading && !isDisabled ? 'auto' : 'none'
+                    cursor: !isSaving && !isLocaleLoading && !isDisabled ? 'auto' : 'not-allowed'
                   }}
-                />
+                >
+                  <Rating
+                    icon={
+                      <IconStar size={30} fill={theme.colors.yellow[6]} style={{ padding: 2 }} />
+                    }
+                    emptyIcon={<IconStar size={30} style={{ padding: 2 }} />}
+                    disabled={isLocaleLoading}
+                    size={'large'}
+                    max={ratings.length}
+                    value={!isLocaleLoading ? rating : -1}
+                    onChange={(_, newRating) =>
+                      !isSaving && !isDisabled && handleChange(_, newRating)
+                    }
+                    onChangeActive={(_, newHover) => !isSaving && !isDisabled && setHover(newHover)}
+                    sx={{
+                      pointerEvents: !isSaving && !isLocaleLoading && !isDisabled ? 'auto' : 'none'
+                    }}
+                  />
+                </Group>
+                <Text
+                  align={'center'}
+                  weight={isRated ? 'bold' : 'normal'}
+                  size={isRated ? 'md' : 'xs'}
+                  sx={(theme) => ({
+                    color: isRated ? 'dark' : theme.colors.gray[4],
+                    minHeight: 25
+                  })}
+                >
+                  {!isLocaleLoading
+                    ? isRated
+                      ? labels?.[hover > -1 ? hover - 1 : rating - 1]
+                      : CommonConstants.rating.label[locale]
+                    : CommonConstants.loading[locale]}
+                </Text>
               </Group>
-              <Text
-                align={'center'}
-                weight={isRated ? 'bold' : 'normal'}
-                size={isRated ? 'md' : 'xs'}
-                sx={(theme) => ({
-                  color: isRated ? 'dark' : theme.colors.gray[4],
-                  minHeight: 25
-                })}
-              >
-                {!isLocaleLoading
-                  ? isRated
-                    ? labels?.[hover > -1 ? hover - 1 : rating - 1]
-                    : CommonConstants.rating.label[locale]
-                  : CommonConstants.loading[locale]}
-              </Text>
-            </Group>
-          </Grid.Col>
+            </Grid.Col>
+          )}
 
           <Grid.Col span={12} xs={8}>
             <Group direction={'column'}>
-              <Text size={'sm'} weight={500} hidden={actor === EVALUATION_ACTOR.USER}>
-                {CommonConstants.achieved[locale]}
-              </Text>
-              <Comment
-                type={'text'}
-                isDisabled={isDisabled}
-                value={achieved}
-                onChange={setAchieved}
-                handleSave={handleSaveAchieved}
-                placeholder={CommonConstants.placeholder.target[locale]}
-                hidden={actor === EVALUATION_ACTOR.USER}
-              />
+              {actor === EVALUATION_ACTOR.MANAGER && periodMode !== EVALUATION_PERIOD.MID && (
+                <>
+                  <Text size={'sm'} weight={500}>
+                    {CommonConstants.achieved[locale]}
+                  </Text>
+                  <Comment
+                    type={'text'}
+                    isDisabled={isDisabled}
+                    value={achieved}
+                    onChange={setAchieved}
+                    handleSave={handleSaveAchieved}
+                    placeholder={CommonConstants.placeholder.target[locale]}
+                  />
+                </>
+              )}
               <Text size={'sm'} weight={500}>
                 {CommonConstants.comment[locale]}
               </Text>
@@ -329,7 +336,7 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider }: PerformedKpiPro
       <HistoricEvaluation
         manager={{
           midYear: performedKpi?.midFeedbackManager || '',
-          endYear: performedKpi?.midFeedbackManager || '',
+          endYear: performedKpi?.endFeedbackManager || '',
           target: performedKpi?.achieved || '',
           rating: performedKpi?.ratingManager?.value || -1
         }}

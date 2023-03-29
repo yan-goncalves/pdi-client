@@ -109,22 +109,20 @@ const PerformedFeedback = ({ feedback, performed, actor }: PerformedFeedbackProp
   }
 
   return (
-    <Grid p={10} gutter={50}>
-      <Grid.Col
-        span={12}
-        xs={8}
-        hidden={actor === EVALUATION_ACTOR.USER || mode === EVALUATION_MODE.VIEW}
-      >
-        <Group direction={'column'}>
-          <Title order={6}>{CommonConstants.comment[locale]}</Title>
-          <Comment
-            isDisabled={isDisabled}
-            value={comment}
-            onChange={setComment}
-            handleSave={handleSaveComment}
-          />
-        </Group>
-      </Grid.Col>
+    <Grid p={10}>
+      {actor === EVALUATION_ACTOR.MANAGER && mode === EVALUATION_MODE.EDIT && (
+        <Grid.Col span={12} xs={8}>
+          <Group direction={'column'}>
+            <Title order={6}>{CommonConstants.comment[locale]}</Title>
+            <Comment
+              isDisabled={isDisabled}
+              value={comment}
+              onChange={setComment}
+              handleSave={handleSaveComment}
+            />
+          </Group>
+        </Grid.Col>
+      )}
       <HistoricEvaluation
         manager={{
           midYear: performedFeedback?.midReply || '',

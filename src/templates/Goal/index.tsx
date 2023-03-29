@@ -131,7 +131,7 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
       }).then(({ data }) => data!.updated)
     }
 
-    await handleKpis(goal.id, evaluationKpis).finally(async () => {
+    await handleKpis(goal, evaluationKpis).finally(async () => {
       await getGoals({
         idEvaluation: evaluationModel.id,
         idUser: appraisee.id
@@ -139,30 +139,28 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
     })
   }
 
-  const handleKpis = async (idGoal: number, evaluationKpis: EvaluationKpiInput[]) => {
-    await Promise.all(
-      evaluationKpis.map(async ({ id, name, target, weight }) => {
-        if (id > 0) {
-          await updateKpi({
-            variables: {
-              id,
-              name,
-              target,
-              weight
-            }
-          })
-        } else {
-          await createKpi({
-            variables: {
-              idGoal,
-              name,
-              target,
-              weight
-            }
-          })
-        }
-      })
-    )
+  const handleKpis = async (goal: GoalType, evaluationKpis: EvaluationKpiInput[]) => {
+    for (const { id, name, target, weight } of evaluationKpis) {
+      if (id > 0 && goal?.kpis?.find((kpi) => kpi.id === id)) {
+        await updateKpi({
+          variables: {
+            id,
+            name,
+            target,
+            weight
+          }
+        })
+      } else {
+        await createKpi({
+          variables: {
+            idGoal: goal.id,
+            name,
+            target,
+            weight
+          }
+        })
+      }
+    }
   }
 
   const handleEdit = (evaluationGoal: GoalType) => {
@@ -274,7 +272,7 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
               sx={{ justifyContent: 'center', width: '100%' }}
             >
               <Text size={!match ? 'lg' : 'md'} sx={{ color: theme.colors.gray[3] }}>
-                {KpisConstants.empty[locale]}
+                {GoalsConstants.empty[locale]}
               </Text>
               {isManageable && (
                 <Button

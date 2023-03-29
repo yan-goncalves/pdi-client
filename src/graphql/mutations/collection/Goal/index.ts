@@ -5,6 +5,9 @@ export const CREATE_GOAL = gql`
     created: createGoal(input: { idEvaluation: $idEvaluation, idUser: $idUser, name: $name }) {
       id
       name
+      kpis {
+        id
+      }
     }
   }
 `
@@ -14,6 +17,9 @@ export const UPDATE_GOAL = gql`
     updated: updateGoal(id: $id, input: { name: $name }) {
       id
       name
+      kpis {
+        id
+      }
     }
   }
 `

@@ -58,76 +58,73 @@ const HistoricEvaluation = (props: HistoricEvaluationProps) => {
 
   return (
     <>
-      <Grid.Col mt={15} span={12} hidden={mode === EVALUATION_MODE.VIEW}>
-        <Text
-          size={'sm'}
-          p={10}
-          mb={5}
-          weight={500}
-          // hidden={actor === EVALUATION_ACTOR.MANAGER && periodMode === EVALUATION_PERIOD.MID}
-        >
-          {CommonConstants.historic[locale]}:
-        </Text>
-      </Grid.Col>
-      <Grid.Col span={!isMobile ? 2 : 12} hidden={segmentedList.length === 1}>
-        <SegmentedControl
-          style={{ height: 'fit-content', width: !isMobile ? 'auto' : '100%' }}
-          orientation={!isMobile ? 'vertical' : 'horizontal'}
-          value={segmented}
-          onChange={(value) => setSegmented(value as EVALUATION_ACTOR)}
-          data={segmentedList || []}
-          radius={'md'}
-          styles={{
-            root: {
-              backgroundColor: theme.colors.gray[2],
-              border: `1px solid ${theme.colors.gray[3]}`
-            }
-          }}
-        />
-      </Grid.Col>
+      {mode === EVALUATION_MODE.EDIT && (
+        <Grid.Col mt={15} span={12}>
+          <Text size={'sm'} p={10} mb={5} weight={500}>
+            {CommonConstants.historic[locale]}:
+          </Text>
+        </Grid.Col>
+      )}
+      {segmentedList.length > 1 && (
+        <Grid.Col span={!isMobile ? 2 : 12}>
+          <SegmentedControl
+            style={{ height: 'fit-content', width: !isMobile ? 'auto' : '100%' }}
+            orientation={!isMobile ? 'vertical' : 'horizontal'}
+            value={segmented}
+            onChange={(value) => setSegmented(value as EVALUATION_ACTOR)}
+            data={segmentedList || []}
+            radius={'md'}
+            styles={{
+              root: {
+                backgroundColor: theme.colors.gray[2],
+                border: `1px solid ${theme.colors.gray[3]}`
+              }
+            }}
+          />
+        </Grid.Col>
+      )}
       {!isMobile && segmentedList.length === 2 && (
         <Grid.Col span={1} sx={{ maxWidth: 20 }}></Grid.Col>
       )}
       <Grid.Col span={!isMobile && segmentedList.length > 1 ? 9 : 12}>
-        <Accordion hidden={typeof props[segmented]?.midYear !== 'string'}>
-          <Accordion.Item
-            label={
-              <Group>
-                <Text>
-                  <b>{accordionLabelName[segmented]}</b>
-                  {` - ${EvaluationConstants.title.MID[locale]}`}
-                </Text>
-              </Group>
-            }
-          >
-            <PerformedView comment={props[segmented]?.midYear} />
-          </Accordion.Item>
-        </Accordion>
+        {typeof props[segmented]?.midYear === 'string' && (
+          <Accordion>
+            <Accordion.Item
+              label={
+                <Group>
+                  <Text>
+                    <b>{accordionLabelName[segmented]}</b>
+                    {` - ${EvaluationConstants.title.MID[locale]}`}
+                  </Text>
+                </Group>
+              }
+            >
+              <PerformedView comment={props[segmented]?.midYear} />
+            </Accordion.Item>
+          </Accordion>
+        )}
 
-        <Accordion
-          mt={10}
-          hidden={
-            periodMode === EVALUATION_PERIOD.MID || typeof props[segmented]?.endYear !== 'string'
-          }
-        >
-          <Accordion.Item
-            label={
-              <Group>
-                <Text>
-                  <b>{accordionLabelName[segmented]}</b>
-                  {` - ${EvaluationConstants.title.END[locale]}`}
-                </Text>
-              </Group>
-            }
-          >
-            <PerformedView
-              rating={props[segmented]?.rating}
-              comment={props[segmented]?.endYear}
-              target={segmented === EVALUATION_ACTOR.MANAGER ? props?.manager?.target : undefined}
-            />
-            {/* <Overlay blur={15} /> */}
-          </Accordion.Item>
-        </Accordion>
+        {periodMode !== EVALUATION_PERIOD.MID && typeof props[segmented]?.endYear === 'string' && (
+          <Accordion mt={10}>
+            <Accordion.Item
+              label={
+                <Group>
+                  <Text>
+                    <b>{accordionLabelName[segmented]}</b>
+                    {` - ${EvaluationConstants.title.END[locale]}`}
+                  </Text>
+                </Group>
+              }
+            >
+              <PerformedView
+                rating={props[segmented]?.rating}
+                comment={props[segmented]?.endYear}
+                target={segmented === EVALUATION_ACTOR.MANAGER ? props?.manager?.target : undefined}
+              />
+              {/* <Overlay blur={15} /> */}
+            </Accordion.Item>
+          </Accordion>
+        )}
       </Grid.Col>
     </>
   )

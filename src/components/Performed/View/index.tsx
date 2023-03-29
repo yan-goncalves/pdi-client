@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client'
 import { Grid, Group, Text, Title, useMantineTheme } from '@mantine/core'
 import { Rating } from '@mui/material'
 import { CommonConstants } from 'constants/common'
+import { useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import { GET_RATINGS } from 'graphql/queries/collection/Rating'
 import { useEffect, useState } from 'react'
@@ -18,15 +19,20 @@ export type PerformedViewProps = {
 const PerformedView = ({ title, emptyMessage, comment, rating, target }: PerformedViewProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
+  const { isLocaleLoading } = useEvaluation()
   const [value, setValue] = useState<number>(-1)
   const [labels, setLabels] = useState<string[]>([])
-  const { data } = useQuery<GetRatings>(GET_RATINGS, {
+  const { data, refetch } = useQuery<GetRatings>(GET_RATINGS, {
     context: {
       headers: {
         locale
       }
     }
   })
+
+  useEffect(() => {
+    refetch()
+  }, [locale])
 
   useEffect(() => {
     if (data) {
@@ -52,7 +58,7 @@ const PerformedView = ({ title, emptyMessage, comment, rating, target }: Perform
           >
             <Title order={6}>{CommonConstants.rating.title[locale]}</Title>
             <Rating
-              value={value}
+              value={!isLocaleLoading ? value : -1}
               size={'large'}
               max={labels.length}
               sx={{ pointerEvents: 'none' }}
@@ -66,7 +72,11 @@ const PerformedView = ({ title, emptyMessage, comment, rating, target }: Perform
                 minHeight: 25
               })}
             >
-              {value > -1 ? labels?.[value - 1] : CommonConstants.rating.label[locale]}
+              {!isLocaleLoading
+                ? value > -1
+                  ? labels?.[value - 1]
+                  : CommonConstants.rating.label[locale]
+                : CommonConstants.loading[locale]}
             </Text>
           </Group>
         </Grid.Col>
@@ -78,9 +88,9 @@ const PerformedView = ({ title, emptyMessage, comment, rating, target }: Perform
             <>
               <Title order={6}>{CommonConstants.achieved[locale]}</Title>
               <Text
-                size={!comment ? 'sm' : 'lg'}
+                size={!target ? 'sm' : 'lg'}
                 weight={400}
-                sx={{ color: !comment ? theme.colors.gray[3] : 'dark' }}
+                sx={{ color: !target ? theme.colors.gray[3] : 'dark' }}
               >
                 {!target.length ? (
                   emptyMessage ?? CommonConstants.empty.comment[locale]

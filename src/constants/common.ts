@@ -1,6 +1,11 @@
 import { EVALUATION_ACTOR } from 'contexts/EvaluationProvider'
 
 export const CommonConstants = {
+  period: {
+    br: 'Período',
+    en: 'Period'
+  },
+
   search: {
     br: 'Buscar usuário',
     en: 'Search user'
@@ -35,7 +40,7 @@ export const CommonConstants = {
 
   historic: {
     br: 'Histórico da Avaliação',
-    en: 'Evaluation History'
+    en: 'Evaluation Historical'
   },
 
   loading: {

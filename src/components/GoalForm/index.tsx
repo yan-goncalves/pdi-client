@@ -167,17 +167,15 @@ const GoalForm = ({
   }
 
   const handleDeleteKpi = async () => {
-    await Promise.all(
-      deletedKpis.map(async ({ id }) => {
-        if (id > 0) {
-          await deleteKpi({
-            variables: {
-              id
-            }
-          })
-        }
-      })
-    )
+    for (const { id } of deletedKpis) {
+      if (id > 0) {
+        await deleteKpi({
+          variables: {
+            id
+          }
+        })
+      }
+    }
   }
 
   const handleEdit = (evaluationKpi: KpiType | EvaluationKpiInput) => {

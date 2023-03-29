@@ -149,20 +149,13 @@ const PdiCompetenceForm = ({
         })
       }
 
-      Promise.all(
-        categories.map(async (c) => {
-          await deleteCategory({
-            variables: {
-              id: c.id
-            }
-          })
+      for (const { id } of categories) {
+        await deleteCategory({ variables: { id } }).catch((err) => {
+          console.log('ERROR ON DELETING PDI COMPETENCE CATEGORY', { ...err })
         })
-      )
-        .catch((err) => console.log('ERROR ON DELETING PDI COMPETENCE CATEGORY', { ...err }))
-        .finally(() => {
-          setIsSaving(false)
-          handleClose()
-        })
+      }
+      setIsSaving(false)
+      handleClose()
     }
   }
 

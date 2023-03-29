@@ -87,7 +87,10 @@ const EvaluationCardItem = ({ year, period, midDate, endDate }: EvaluationCardIt
               justifyContent: 'flex-end'
             }}
           >
-            <Tooltip label={'status'} color={EvaluationConstants.status[period].color}>
+            <Tooltip
+              label={CommonConstants.period[locale]}
+              color={EvaluationConstants.status[period].color}
+            >
               <Badge size={'md'} variant={'dot'} color={EvaluationConstants.status[period].color}>
                 {EvaluationConstants.status[period].name[locale]}
               </Badge>
@@ -125,7 +128,7 @@ const EvaluationCardItem = ({ year, period, midDate, endDate }: EvaluationCardIt
                 {!midCountdown &&
                 dayjs().diff(midDate.start) < 0 &&
                 validPeriods([EVALUATION_PERIOD.FREE, EVALUATION_PERIOD.MID]) ? (
-                  <Tooltip color={'gray'} label={CommonConstants.soon[locale]}>
+                  <Tooltip color={'gray'} label={dayjs(midDate.start).format('DD/MM/YYYY')}>
                     <Countdown
                       renderer={(props) => <CountdownRenderer {...props} />}
                       date={midDate.start}
@@ -165,7 +168,7 @@ const EvaluationCardItem = ({ year, period, midDate, endDate }: EvaluationCardIt
               </Text>
               <Group>
                 {!endCountdown && dayjs().diff(endDate.start) < 0 ? (
-                  <Tooltip color={'gray'} label={CommonConstants.soon[locale]}>
+                  <Tooltip color={'gray'} label={dayjs(endDate.start).format('DD/MM/YYYY')}>
                     <Countdown
                       renderer={(props) => <CountdownRenderer {...props} />}
                       date={endDate.start}

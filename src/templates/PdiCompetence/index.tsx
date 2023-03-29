@@ -150,15 +150,13 @@ const PdiCompetence = ({ actor, pdi }: PdiCompetenceProps) => {
         id: pdiCompetence.id
       }
     }).finally(async () => {
-      Promise.all(
-        categories.map(async (category) => {
-          await deleteCategory({
-            variables: {
-              id: category.id
-            }
-          }).catch((err) => console.log('ERROR ON DELETING PDI COMPETENCE CATEGORY', { ...err }))
-        })
-      )
+      for (const category of categories) {
+        await deleteCategory({
+          variables: {
+            id: category.id
+          }
+        }).catch((err) => console.log('ERROR ON DELETING PDI COMPETENCE CATEGORY', { ...err }))
+      }
     })
   }
 
