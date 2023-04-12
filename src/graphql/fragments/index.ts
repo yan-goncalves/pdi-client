@@ -180,7 +180,7 @@ export const FRAGMENT_PERFORMED_KPI = gql`
     }
     achieved
     midFeedbackUser
-    midFeedbackUser
+    endFeedbackUser
     midFeedbackManager
     endFeedbackManager
   }
