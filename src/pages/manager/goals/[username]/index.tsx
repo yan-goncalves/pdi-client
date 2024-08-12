@@ -6,12 +6,14 @@ import { EVALUATION_ACTOR } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import { initializeApollo } from 'graphql/client'
 import { GET_EVALUATION_MODELS } from 'graphql/queries/collection/EvaluationModel'
+import { GET_EVALUATION_GOALS } from 'graphql/queries/collection/Goals'
 import { GET_USER } from 'graphql/queries/collection/User'
 import { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
 import EvaluationCardListTemplate from 'templates/EvaluationCardList'
 import { EvaluationListTemplateProps } from 'templates/EvaluationList'
 import { GetEvaluationModelsType } from 'types/collection/EvaluationModel'
+import { GetEvaluationGoalsType } from 'types/collection/Goal'
 import { GetUserType, UserType } from 'types/collection/User'
 
 export interface PageEvaluationListUserProps extends EvaluationListTemplateProps {
@@ -95,9 +97,32 @@ export const getServerSideProps: GetServerSideProps<EvaluationListTemplateProps>
     }
   }
 
+  const mappedEvaluation = await Promise.all(
+    evaluations.map(async (evaluation) => {
+      const {
+        data: { evaluationGoals }
+      } = await apolloClient.query<GetEvaluationGoalsType>({
+        query: GET_EVALUATION_GOALS,
+        variables: {
+          idEvaluation: evaluation.id,
+          idUser: user.id
+        }
+      })
+      const total = evaluationGoals
+        .map(({ kpis }) => {
+          return kpis
+            .map(({ weight }) => weight)
+            .reduce((prevWeight, currWeight) => prevWeight + currWeight, 0)
+        })
+        .reduce((prevWeight, currWeight) => prevWeight + currWeight, 0)
+
+      return { ...evaluation, totalWeight: total }
+    })
+  )
+
   return {
     props: {
-      items: [...evaluations],
+      items: [...mappedEvaluation],
       user
     }
   }
