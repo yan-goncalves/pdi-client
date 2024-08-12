@@ -211,9 +211,9 @@ const GoalForm = ({
             !editKpi
               ? undefined
               : {
-                  evaluationKpi: editKpi,
-                  handleEdit: handleEditKpi
-                }
+                evaluationKpi: editKpi,
+                handleEdit: handleEditKpi
+              }
           }
         />
       )}
