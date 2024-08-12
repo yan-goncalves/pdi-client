@@ -14,7 +14,7 @@ import { useAppDispatch } from 'app/hooks'
 import CountdownRenderer from 'components/CountdownRenderer'
 import LoadingOverlay from 'components/LoadingOverlay'
 import { CommonConstants } from 'constants/common'
-import { EvaluationConstants, EVALUATION_PERIOD } from 'constants/evaluation'
+import { EVALUATION_PERIOD, EvaluationConstants } from 'constants/evaluation'
 import { EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import dayjs from 'dayjs'
@@ -34,6 +34,7 @@ export type EvaluationCardItemProps = {
     start: Date
     deadline: Date
   }
+  totalWeight?: number
 }
 
 const EvaluationCardItem = ({ year, period, midDate, endDate }: EvaluationCardItemProps) => {
