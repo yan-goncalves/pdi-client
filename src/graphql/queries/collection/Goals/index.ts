@@ -34,3 +34,12 @@ export const GET_GOALS = gql`
     }
   }
 `
+
+export const GET_PREVIOUS_YEAR_GOALS = gql`
+  ${FRAGMENT_GOAL_MODEL}
+  query GetPreviousYearGoals {
+    goals: previousYearGoals {
+      ...FragmentGoalModel
+    }
+  }
+`

@@ -16,6 +16,7 @@ import { useMediaQuery } from '@mantine/hooks'
 import { Table } from '@nextui-org/react'
 import { IconEdit, IconTrash } from '@tabler/icons'
 import ContentBase from 'components/ContentBase'
+import GoalImportForm from 'components/GoalImportForm'
 import { EvaluationKpiInput } from 'components/KpiForm'
 import LoadingOverlay from 'components/LoadingOverlay'
 import { FALLBACK_USER_PICTURE } from 'components/UserPicture'
@@ -28,13 +29,14 @@ import { EVALUATION_ACTOR, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import { CREATE_GOAL, DELETE_GOAL, UPDATE_GOAL } from 'graphql/mutations/collection/Goal'
 import { CREATE_KPI, UPDATE_KPI } from 'graphql/mutations/collection/Kpi'
-import { GET_EVALUATION_GOALS } from 'graphql/queries/collection/Goals'
+import { GET_EVALUATION_GOALS, GET_PREVIOUS_YEAR_GOALS } from 'graphql/queries/collection/Goals'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import {
   CreateGoalType,
   DeleteGoalType,
   GetEvaluationGoalsType,
+  GetGoalsType,
   GoalType,
   UpdateGoalType
 } from 'types/collection/Goal'
@@ -52,10 +54,11 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
   const { data: session } = useSession()
   const { classes, cx } = useStyles()
   const { locale } = useLocale()
-  const { evaluationModel, appraisee } = useEvaluation()
+  const { evaluationModel, appraisee, isSaving, setIsSaving } = useEvaluation()
   const match = useMediaQuery(`(max-width: ${theme.breakpoints.xs}px)`, false)
   const [opened, setOpened] = useState<number>(-1)
   const [openGoalModal, setOpenGoalModal] = useState<boolean>(false)
+  const [openImportGoalModal, setOpenImportGoalModal] = useState<boolean>(false)
   const [totalWeight, setTotalWeight] = useState<number>(0)
   const [evaluationGoals, setEvaluationGoals] = useState<GoalType[]>([])
   const [removing, setRemoving] = useState<number>(-1)
@@ -69,6 +72,10 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
       setRemoving(-1)
       setEvaluationGoals(evaluationGoals)
     }
+  })
+
+  const { refetch: getPreviousGoals } = useQuery<GetGoalsType>(GET_PREVIOUS_YEAR_GOALS, {
+    skip: true
   })
   const [createGoal] = useMutation<CreateGoalType>(CREATE_GOAL)
   const [updateGoal] = useMutation<UpdateGoalType>(UPDATE_GOAL)
@@ -188,6 +195,49 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
     }
   }
 
+  const handleImportGoals = async () => {
+    setIsSaving(true)
+    const { data } = await getPreviousGoals()
+    if (data.goals.length > 0) {
+      const uniqueGoals = data.goals.filter((goal) => {
+        return evaluationGoals.every((evaluationGoal) => evaluationGoal.name !== goal.name)
+      })
+
+      for (const importGoal of uniqueGoals) {
+        await handleSave(importGoal.name, importGoal.kpis)
+      }
+    }
+    setIsSaving(false)
+  }
+
+  const ActionButtonsGoal = () => {
+    return (
+      <Group align={'center'}>
+        <Button
+          variant={'subtle'}
+          onClick={handleImportGoals}
+          disabled={totalWeight === 100 || isSaving}
+          loading={isSaving}
+        >
+          {isSaving ? GoalsConstants.importing[locale] : GoalsConstants.import[locale]}
+        </Button>
+        <Text size={!match ? 'md' : 'sm'} weight={500}>
+          ou
+        </Text>
+        <Button
+          disabled={totalWeight === 100 || isSaving}
+          onClick={() => {
+            if (totalWeight < 100) {
+              setOpenGoalModal(true)
+            }
+          }}
+        >
+          {CommonConstants.create[locale]}
+        </Button>
+      </Group>
+    )
+  }
+
   if (!session) {
     return <LoadingOverlay />
   }
@@ -212,6 +262,16 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
                   handleUpdate: handleSave
                 }
           }
+        />
+      )}
+      {openImportGoalModal && (
+        <GoalImportForm
+          goals={goals}
+          evaluationGoals={evaluationGoals}
+          handleClose={() => {
+            setOpenImportGoalModal(false)
+          }}
+          totalWeight={totalWeight}
         />
       )}
       <ContentBase
@@ -250,18 +310,7 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
             <Text weight={600} sx={{ color: theme.colors.gray[6] }}>
               {EvaluationConstants.title.default[locale]} - {evaluationModel.year}
             </Text>
-            {isManageable && evaluationGoals.length && (
-              <Button
-                disabled={totalWeight === 100}
-                onClick={() => {
-                  if (totalWeight < 100) {
-                    setOpenGoalModal(true)
-                  }
-                }}
-              >
-                {CommonConstants.create[locale]}
-              </Button>
-            )}
+            {isManageable && evaluationGoals.length && ActionButtonsGoal()}
           </Group>
           {!evaluationGoals.length && (
             <Group
@@ -274,18 +323,7 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
               <Text size={!match ? 'lg' : 'md'} sx={{ color: theme.colors.gray[3] }}>
                 {GoalsConstants.empty[locale]}
               </Text>
-              {isManageable && (
-                <Button
-                  disabled={totalWeight === 100}
-                  onClick={() => {
-                    if (totalWeight < 100) {
-                      setOpenGoalModal(true)
-                    }
-                  }}
-                >
-                  {CommonConstants.create[locale]}
-                </Button>
-              )}
+              {isManageable && ActionButtonsGoal()}
             </Group>
           )}
           {evaluationGoals.map((goal) => (
