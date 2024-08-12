@@ -16,7 +16,6 @@ import { useMediaQuery } from '@mantine/hooks'
 import { Table } from '@nextui-org/react'
 import { IconEdit, IconTrash } from '@tabler/icons'
 import ContentBase from 'components/ContentBase'
-import GoalImportForm from 'components/GoalImportForm'
 import { EvaluationKpiInput } from 'components/KpiForm'
 import LoadingOverlay from 'components/LoadingOverlay'
 import { FALLBACK_USER_PICTURE } from 'components/UserPicture'
@@ -264,7 +263,7 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
           }
         />
       )}
-      {openImportGoalModal && (
+      {/* {openImportGoalModal && (
         <GoalImportForm
           goals={goals}
           evaluationGoals={evaluationGoals}
@@ -273,7 +272,7 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
           }}
           totalWeight={totalWeight}
         />
-      )}
+      )} */}
       <ContentBase
         title={
           <Group sx={{ justifyContent: 'space-between' }}>
