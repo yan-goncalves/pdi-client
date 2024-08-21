@@ -35,16 +35,17 @@ import { useStyles } from './styles'
 export type GoalFormProps = {
   goals: GoalType[]
   evaluationGoals: GoalType[]
-  handleAdd: (goalName: string, evaluationKpis: EvaluationKpiInput[]) => Promise<void>
+  handleAdd?: (goalName: string, evaluationKpis: EvaluationKpiInput[]) => Promise<void>
   handleClose: () => void
   totalWeight: number
   editMode?: {
     evaluationGoal: GoalType
-    handleUpdate: (
+    handleUpdate?: (
       goalName: string,
       evaluationKpis: EvaluationKpiInput[],
       oldEvaluationGoal: GoalType
     ) => Promise<void>
+    handleImport?: (goal: GoalType, evaluationKpis: EvaluationKpiInput[]) => Promise<void>
   }
 }
 
@@ -156,10 +157,16 @@ const GoalForm = ({
     if (!isDisabled && goalName) {
       await handleDeleteKpi().then(async () => {
         if (!editMode) {
-          await handleAdd(goalName, evaluationKpis).then(() => handleClose())
+          await handleAdd?.(goalName, evaluationKpis).then(() => handleClose())
         } else {
-          const { evaluationGoal, handleUpdate } = editMode
-          await handleUpdate(goalName, evaluationKpis, evaluationGoal).then(() => handleClose())
+          const { evaluationGoal } = editMode
+          if (editMode?.handleUpdate) {
+            await editMode
+              .handleUpdate(goalName, evaluationKpis, evaluationGoal)
+              .then(() => handleClose())
+          } else if (editMode?.handleImport) {
+            await editMode.handleImport(evaluationGoal, evaluationKpis).then(() => handleClose())
+          }
         }
       })
       setIsSaving(false)
@@ -167,13 +174,15 @@ const GoalForm = ({
   }
 
   const handleDeleteKpi = async () => {
-    for (const { id } of deletedKpis) {
-      if (id > 0) {
-        await deleteKpi({
-          variables: {
-            id
-          }
-        })
+    if (!editMode?.handleImport) {
+      for (const { id } of deletedKpis) {
+        if (id > 0) {
+          await deleteKpi({
+            variables: {
+              id
+            }
+          })
+        }
       }
     }
   }
@@ -211,10 +220,11 @@ const GoalForm = ({
             !editKpi
               ? undefined
               : {
-                evaluationKpi: editKpi,
-                handleEdit: handleEditKpi
-              }
+                  evaluationKpi: editKpi,
+                  handleEdit: handleEditKpi
+                }
           }
+          isImport={!!editMode?.handleImport}
         />
       )}
       <Modal
@@ -233,22 +243,28 @@ const GoalForm = ({
         size={600}
       >
         <Group direction={'column'}>
-          <Textarea
-            disabled={isSaving}
-            id={'name'}
-            radius={'md'}
-            error={
-              !inError ? undefined : <Text size={'xs'}>{ErrorsConstants.goals.exists[locale]}</Text>
-            }
-            label={CommonConstants.description[locale]}
-            size={'sm'}
-            sx={{ width: '100%' }}
-            minRows={4}
-            maxRows={5}
-            maxLength={3000}
-            value={goalName}
-            onChange={({ currentTarget: { value } }) => setGoalName(value)}
-          />
+          {!editMode?.handleImport ? (
+            <Textarea
+              disabled={isSaving}
+              id={'name'}
+              radius={'md'}
+              error={
+                !inError ? undefined : (
+                  <Text size={'xs'}>{ErrorsConstants.goals.exists[locale]}</Text>
+                )
+              }
+              label={CommonConstants.description[locale]}
+              size={'sm'}
+              sx={{ width: '100%' }}
+              minRows={4}
+              maxRows={5}
+              maxLength={3000}
+              value={goalName}
+              onChange={({ currentTarget: { value } }) => setGoalName(value)}
+            />
+          ) : (
+            <Text size={'lg'}>{goalName}</Text>
+          )}
           <Group sx={{ width: '100%', justifyContent: 'space-between' }}>
             <Text size={'sm'} weight={500}>
               KPI&apos;s
@@ -385,6 +401,7 @@ const GoalForm = ({
             flexDirection: 'row-reverse',
             justifyContent: 'flex-start'
           }}
+          showNotifications={!editMode?.handleImport}
         />
       </Modal>
     </>

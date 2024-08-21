@@ -15,6 +15,7 @@ export type ActionGroupProps = {
   handleSave: () => Promise<void>
   handleCancel: () => Promise<void> | void
   groupProps?: Sx
+  showNotifications?: boolean
 }
 
 const ActionGroup = ({
@@ -22,7 +23,8 @@ const ActionGroup = ({
   disabled,
   handleSave,
   handleCancel,
-  groupProps
+  groupProps,
+  showNotifications = true
 }: ActionGroupProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
@@ -31,47 +33,51 @@ const ActionGroup = ({
 
   const handleAction = async () => {
     setIsSaving(true)
-    notifications.showNotification({
-      message: (
-        <Title order={5} p={2}>
-          <Group>
-            <Loader size={'sm'} />
-            {messages?.saving ?? NotificationsConstants.saving.answer[locale]}
-          </Group>
-        </Title>
-      ),
-      radius: 'md',
-      autoClose: 850,
-      styles: {
-        root: {
-          borderColor: theme.colors.blue[6],
-          '&::before': { backgroundColor: theme.colors.blue[6] }
+    if (showNotifications) {
+      notifications.showNotification({
+        message: (
+          <Title order={5} p={2}>
+            <Group>
+              <Loader size={'sm'} />
+              {messages?.saving ?? NotificationsConstants.saving.answer[locale]}
+            </Group>
+          </Title>
+        ),
+        radius: 'md',
+        autoClose: 850,
+        styles: {
+          root: {
+            borderColor: theme.colors.blue[6],
+            '&::before': { backgroundColor: theme.colors.blue[6] }
+          }
         }
-      }
-    })
+      })
+    }
     setTimeout(
       async () =>
         await handleSave().then(() => {
-          notifications.showNotification({
-            message: (
-              <Title order={5} p={2}>
-                <Group>
-                  <IconChecks size={22} color={theme.colors.green[9]} />
-                  {messages?.saved ?? NotificationsConstants.saved.answer[locale]}
-                </Group>
-              </Title>
-            ),
-            color: 'green',
-            radius: 'md',
+          if (showNotifications) {
+            notifications.showNotification({
+              message: (
+                <Title order={5} p={2}>
+                  <Group>
+                    <IconChecks size={22} color={theme.colors.green[9]} />
+                    {messages?.saved ?? NotificationsConstants.saved.answer[locale]}
+                  </Group>
+                </Title>
+              ),
+              color: 'green',
+              radius: 'md',
 
-            autoClose: 1500,
-            styles: (theme) => ({
-              root: {
-                borderColor: theme.colors.green[6],
-                '&::before': { backgroundColor: theme.colors.green[6] }
-              }
+              autoClose: 1500,
+              styles: (theme) => ({
+                root: {
+                  borderColor: theme.colors.green[6],
+                  '&::before': { backgroundColor: theme.colors.green[6] }
+                }
+              })
             })
-          })
+          }
           setIsSaving(false)
         }),
       1000

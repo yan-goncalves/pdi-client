@@ -46,5 +46,20 @@ export const GoalsConstants = {
   totalWeightLess: {
     br: 'O peso total dos objetivos deve ser igual a 100.',
     en: 'The total weight of the goals must be exactly 100.'
+  },
+
+  importPrevious: {
+    info: {
+      br: 'Os objetivos do ano anterior que forem iguais aos atuais não aparecerão na lista.',
+      en: 'The goals from the previous year that are the same as the current ones will not appear on the list.'
+    },
+    saving: {
+      br: 'Salvando objetivos...',
+      en: 'Saving goals...'
+    },
+    saved: {
+      br: 'Objetivos salvos',
+      en: 'Goals saved'
+    }
   }
 }

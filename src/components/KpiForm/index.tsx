@@ -34,9 +34,17 @@ export type KpiFormProps = {
     evaluationKpi: KpiType | EvaluationKpiInput
     handleEdit: (evaluationKpi: KpiType | EvaluationKpiInput) => void
   }
+  isImport?: boolean
 }
 
-const KpiForm = ({ staging, totalWeight, handleAdd, handleClose, editMode }: KpiFormProps) => {
+const KpiForm = ({
+  staging,
+  totalWeight,
+  handleAdd,
+  handleClose,
+  editMode,
+  isImport
+}: KpiFormProps) => {
   const { locale } = useLocale()
   const [options, setOptions] = useState<KpiType[]>([])
   const [kpiName, setKpiName] = useState<string>('')
@@ -184,13 +192,15 @@ const KpiForm = ({ staging, totalWeight, handleAdd, handleClose, editMode }: Kpi
         </Group>
         <Slider
           value={
+            !isImport &&
             weight > 100 - totalWeight + (!editMode ? 0 : editMode.evaluationKpi.weight)
               ? 100 - totalWeight + (!editMode ? 0 : editMode.evaluationKpi.weight)
               : weight
           }
           onChange={(value) =>
             setWeight(
-              value > 100 - totalWeight + (!editMode ? 0 : editMode.evaluationKpi.weight)
+              !isImport &&
+                value > 100 - totalWeight + (!editMode ? 0 : editMode.evaluationKpi.weight)
                 ? 100 - totalWeight + (!editMode ? 0 : editMode.evaluationKpi.weight)
                 : value
             )

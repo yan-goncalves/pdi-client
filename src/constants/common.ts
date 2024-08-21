@@ -413,5 +413,10 @@ export const CommonConstants = {
         }
       }
     }
+  },
+
+  selectAll: {
+    br: 'Selecionar todos',
+    en: 'Select all'
   }
 }
