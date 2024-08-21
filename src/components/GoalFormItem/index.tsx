@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Box,
+  Checkbox,
   Collapse,
   Divider,
   Group,
@@ -24,25 +25,30 @@ import { useStyles } from './styles'
 export type GoalFormItemProps = {
   goal: GoalType
   opened?: boolean
-  onClick: () => void
+  onOpen: () => void
+  onSelect?: (goalId: number, checked: boolean) => void
   onEdit?: (goal: GoalType) => void | GoalType
   onDelete?: (goal: GoalType) => Promise<void>
   removing?: boolean
+  isSelected?: boolean
+  selectable?: boolean
 }
 
 const GoalFormItem = ({
   goal,
   opened = false,
-  onClick,
+  onOpen,
+  onSelect,
   onEdit,
   onDelete,
-  removing = false
+  removing = false,
+  isSelected = false
 }: GoalFormItemProps) => {
   const theme = useMantineTheme()
   const { data: session } = useSession()
   const match = useMediaQuery(`(max-width: ${theme.breakpoints.xs}px)`, false)
   const { locale } = useLocale()
-  const { classes, cx } = useStyles()
+  const { classes, cx } = useStyles({ isSelected })
   const { appraisee } = useEvaluation()
   const isManageable = useMemo(() => {
     return session && session.user.role !== ROLES.ADMIN && session.user.id === appraisee.manager?.id
@@ -61,9 +67,17 @@ const GoalFormItem = ({
         align={'center'}
         className={opened ? cx(classes.group, classes.groupOpened) : classes.group}
       >
+        {!!onSelect && (
+          <Checkbox
+            value={goal.id}
+            onChange={(event) => onSelect(goal.id, event.currentTarget.checked)}
+            classNames={{ input: classes.checkbox }}
+            checked={isSelected}
+          />
+        )}
         <Text
           role={'button'}
-          onClick={onClick}
+          onClick={onOpen}
           className={classes.label}
           sx={{
             color: removing ? theme.colors.gray[3] : theme.black

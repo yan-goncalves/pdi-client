@@ -1,41 +1,27 @@
 import { useMutation, useQuery } from '@apollo/client'
-import {
-  ActionIcon,
-  Avatar,
-  Box,
-  Button,
-  Collapse,
-  Divider,
-  Group,
-  Text,
-  Title,
-  Tooltip,
-  useMantineTheme
-} from '@mantine/core'
+import { Avatar, Button, Group, Text, Title, useMantineTheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-import { Table } from '@nextui-org/react'
-import { IconEdit, IconTrash } from '@tabler/icons'
 import ContentBase from 'components/ContentBase'
+import GoalFormItem from 'components/GoalFormItem'
+import GoalImportForm from 'components/GoalImportForm'
 import { EvaluationKpiInput } from 'components/KpiForm'
 import LoadingOverlay from 'components/LoadingOverlay'
 import { FALLBACK_USER_PICTURE } from 'components/UserPicture'
 import { CommonConstants } from 'constants/common'
 import { EvaluationConstants } from 'constants/evaluation'
 import { GoalsConstants } from 'constants/goals'
-import { KpisConstants } from 'constants/kpis'
 import { ROLES } from 'constants/role'
 import { EVALUATION_ACTOR, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import { CREATE_GOAL, DELETE_GOAL, UPDATE_GOAL } from 'graphql/mutations/collection/Goal'
 import { CREATE_KPI, UPDATE_KPI } from 'graphql/mutations/collection/Kpi'
-import { GET_EVALUATION_GOALS, GET_PREVIOUS_YEAR_GOALS } from 'graphql/queries/collection/Goals'
+import { GET_EVALUATION_GOALS } from 'graphql/queries/collection/Goals'
 import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   CreateGoalType,
   DeleteGoalType,
   GetEvaluationGoalsType,
-  GetGoalsType,
   GoalType,
   UpdateGoalType
 } from 'types/collection/Goal'
@@ -73,9 +59,6 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
     }
   })
 
-  const { refetch: getPreviousGoals } = useQuery<GetGoalsType>(GET_PREVIOUS_YEAR_GOALS, {
-    skip: true
-  })
   const [createGoal] = useMutation<CreateGoalType>(CREATE_GOAL)
   const [updateGoal] = useMutation<UpdateGoalType>(UPDATE_GOAL)
   const [deleteGoal] = useMutation<DeleteGoalType>(DELETE_GOAL)
@@ -145,6 +128,12 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
     })
   }
 
+  const onSaveImport = useCallback(async (goals: GoalType[]) => {
+    for (const goal of goals) {
+      await handleSave(goal.name, goal.kpis)
+    }
+  }, [])
+
   const handleKpis = async (goal: GoalType, evaluationKpis: EvaluationKpiInput[]) => {
     for (const { id, name, target, weight } of evaluationKpis) {
       if (id > 0 && goal?.kpis?.find((kpi) => kpi.id === id)) {
@@ -178,11 +167,10 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
     setTotalWeight(0)
     setRemoving(evaluationGoal.id)
 
-    await handleDeleteGoal(evaluationGoal).finally(async () => {
-      await getGoals({
-        idEvaluation: evaluationModel.id,
-        idUser: appraisee.id
-      })
+    await handleDeleteGoal(evaluationGoal)
+    await getGoals({
+      idEvaluation: evaluationModel.id,
+      idUser: appraisee.id
     })
   }
 
@@ -194,31 +182,16 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
     }
   }
 
-  const handleImportGoals = async () => {
-    setIsSaving(true)
-    const { data } = await getPreviousGoals()
-    if (data.goals.length > 0) {
-      const uniqueGoals = data.goals.filter((goal) => {
-        return evaluationGoals.every((evaluationGoal) => evaluationGoal.name !== goal.name)
-      })
-
-      for (const importGoal of uniqueGoals) {
-        await handleSave(importGoal.name, importGoal.kpis)
-      }
-    }
-    setIsSaving(false)
-  }
-
   const ActionButtonsGoal = () => {
     return (
       <Group align={'center'}>
         <Button
           variant={'subtle'}
-          onClick={handleImportGoals}
+          onClick={() => setOpenImportGoalModal(true)}
           disabled={totalWeight === 100 || isSaving}
           loading={isSaving}
         >
-          {isSaving ? GoalsConstants.importing[locale] : GoalsConstants.import[locale]}
+          {GoalsConstants.import[locale]}
         </Button>
         <Text size={!match ? 'md' : 'sm'} weight={500}>
           ou
@@ -237,13 +210,9 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
     )
   }
 
-  if (!session) {
-    return <LoadingOverlay />
-  }
-
-  return (
-    <>
-      {openGoalModal && (
+  const shouldOpenGoalModal = () => {
+    if (openGoalModal) {
+      return (
         <GoalForm
           goals={goals}
           evaluationGoals={evaluationGoals}
@@ -262,17 +231,32 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
                 }
           }
         />
-      )}
-      {/* {openImportGoalModal && (
+      )
+    }
+  }
+
+  const shouldOpenImportGoalModal = () => {
+    if (openImportGoalModal) {
+      return (
         <GoalImportForm
           goals={goals}
           evaluationGoals={evaluationGoals}
-          handleClose={() => {
-            setOpenImportGoalModal(false)
-          }}
+          handleSave={onSaveImport}
+          handleClose={() => setOpenImportGoalModal(false)}
           totalWeight={totalWeight}
         />
-      )} */}
+      )
+    }
+  }
+
+  if (!session) {
+    return <LoadingOverlay />
+  }
+
+  return (
+    <>
+      {shouldOpenGoalModal()}
+      {shouldOpenImportGoalModal()}
       <ContentBase
         title={
           <Group sx={{ justifyContent: 'space-between' }}>
@@ -325,96 +309,16 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
               {isManageable && ActionButtonsGoal()}
             </Group>
           )}
-          {evaluationGoals.map((goal) => (
-            <Box key={goal.id} className={classes.box}>
-              <Group
-                align={'center'}
-                className={
-                  opened === goal.id ? cx(classes.group, classes.groupOpened) : classes.group
-                }
-              >
-                <Text
-                  role={'button'}
-                  onClick={() => {
-                    opened === goal.id ? setOpened(-1) : setOpened(goal.id)
-                  }}
-                  className={classes.label}
-                  sx={{
-                    color: removing === goal.id ? theme.colors.gray[3] : theme.black
-                  }}
-                >
-                  {removing === goal.id ? CommonConstants.removing[locale] : goal.name}
-                </Text>
-                {isManageable && (
-                  <Group className={classes.actionsGroup}>
-                    <Tooltip color={'cyan'} label={CommonConstants.edit[locale]}>
-                      <ActionIcon
-                        disabled={removing > 0}
-                        variant={'light'}
-                        color={'cyan'}
-                        onClick={() => handleEdit(goal)}
-                      >
-                        <IconEdit size={!match ? 20 : 14} />
-                      </ActionIcon>
-                    </Tooltip>
-                    <Tooltip color={'red'} label={CommonConstants.delete[locale]}>
-                      <ActionIcon
-                        disabled={removing > 0}
-                        variant={'light'}
-                        color={'red'}
-                        onClick={async () => await handleDelete(goal)}
-                      >
-                        <IconTrash size={!match ? 20 : 14} />
-                      </ActionIcon>
-                    </Tooltip>
-                  </Group>
-                )}
-              </Group>
-              <Divider
-                className={cx(
-                  classes.divider,
-                  opened === goal.id ? classes.dividerOpened : classes.dividerHidden
-                )}
-              />
-              <Collapse in={opened === goal.id}>
-                {!goal.kpis?.length ? (
-                  <Group spacing={5} m={20}>
-                    <Text size={!match ? 'md' : 'xs'} sx={{ color: theme.colors.gray[3] }}>
-                      {KpisConstants.empty[locale]}
-                    </Text>
-                  </Group>
-                ) : (
-                  <Table aria-labelledby={'kpi'}>
-                    <Table.Header>
-                      <Table.Column width={'60%'}>
-                        <Text size={'xs'}>KPI</Text>
-                      </Table.Column>
-                      <Table.Column width={'25%'}>
-                        <Text size={'xs'}>{CommonConstants.target[locale]}</Text>
-                      </Table.Column>
-                      <Table.Column width={'15%'}>
-                        <Text size={'xs'}>{CommonConstants.weight[locale]}</Text>
-                      </Table.Column>
-                    </Table.Header>
-                    <Table.Body>
-                      {goal.kpis.map(({ id, name, target, weight }) => (
-                        <Table.Row key={id}>
-                          <Table.Cell>
-                            <Text size={!match ? 'md' : 'xs'}>{name}</Text>
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Text size={!match ? 'md' : 'xs'}>{target}</Text>
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Text size={!match ? 'md' : 'xs'}>{weight}%</Text>
-                          </Table.Cell>
-                        </Table.Row>
-                      ))}
-                    </Table.Body>
-                  </Table>
-                )}
-              </Collapse>
-            </Box>
+          {evaluationGoals.map((goal, index) => (
+            <GoalFormItem
+              key={`${goal.id}-${index}`}
+              goal={goal}
+              opened={opened === goal.id}
+              onOpen={() => (opened === goal.id ? setOpened(-1) : setOpened(goal.id))}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              removing={removing > 0}
+            />
           ))}
         </Group>
       </ContentBase>
