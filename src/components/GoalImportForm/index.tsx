@@ -32,7 +32,7 @@ const GoalImportForm = ({
   const theme = useMantineTheme()
   const { classes, cx } = useStyles()
   const { locale } = useLocale()
-  const { isSaving, setIsSaving } = useEvaluation()
+  const { isSaving, appraisee } = useEvaluation()
   const [opened, setOpened] = useState<number>(-1)
   const [previousYearGoals, setPreviousYearGoals] = useState<GoalType[]>([])
   const [selectedYearGoals, setSelectedYearGoals] = useState<number[]>([])
@@ -105,7 +105,9 @@ const GoalImportForm = ({
     } else if (data && !loading) {
       setPreviousYearGoals(
         data.goals.filter((goal) => {
-          return evaluationGoals.every((evaluationGoal) => evaluationGoal.name !== goal.name)
+          return evaluationGoals.every((evaluationGoal) => {
+            return evaluationGoal.name !== goal.name && goal.user.id === appraisee.id
+          })
         })
       )
     }

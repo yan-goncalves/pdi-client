@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client'
-import { FRAGMENT_GOAL_MODEL, FRAGMENT_KPI_MODEL } from 'graphql/fragments'
+import { FRAGMENT_GOAL_MODEL, FRAGMENT_KPI_MODEL, FRAGMENT_USER_MODEL } from 'graphql/fragments'
 
 export const GET_GOAL = gql`
   ${FRAGMENT_KPI_MODEL}
@@ -37,9 +37,13 @@ export const GET_GOALS = gql`
 
 export const GET_PREVIOUS_YEAR_GOALS = gql`
   ${FRAGMENT_GOAL_MODEL}
+  ${FRAGMENT_USER_MODEL}
   query GetPreviousYearGoals {
     goals: previousYearGoals {
       ...FragmentGoalModel
+      user {
+        ...FragmentUserModel
+      }
     }
   }
 `
