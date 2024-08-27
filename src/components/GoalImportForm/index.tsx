@@ -52,6 +52,9 @@ const GoalImportForm = ({
   }, [totalWeight, previousYearWeight])
 
   const { data, loading, error } = useQuery<GetGoalsType>(GET_PREVIOUS_YEAR_GOALS, {
+    variables: {
+      idUser: appraisee.id
+    },
     context: {
       headers: {
         locale
@@ -115,7 +118,7 @@ const GoalImportForm = ({
     return () => {
       setPreviousYearGoals([])
     }
-  }, [data, loading, error])
+  }, [data, loading, error, appraisee, evaluationGoals])
 
   const shouldOpenGoalModal = useCallback(() => {
     if (openGoalModal && editEvaluationGoal) {
@@ -132,7 +135,7 @@ const GoalImportForm = ({
         />
       )
     }
-  }, [openGoalModal, editEvaluationGoal])
+  }, [openGoalModal, editEvaluationGoal, evaluationGoals, sumTotalWeight, handleImport])
 
   return (
     <>
