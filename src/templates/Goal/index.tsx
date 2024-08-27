@@ -95,68 +95,73 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
     }
   }, [session, appraisee])
 
-  const handleSave = async (
-    goalName: string,
-    evaluationKpis: EvaluationKpiInput[],
-    evaluationGoal?: GoalType
-  ) => {
-    setTotalWeight(0)
-
-    let goal: GoalType
-    if (!evaluationGoal) {
-      goal = await createGoal({
-        variables: {
-          idEvaluation: evaluationModel.id,
-          idUser: appraisee.id,
-          name: goalName
+  const handleKpis = useCallback(
+    async (goal: GoalType, evaluationKpis: EvaluationKpiInput[]) => {
+      for (const { id, name, target, weight } of evaluationKpis) {
+        if (id > 0 && goal?.kpis?.find((kpi) => kpi.id === id)) {
+          await updateKpi({
+            variables: {
+              id,
+              name,
+              target,
+              weight
+            }
+          })
+        } else {
+          await createKpi({
+            variables: {
+              idGoal: goal.id,
+              name,
+              target,
+              weight
+            }
+          })
         }
-      }).then(async ({ data }) => data!.created)
-    } else {
-      goal = await updateGoal({
-        variables: {
-          id: evaluationGoal.id,
-          name: goalName
-        }
-      }).then(({ data }) => data!.updated)
-    }
-
-    await handleKpis(goal, evaluationKpis).finally(async () => {
-      await getGoals({
-        idEvaluation: evaluationModel.id,
-        idUser: appraisee.id
-      })
-    })
-  }
-
-  const onSaveImport = useCallback(async (goals: GoalType[]) => {
-    for (const goal of goals) {
-      await handleSave(goal.name, goal.kpis)
-    }
-  }, [])
-
-  const handleKpis = async (goal: GoalType, evaluationKpis: EvaluationKpiInput[]) => {
-    for (const { id, name, target, weight } of evaluationKpis) {
-      if (id > 0 && goal?.kpis?.find((kpi) => kpi.id === id)) {
-        await updateKpi({
-          variables: {
-            id,
-            name,
-            target,
-            weight
-          }
-        })
-      } else {
-        await createKpi({
-          variables: {
-            idGoal: goal.id,
-            name,
-            target,
-            weight
-          }
-        })
       }
-    }
-  }
+    },
+    [createKpi, updateKpi]
+  )
+
+  const handleSave = useCallback(
+    async (goalName: string, evaluationKpis: EvaluationKpiInput[], evaluationGoal?: GoalType) => {
+      setTotalWeight(0)
+
+      let goal: GoalType
+      if (!evaluationGoal) {
+        goal = await createGoal({
+          variables: {
+            idEvaluation: evaluationModel.id,
+            idUser: appraisee.id,
+            name: goalName
+          }
+        }).then(async ({ data }) => data!.created)
+      } else {
+        goal = await updateGoal({
+          variables: {
+            id: evaluationGoal.id,
+            name: goalName
+          }
+        }).then(({ data }) => data!.updated)
+      }
+
+      await handleKpis(goal, evaluationKpis).finally(async () => {
+        await getGoals({
+          idEvaluation: evaluationModel.id,
+          idUser: appraisee.id
+        })
+      })
+    },
+    [appraisee, createGoal, evaluationModel, getGoals, handleKpis, updateGoal]
+  )
+
+  const onSaveImport = useCallback(
+    async (goals: GoalType[]) => {
+      for (const goal of goals) {
+        await handleSave(goal.name, goal.kpis)
+      }
+    },
+    [handleSave]
+  )
 
   const handleEdit = (evaluationGoal: GoalType) => {
     setEditEvaluationGoal(evaluationGoal)
@@ -317,7 +322,7 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
               onOpen={() => (opened === goal.id ? setOpened(-1) : setOpened(goal.id))}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              removing={removing > 0}
+              removing={removing > 0 && removing === goal.id}
             />
           ))}
         </Group>
