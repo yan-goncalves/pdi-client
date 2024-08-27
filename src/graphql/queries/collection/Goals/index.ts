@@ -38,8 +38,8 @@ export const GET_GOALS = gql`
 export const GET_PREVIOUS_YEAR_GOALS = gql`
   ${FRAGMENT_GOAL_MODEL}
   ${FRAGMENT_USER_MODEL}
-  query GetPreviousYearGoals {
-    goals: previousYearGoals {
+  query GetPreviousYearGoals($idUser: Int!) {
+    goals: previousYearGoals(idUser: $idUser) {
       ...FragmentGoalModel
       user {
         ...FragmentUserModel
