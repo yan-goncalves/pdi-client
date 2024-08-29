@@ -17,7 +17,7 @@ import { CREATE_GOAL, DELETE_GOAL, UPDATE_GOAL } from 'graphql/mutations/collect
 import { CREATE_KPI, UPDATE_KPI } from 'graphql/mutations/collection/Kpi'
 import { GET_EVALUATION_GOALS } from 'graphql/queries/collection/Goals'
 import { useSession } from 'next-auth/react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   CreateGoalType,
   DeleteGoalType,
@@ -27,7 +27,6 @@ import {
 } from 'types/collection/Goal'
 import { CreateKpiType, UpdateKpiType } from 'types/collection/Kpi'
 import GoalForm from '../../components/GoalForm'
-import { useStyles } from './styles'
 
 export type GoalTemplateProps = {
   actor: EVALUATION_ACTOR
@@ -37,18 +36,24 @@ export type GoalTemplateProps = {
 const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
   const theme = useMantineTheme()
   const { data: session } = useSession()
-  const { classes, cx } = useStyles()
   const { locale } = useLocale()
-  const { evaluationModel, appraisee, isSaving, setIsSaving } = useEvaluation()
+  const { evaluationModel, appraisee, isSaving } = useEvaluation()
   const match = useMediaQuery(`(max-width: ${theme.breakpoints.xs}px)`, false)
   const [opened, setOpened] = useState<number>(-1)
   const [openGoalModal, setOpenGoalModal] = useState<boolean>(false)
   const [openImportGoalModal, setOpenImportGoalModal] = useState<boolean>(false)
-  const [totalWeight, setTotalWeight] = useState<number>(0)
+  // const [totalWeight, setTotalWeight] = useState<number>(0)
   const [evaluationGoals, setEvaluationGoals] = useState<GoalType[]>([])
   const [removing, setRemoving] = useState<number>(-1)
   const [editEvaluationGoal, setEditEvaluationGoal] = useState<GoalType>()
   const [isManageable, setIsManageable] = useState<boolean>(false)
+
+  const totalWeight = useMemo(() => {
+    return evaluationGoals.reduce((accGoal, currGoal) => {
+      const total = currGoal.kpis.reduce((accKpi, currKpi) => accKpi + currKpi.weight, 0)
+      return accGoal + total
+    }, 0)
+  }, [evaluationGoals])
 
   // queries/mutations
   const { refetch: getGoals } = useQuery<GetEvaluationGoalsType>(GET_EVALUATION_GOALS, {
@@ -72,20 +77,6 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
       setEvaluationGoals([])
     }
   }, [evaluationModel])
-
-  useEffect(() => {
-    if (evaluationGoals.length) {
-      const total = evaluationGoals
-        .map(({ kpis }) => {
-          return kpis
-            .map(({ weight }) => weight)
-            .reduce((prevWeight, currWeight) => prevWeight + currWeight, 0)
-        })
-        .reduce((prevWeight, currWeight) => prevWeight + currWeight, 0)
-
-      setTotalWeight(total)
-    }
-  }, [evaluationGoals])
 
   useEffect(() => {
     if (session && session.user.role !== ROLES.ADMIN && session.user.id === appraisee.manager?.id) {
@@ -124,8 +115,6 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
 
   const handleSave = useCallback(
     async (goalName: string, evaluationKpis: EvaluationKpiInput[], evaluationGoal?: GoalType) => {
-      setTotalWeight(0)
-
       let goal: GoalType
       if (!evaluationGoal) {
         goal = await createGoal({
@@ -169,7 +158,6 @@ const GoalTemplate = ({ actor, goals }: GoalTemplateProps) => {
   }
 
   const handleDelete = async (evaluationGoal: GoalType) => {
-    setTotalWeight(0)
     setRemoving(evaluationGoal.id)
 
     await handleDeleteGoal(evaluationGoal)
