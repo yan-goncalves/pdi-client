@@ -32,7 +32,7 @@ const GoalImportForm = ({
   const theme = useMantineTheme()
   const { classes, cx } = useStyles()
   const { locale } = useLocale()
-  const { isSaving, setIsSaving } = useEvaluation()
+  const { isSaving, appraisee } = useEvaluation()
   const [opened, setOpened] = useState<number>(-1)
   const [previousYearGoals, setPreviousYearGoals] = useState<GoalType[]>([])
   const [selectedYearGoals, setSelectedYearGoals] = useState<number[]>([])
@@ -52,6 +52,9 @@ const GoalImportForm = ({
   }, [totalWeight, previousYearWeight])
 
   const { data, loading, error } = useQuery<GetGoalsType>(GET_PREVIOUS_YEAR_GOALS, {
+    variables: {
+      idUser: appraisee.id
+    },
     context: {
       headers: {
         locale
@@ -105,7 +108,9 @@ const GoalImportForm = ({
     } else if (data && !loading) {
       setPreviousYearGoals(
         data.goals.filter((goal) => {
-          return evaluationGoals.every((evaluationGoal) => evaluationGoal.name !== goal.name)
+          return evaluationGoals.every((evaluationGoal) => {
+            return evaluationGoal.name !== goal.name && goal.user.id === appraisee.id
+          })
         })
       )
     }
@@ -113,7 +118,7 @@ const GoalImportForm = ({
     return () => {
       setPreviousYearGoals([])
     }
-  }, [data, loading, error])
+  }, [data, loading, error, appraisee, evaluationGoals])
 
   const shouldOpenGoalModal = useCallback(() => {
     if (openGoalModal && editEvaluationGoal) {
@@ -130,7 +135,7 @@ const GoalImportForm = ({
         />
       )
     }
-  }, [openGoalModal, editEvaluationGoal])
+  }, [openGoalModal, editEvaluationGoal, evaluationGoals, sumTotalWeight, handleImport])
 
   return (
     <>
