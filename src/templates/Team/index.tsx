@@ -1,18 +1,17 @@
 import { Grid, Group, Text, Title, useMantineTheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-import { IconSocial, TablerIconProps } from '@tabler/icons'
+import { IconSocial } from '@tabler/icons'
 import Accordion from 'components/Accordion'
 import ContentBase from 'components/ContentBase'
 import LoadingOverlay from 'components/LoadingOverlay'
 import TeamMemberCardItem from 'components/TeamMemberCardItem'
-import { DepartmentIcon } from 'constants/department'
+import { DepartmentIcon, LetterIcons } from 'constants/department'
 import { ROLES } from 'constants/role'
 import { useSession } from 'next-auth/react'
-import { ComponentType } from 'react'
 import { UserType } from 'types/collection/User'
 
 export type TeamMembersTemplateProps = {
-  [key in string]: {
+  [key: string]: {
     name: string
     members: UserType[]
   }
@@ -41,10 +40,12 @@ const TeamMembersTemplate = (items: TeamMembersTemplateProps) => {
     </Grid>
   )
 
-  const renderLabel = (Icon: ComponentType<TablerIconProps>, label: string) => {
+  const renderLabel = (key: string, label: string) => {
+    const IconComponent = DepartmentIcon[key] || LetterIcons[label[0].toLowerCase()]
+
     return (
       <Group>
-        <Icon />
+        <IconComponent />
         <Text>{label}</Text>
       </Group>
     )
@@ -63,7 +64,7 @@ const TeamMembersTemplate = (items: TeamMembersTemplateProps) => {
               m={10}
               key={departmentKey}
               color={theme.colors.blue[3]}
-              label={renderLabel(DepartmentIcon[departmentKey], items[departmentKey].name)}
+              label={renderLabel(departmentKey, items[departmentKey].name)}
             >
               {getMembers(departmentKey)}
             </Accordion.Item>
