@@ -5,7 +5,6 @@ import Accordion from 'components/Accordion'
 import ContentBase from 'components/ContentBase'
 import LoadingOverlay from 'components/LoadingOverlay'
 import TeamMemberCardItem from 'components/TeamMemberCardItem'
-import { DepartmentIcon, LetterIcons } from 'constants/department'
 import { ROLES } from 'constants/role'
 import { useSession } from 'next-auth/react'
 import { UserType } from 'types/collection/User'
@@ -41,11 +40,11 @@ const TeamMembersTemplate = (items: TeamMembersTemplateProps) => {
   )
 
   const renderLabel = (key: string, label: string) => {
-    const IconComponent = DepartmentIcon[key] || LetterIcons[label[0].toLowerCase()]
+    // const IconComponent = DepartmentIcon[key] || LetterIcons[label[0].toLowerCase()]
 
     return (
       <Group>
-        <IconComponent />
+        {/* <IconComponent /> */}
         <Text>{label}</Text>
       </Group>
     )
