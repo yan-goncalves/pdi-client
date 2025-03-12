@@ -32,7 +32,7 @@ const GoalImportForm = ({
   const theme = useMantineTheme()
   const { classes, cx } = useStyles()
   const { locale } = useLocale()
-  const { isSaving, appraisee } = useEvaluation()
+  const { isSaving, appraisee, evaluationModel } = useEvaluation()
   const [opened, setOpened] = useState<number>(-1)
   const [previousYearGoals, setPreviousYearGoals] = useState<GoalType[]>([])
   const [selectedYearGoals, setSelectedYearGoals] = useState<number[]>([])
@@ -53,7 +53,8 @@ const GoalImportForm = ({
 
   const { data, loading, error } = useQuery<GetGoalsType>(GET_PREVIOUS_YEAR_GOALS, {
     variables: {
-      idUser: appraisee.id
+      idUser: appraisee.id,
+      year: Number(evaluationModel.year) - 1
     },
     context: {
       headers: {
