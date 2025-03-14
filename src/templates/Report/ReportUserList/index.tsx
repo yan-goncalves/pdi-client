@@ -29,7 +29,7 @@ export type ReportUserListProps = {
   users: UserType[]
   year: number
   usersGoals?: {
-    [key in number]: GoalType[]
+    [key: number]: GoalType[]
   }
 }
 
