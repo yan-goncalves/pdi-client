@@ -55,10 +55,10 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
       return users
     }
 
-    return users.filter(({ username, info: { name, lastname } }) => {
+    return users.filter(({ username, info }) => {
       return (
         username.toLowerCase().includes(search.toLowerCase()) ||
-        `${name} ${lastname}`.toLowerCase().includes(search.toLowerCase())
+        `${info?.name} ${info?.lastname}`.toLowerCase().includes(search.toLowerCase())
       )
     })
   }, [search, users])
@@ -75,7 +75,7 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
                   ? FALLBACK_USER_PICTURE
                   : `${process.env.NEXT_PUBLIC_API_URL}/${user.picture}`
               }
-              name={`${user.info.name} ${user.info.lastname}`}
+              name={`${user?.info?.name} ${user?.info?.lastname}`}
               css={{
                 p: 0,
                 '.nextui-user-avatar': {
