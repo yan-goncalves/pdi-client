@@ -25,7 +25,12 @@ export const getMembersRecursively = async (
         async (dataMember) => await getMembersRecursively(dataMember, apolloClient, team)
       )
     )
-    team.push(...ordered)
+
+    for (const teamMember of ordered) {
+      if (!team.some(({ id }) => teamMember.id === id)) {
+        team.push(...ordered)
+      }
+    }
   }
 
   return member

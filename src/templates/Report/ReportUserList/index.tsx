@@ -10,7 +10,7 @@ import {
   useMantineTheme
 } from '@mantine/core'
 import { useMediaQuery, useWindowScroll } from '@mantine/hooks'
-import { SortDescriptor, Table, useAsyncList, useCollator, User } from '@nextui-org/react'
+import { SortDescriptor, Table, User, useAsyncList, useCollator } from '@nextui-org/react'
 import { IconCheck, IconFileDownload, IconSearch, IconX } from '@tabler/icons'
 import ContentBase from 'components/ContentBase'
 import LoadingOverlay from 'components/LoadingOverlay'
@@ -20,7 +20,7 @@ import { ReportConstants } from 'constants/report'
 import { useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import FileSaver from 'file-saver'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { GoalType } from 'types/collection/Goal'
 import { UserType } from 'types/collection/User'
 import { useStyles } from './styles'
@@ -29,7 +29,7 @@ export type ReportUserListProps = {
   users: UserType[]
   year: number
   usersGoals?: {
-    [key in number]: GoalType[]
+    [key: number]: GoalType[]
   }
 }
 
@@ -48,60 +48,60 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
   const [ready, setReady] = useState<boolean>(false)
   const [inError, setInError] = useState<boolean>(false)
   const [UUID, setUUID] = useState<string>()
-  const [search, setSearch] = useState<string>()
-  const [filteredUsers, setFilteredUsers] = useState<UserType[]>([])
+  const [search, setSearch] = useState<string>('')
 
-  useEffect(() => {
-    if (search?.length) {
-      setFilteredUsers(
-        users.filter(({ username, info: { name, lastname } }) => {
-          return (
-            username.toLowerCase().includes(search.toLowerCase()) ||
-            `${name} ${lastname}`.toLowerCase().includes(search.toLowerCase())
-          )
-        })
+  const filteredUsers = useMemo(() => {
+    if (search.length === 0) {
+      return users
+    }
+
+    return users.filter(({ username, info }) => {
+      return (
+        username.toLowerCase().includes(search.toLowerCase()) ||
+        `${info?.name} ${info?.lastname}`.toLowerCase().includes(search.toLowerCase())
       )
-    } else {
-      setFilteredUsers(users)
-    }
-  }, [search])
+    })
+  }, [search, users])
 
-  const renderCell = (user: UserType, columnKey: React.Key) => {
-    switch (columnKey) {
-      case 'name':
-        return (
-          <User
-            squared
-            src={
-              !user?.picture
-                ? FALLBACK_USER_PICTURE
-                : `${process.env.NEXT_PUBLIC_API_URL}/${user.picture}`
-            }
-            name={`${user.info.name} ${user.info.lastname}`}
-            css={{
-              p: 0,
-              '.nextui-user-avatar': {
-                border: `1px solid ${theme.colors.gray[3]} !important`
+  const renderCell = useCallback(
+    (user: UserType, columnKey: React.Key) => {
+      switch (columnKey) {
+        case 'name':
+          return (
+            <User
+              squared
+              src={
+                !user?.picture
+                  ? FALLBACK_USER_PICTURE
+                  : `${process.env.NEXT_PUBLIC_API_URL}/${user.picture}`
               }
-            }}
-          >
-            {user.username}
-          </User>
-        )
+              name={`${user?.info?.name} ${user?.info?.lastname}`}
+              css={{
+                p: 0,
+                '.nextui-user-avatar': {
+                  border: `1px solid ${theme.colors.gray[3]} !important`
+                }
+              }}
+            >
+              {user.username}
+            </User>
+          )
 
-      case 'department':
-        return user.department.name
+        case 'department':
+          return user.department.name
 
-      default:
-        return !user.manager?.info
-          ? user.manager?.username
+        default:
+          return !user.manager?.info
             ? user.manager?.username
-            : '-'
-          : `${user.manager.info.name} ${user.manager.info.lastname}`
-    }
-  }
+              ? user.manager?.username
+              : '-'
+            : `${user.manager.info.name} ${user.manager.info.lastname}`
+      }
+    },
+    [theme.colors.gray]
+  )
 
-  const getColumnField = (user: UserType, column: React.Key) => {
+  const getColumnField = useCallback((user: UserType, column: React.Key) => {
     switch (column) {
       case 'name':
         return user.info.name
@@ -114,29 +114,32 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
             : '-'
           : `${user.manager.info.name} ${user.manager.info.lastname}`
     }
-  }
+  }, [])
 
-  const sort = ({ sortDescriptor }: { sortDescriptor: SortDescriptor }) => {
-    return {
-      items: filteredUsers.sort((userA, userB) => {
-        if (sortDescriptor.column) {
-          const first = getColumnField(userA, sortDescriptor.column)
-          const second = getColumnField(userB, sortDescriptor.column)
-          let cmp = collator.compare(first, second)
-          if (sortDescriptor.direction === 'descending') {
-            cmp *= -1
+  const sort = useCallback(
+    ({ sortDescriptor }: { sortDescriptor: SortDescriptor }) => {
+      return {
+        items: filteredUsers.sort((userA, userB) => {
+          if (sortDescriptor.column) {
+            const first = getColumnField(userA, sortDescriptor.column)
+            const second = getColumnField(userB, sortDescriptor.column)
+            let cmp = collator.compare(first, second)
+            if (sortDescriptor.direction === 'descending') {
+              cmp *= -1
+            }
+            return cmp
           }
-          return cmp
-        }
 
-        return 0
-      })
-    }
-  }
+          return 0
+        })
+      }
+    },
+    [collator, filteredUsers, getColumnField]
+  )
 
   const list = useAsyncList({ load: async () => ({ items: filteredUsers }), sort })
 
-  const handleReport = async () => {
+  const handleReport = useCallback(async () => {
     setOpenModal(true)
     setGenerating(true)
     const selected =
@@ -163,21 +166,21 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
     setUUID(uuid)
     setGenerating(false)
     setReady(true)
-  }
+  }, [evaluationModel, filteredUsers, selectedKeys, usersGoals])
 
-  const handleDownload = async () => {
+  const handleDownload = useCallback(async () => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reports/${UUID}`)
     const blob = await response.blob()
 
     FileSaver.saveAs(blob, `report_${evaluationModel.year}.xlsx`)
-  }
+  }, [UUID, evaluationModel.year])
 
-  const handleClose = async () => {
+  const handleClose = useCallback(async () => {
     setSelectedKeys(new Set())
     setOpenModal(false)
     setReady(false)
     setInError(false)
-  }
+  }, [])
 
   if (!locale || !users) {
     return <LoadingOverlay />
@@ -316,4 +319,4 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
   )
 }
 
-export default ReportUserListTemplate
+export default React.memo(ReportUserListTemplate)
