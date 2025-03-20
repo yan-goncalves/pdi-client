@@ -21,19 +21,15 @@ import { useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import FileSaver from 'file-saver'
 import React, { useCallback, useMemo, useState } from 'react'
-import { GoalType } from 'types/collection/Goal'
 import { UserType } from 'types/collection/User'
 import { useStyles } from './styles'
 
 export type ReportUserListProps = {
   users: UserType[]
   year: number
-  usersGoals?: {
-    [key: number]: GoalType[]
-  }
 }
 
-const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps) => {
+const ReportUserListTemplate = ({ users, year }: ReportUserListProps) => {
   const theme = useMantineTheme()
   const match = useMediaQuery(`(max-width: ${theme.breakpoints.xs}px)`, false)
   const [scroll] = useWindowScroll()
@@ -151,9 +147,9 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        users: selected,
-        evaluation: evaluationModel,
-        usersEvaluationGoals: usersGoals
+        usersIds: selected.map((user) => user.id),
+        evaluationId: evaluationModel.id,
+        locale: locale.toUpperCase()
       })
     })
 
@@ -166,7 +162,7 @@ const ReportUserListTemplate = ({ users, year, usersGoals }: ReportUserListProps
     setUUID(uuid)
     setGenerating(false)
     setReady(true)
-  }, [evaluationModel, filteredUsers, selectedKeys, usersGoals])
+  }, [evaluationModel, filteredUsers, selectedKeys])
 
   const handleDownload = useCallback(async () => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reports/${UUID}`)
