@@ -50,7 +50,7 @@ const LoginForm = ({ usernameLabel, passwordLabel, button }: LoginFormProps) => 
 
   const { refetch: fetchEvaluationModel } = useQuery<GetEvaluationModelType>(GET_EVALUATION_MODEL, {
     variables: {
-      year: 2024
+      year: new Date().getFullYear()
     },
     skip: true
   })
