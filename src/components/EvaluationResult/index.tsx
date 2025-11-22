@@ -12,7 +12,7 @@ import {
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { Rating } from '@mui/material'
-import { IconCheck } from '@tabler/icons'
+import { IconAlertTriangle, IconCheck } from '@tabler/icons'
 import { CommonConstants } from 'constants/common'
 import { EVALUATION_PERIOD } from 'constants/evaluation'
 import { EVALUATION_ACTOR, useEvaluation } from 'contexts/EvaluationProvider'
@@ -41,24 +41,15 @@ const EvaluationResult = () => {
   const { locale } = useLocale()
   const { performedEvaluation, setPerformedEvaluation, ratings, periodMode } = useEvaluation()
   const [appraiseeConcept, setAppraiseeConcept] = useState<AppraiseeConceptType>()
-  const [grade, setGrade] = useState<number>()
   const [concepts, setConcepts] = useState<EvaluationResultConceptType[]>([])
   const match = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`, false)
 
-  const { loading, refetch: refetchGrade } = useQuery<GetPerformedEvaluationType>(
+  const { loading, data, refetch: refetchGrade } = useQuery<GetPerformedEvaluationType>(
     GET_PERFORMED_EVALUATION_GRADE,
     {
       variables: {
         id: performedEvaluation.id
-      },
-      onCompleted: ({ performedEvaluation }) => {
-        setGrade(performedEvaluation?.grade || 0.0)
-        setPerformedEvaluation((pe) => ({
-          ...pe,
-          grade: performedEvaluation.grade || 0.0
-        }))
-      },
-      onError: (error) => console.log('ERROR ON GETTING PERFORMED EVALUATION', { ...error })
+      }
     }
   )
 
@@ -80,7 +71,16 @@ const EvaluationResult = () => {
   }, [])
 
   useEffect(() => {
-    if (typeof grade === 'number') {
+    if (data) {
+      setPerformedEvaluation((pe) => ({
+        ...pe,
+        grade: data.performedEvaluation.grade || 0.0
+      }))
+    }
+  }, [data])
+
+  useEffect(() => {
+    if (typeof performedEvaluation.grade === 'number') {
       const abortController = new AbortController()
 
       if (errorConcepts) {
@@ -93,23 +93,27 @@ const EvaluationResult = () => {
         abortController.abort()
       }
     }
-  }, [dataConcepts, loadingConcepts, errorConcepts, grade])
+  }, [dataConcepts, loadingConcepts, errorConcepts, performedEvaluation.grade])
 
   useEffect(() => {
     refetchConcepts()
   }, [locale])
 
   useEffect(() => {
-    if (concepts.length && typeof grade === 'number') {
-      concepts.map(({ concept, description, color, min, max }) => {
+    if (concepts.length && typeof performedEvaluation.grade === 'number') {
+      const concept = concepts.find((concept) => {
+        const { min, max } = concept
         const grade = performedEvaluation.grade || 0
         if (grade >= min && grade <= max) {
-          setAppraiseeConcept({ concept, description, color })
-          return
+          return concept
         }
       })
+
+      if (concept) {
+        setAppraiseeConcept(concept)
+      }
     }
-  }, [concepts, grade])
+  }, [concepts, performedEvaluation.grade])
 
   return (
     <Group m={25} mt={50} sx={{ justifyContent: 'center' }}>
@@ -139,83 +143,100 @@ const EvaluationResult = () => {
             </Group>
           ) : (
             <Grid justify={'center'}>
-              <Grid.Col span={5}>
-                <Group
-                  spacing={5}
-                  direction={'column'}
-                  align={'center'}
-                  sx={{ height: '100%', justifyContent: 'center' }}
-                >
-                  {loading ||
-                  loadingConcepts ||
-                  !appraiseeConcept ||
-                  typeof grade === 'undefined' ? (
-                    <>
-                      <Skeleton height={!match ? 100 : 60} radius={!match ? 'lg' : 'md'} />
-                      <Skeleton mt={10} height={!match ? 40 : 20} radius={!match ? 'lg' : 'md'} />
-                    </>
-                  ) : (
-                    <>
-                      <Badge size={'lg'} color={'cyan'} p={12}>
-                        {CommonConstants.result.concept[locale]}
-                      </Badge>
-                      <Text
-                        weight={900}
-                        color={!appraiseeConcept ? undefined : appraiseeConcept.color}
-                        sx={{ fontSize: !match ? 100 : 60 }}
-                      >
-                        {appraiseeConcept.concept}
-                      </Text>
-                      <Text
+              {!appraiseeConcept ? (
+                <Grid.Col span={12}>
+                  <Group spacing={15} px={50} py={30} direction={'column'} align={'center'}>
+                    <IconAlertTriangle size={50} color={theme.colors.orange[6]} />
+                    <Text align={'center'} size={'xl'} weight={500} color={theme.colors.orange[7]}>
+                      {CommonConstants.result.incomplete.title[locale]}
+                    </Text>
+                    <Text align={'center'} size={'md'} color={theme.colors.gray[6]} sx={{ maxWidth: 400 }}>
+                      {CommonConstants.result.incomplete.message[locale]}
+                    </Text>
+                  </Group>
+                </Grid.Col>
+              )
+                : (
+                  <>
+                    <Grid.Col span={5}>
+                      <Group
+                        spacing={5}
+                        direction={'column'}
                         align={'center'}
-                        weight={700}
-                        color={!appraiseeConcept ? undefined : appraiseeConcept.color}
-                        mt={-20}
-                        sx={{ fontSize: !match ? 20 : 14 }}
+                        sx={{ height: '100%', justifyContent: 'center' }}
                       >
-                        {appraiseeConcept.description}
-                      </Text>
-                    </>
-                  )}
-                </Group>
-              </Grid.Col>
-              <Grid.Col span={2} sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Divider orientation={'vertical'} />
-              </Grid.Col>
-              <Grid.Col span={5}>
-                <Group
-                  spacing={5}
-                  direction={'column'}
-                  align={'center'}
-                  sx={{ height: '100%', justifyContent: 'center' }}
-                >
-                  {loading ||
-                  loadingConcepts ||
-                  !appraiseeConcept ||
-                  typeof grade === 'undefined' ? (
-                    <>
-                      <Skeleton height={!match ? 100 : 60} radius={!match ? 'lg' : 'md'} />
-                      <Skeleton mt={10} height={!match ? 40 : 20} radius={!match ? 'lg' : 'md'} />
-                    </>
-                  ) : (
-                    <>
-                      <Badge size={'lg'} color={'cyan'} p={12}>
-                        {CommonConstants.result.grade[locale]}
-                      </Badge>
-                      <Text weight={900} sx={{ fontSize: !match ? 80 : 40 }}>
-                        {grade}
-                      </Text>
-                      <Rating
-                        readOnly
-                        precision={0.1}
-                        value={grade}
-                        max={ratings.length}
-                        size={!match ? 'large' : 'medium'}
-                      />
-                    </>
-                  )}
-                </Group>
-              </Grid.Col>
+                        {loading ||
+                          loadingConcepts ||
+                          typeof performedEvaluation.grade === 'undefined' ? (
+                          <>
+                            <Skeleton height={!match ? 100 : 60} radius={!match ? 'lg' : 'md'} />
+                            <Skeleton mt={10} height={!match ? 40 : 20} radius={!match ? 'lg' : 'md'} />
+                          </>
+                        ) :
+                          (
+                            <>
+                              <Badge size={'lg'} color={'cyan'} p={12}>
+                                {CommonConstants.result.concept[locale]}
+                              </Badge>
+                              <Text
+                                weight={900}
+                                color={!appraiseeConcept ? undefined : appraiseeConcept.color}
+                                sx={{ fontSize: !match ? 100 : 60 }}
+                              >
+                                {appraiseeConcept.concept}
+                              </Text>
+                              <Text
+                                align={'center'}
+                                weight={700}
+                                color={!appraiseeConcept ? undefined : appraiseeConcept.color}
+                                mt={-20}
+                                sx={{ fontSize: !match ? 20 : 14 }}
+                              >
+                                {appraiseeConcept.description}
+                              </Text>
+                            </>
+                          )}
+                      </Group>
+                    </Grid.Col>
+                    <Grid.Col span={2} sx={{ display: 'flex', justifyContent: 'center' }}>
+                      <Divider orientation={'vertical'} />
+                    </Grid.Col>
+                    <Grid.Col span={5}>
+                      <Group
+                        spacing={5}
+                        direction={'column'}
+                        align={'center'}
+                        sx={{ height: '100%', justifyContent: 'center' }}
+                      >
+                        {loading ||
+                          loadingConcepts ||
+                          !appraiseeConcept ||
+                          typeof performedEvaluation.grade === 'undefined' ? (
+                          <>
+                            <Skeleton height={!match ? 100 : 60} radius={!match ? 'lg' : 'md'} />
+                            <Skeleton mt={10} height={!match ? 40 : 20} radius={!match ? 'lg' : 'md'} />
+                          </>
+                        ) : (
+                          <>
+                            <Badge size={'lg'} color={'cyan'} p={12}>
+                              {CommonConstants.result.grade[locale]}
+                            </Badge>
+                            <Text weight={900} sx={{ fontSize: !match ? 80 : 40 }}>
+                              {performedEvaluation.grade}
+                            </Text>
+                            <Rating
+                              readOnly
+                              precision={0.1}
+                              value={performedEvaluation.grade}
+                              max={ratings.length}
+                              size={!match ? 'large' : 'medium'}
+                            />
+                          </>
+                        )}
+                      </Group>
+                    </Grid.Col>
+                  </>
+                )}
             </Grid>
           )}
         </Card.Section>
