@@ -37,8 +37,10 @@ const UserPicture = ({ width = 80, height = 80 }: UserPictureProps) => {
   }, [session])
 
   const openImageViewer = useCallback(() => {
-    picture !== FALLBACK_USER_PICTURE && setIsViewerOpen(true)
-  }, [])
+    if (picture !== FALLBACK_USER_PICTURE) {
+      setIsViewerOpen(true)
+    }
+  }, [picture])
 
   const closeImageViewer = () => {
     setIsViewerOpen(false)
