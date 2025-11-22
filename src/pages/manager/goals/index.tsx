@@ -1,11 +1,13 @@
 import { initializeApollo } from 'graphql/client'
 import { GetDepartments } from 'graphql/queries/collection/Department'
 import { GET_TEAM_MEMBERS } from 'graphql/queries/collection/Team'
+import { GET_USER } from 'graphql/queries/collection/User'
 import { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
 import TeamMembersTemplate, { TeamMembersTemplateProps } from 'templates/Team'
 import { GetDepartmentsType } from 'types/collection/Department'
 import { GetTeamMembersType } from 'types/collection/Team'
+import { GetUserType } from 'types/collection/User'
 import { getMembersRecursively, orderMembersByDepartments } from 'utils/helpers'
 
 const PageTeamList = (props: TeamMembersTemplateProps) => {
@@ -19,11 +21,30 @@ export const getServerSideProps: GetServerSideProps<TeamMembersTemplateProps> = 
   const session = await getSession({ req })
   const apolloClient = initializeApollo(null, session)
 
-  const {
-    data: { team }
-  } = await apolloClient.query<GetTeamMembersType>({
-    query: GET_TEAM_MEMBERS
-  })
+  let team
+
+  if (session?.user.username === 'sabrinavelasques') {
+    const { data: director } = await apolloClient.query<GetUserType>({
+      query: GET_USER,
+      variables: {
+        input: {
+          username: 'marcomarelli'
+        }
+      }
+    })
+    const { data } = await apolloClient.query<GetTeamMembersType>({
+      query: GET_TEAM_MEMBERS,
+      variables: {
+        id: director.user.id
+      }
+    })
+    team = data.team
+  } else {
+    const { data } = await apolloClient.query<GetTeamMembersType>({
+      query: GET_TEAM_MEMBERS
+    })
+    team = data.team
+  }
 
   if (!team) {
     return {

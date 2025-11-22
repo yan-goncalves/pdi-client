@@ -54,9 +54,13 @@ const TeamMembersTemplate = (items: TeamMembersTemplateProps) => {
     return <LoadingOverlay />
   }
 
+  const hasOrganizationalView =
+    [ROLES.ADMIN, ROLES.DIRECTOR].includes(session.user.role) ||
+    session.user.username === 'sabrinavelasques'
+
   return (
     <ContentBase>
-      {[ROLES.ADMIN, ROLES.DIRECTOR].includes(session.user.role) ? (
+      {hasOrganizationalView ? (
         <Accordion>
           {Object.keys(items).map((departmentKey) => (
             <Accordion.Item
@@ -70,7 +74,7 @@ const TeamMembersTemplate = (items: TeamMembersTemplateProps) => {
           ))}
         </Accordion>
       ) : (
-        Object.keys(items).map((departmentKey) => getMembers(departmentKey))
+        Object.keys(items).map((departmentKey) => getMembers(departmentKey, true))
       )}
     </ContentBase>
   )
