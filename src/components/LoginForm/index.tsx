@@ -50,11 +50,12 @@ const LoginForm = ({ usernameLabel, passwordLabel, button }: LoginFormProps) => 
 
   const { refetch: fetchEvaluationModel } = useQuery<GetEvaluationModelType>(GET_EVALUATION_MODEL, {
     variables: {
-      year: new Date().getFullYear()
-    }
+      year: 2024
+    },
+    skip: true
   })
-  const { refetch: fetchTeamMembers } = useQuery<GetTeamMembersType>(GET_TEAM_MEMBERS)
-  const { refetch: fetchTeamGoals } = useQuery<GetEvaluationGoalsType>(GET_EVALUATION_GOALS)
+  const { refetch: fetchTeamMembers } = useQuery<GetTeamMembersType>(GET_TEAM_MEMBERS, { skip: true })
+  const { refetch: fetchTeamGoals } = useQuery<GetEvaluationGoalsType>(GET_EVALUATION_GOALS, { skip: true })
 
   const username = watch('username')
   const password = watch('password')
@@ -129,12 +130,6 @@ const LoginForm = ({ usernameLabel, passwordLabel, button }: LoginFormProps) => 
                 }
               })
             })
-          })
-          .finally(async () => {
-            const session = await getSession()
-            const user = session?.user
-            const info = user?.info
-            const name = user?.role === ROLES.ADMIN ? 'Admin' : info?.name
 
             if (user?.role !== ROLES.USER) {
               const { data: dataEvaluationModel } = await fetchEvaluationModel()
