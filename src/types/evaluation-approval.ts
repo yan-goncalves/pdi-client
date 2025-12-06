@@ -2,15 +2,15 @@ import {
   EVALUATION_APPROVAL_PERIOD,
   EVALUATION_APPROVAL_STATUS
 } from 'constants/evaluation-approval'
-import { PerformedEvaluation } from './performed-evaluation'
-import { User } from './user'
+import { PerformedEvaluationType } from './collection/PerformedEvaluation'
+import { UserType } from './collection/User'
 
 export type EvaluationApproval = {
   id: number
-  performedEvaluation: PerformedEvaluation
+  performedEvaluation: PerformedEvaluationType
   period: EVALUATION_APPROVAL_PERIOD
   status: EVALUATION_APPROVAL_STATUS
-  hrUser?: User
+  hrUser?: UserType
   comment?: string
   createdAt: string
   updatedAt: string

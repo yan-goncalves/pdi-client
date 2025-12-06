@@ -102,7 +102,9 @@ const ApprovalsList = ({ approvals, status }: ApprovalsListProps) => {
     // Sort approvals within each group by year DESC, then period
     groups.forEach((group) => {
       group.approvals.sort((a, b) => {
-        const yearDiff = b.performedEvaluation.evaluation.year - a.performedEvaluation.evaluation.year
+        const curr = Number(b.performedEvaluation.evaluation.year)
+        const prev = Number(a.performedEvaluation.evaluation.year)
+        const yearDiff = curr - prev
         if (yearDiff !== 0) return yearDiff
         return a.period === EVALUATION_APPROVAL_PERIOD.MID ? -1 : 1
       })
@@ -115,7 +117,8 @@ const ApprovalsList = ({ approvals, status }: ApprovalsListProps) => {
   const availableYears = useMemo(() => {
     const years = new Set<number>()
     approvals.forEach((approval) => {
-      years.add(approval.performedEvaluation.evaluation.year)
+      const year = Number(approval.performedEvaluation.evaluation.year)
+      years.add(year)
     })
     return Array.from(years)
       .sort((a, b) => b - a)

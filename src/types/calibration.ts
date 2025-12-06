@@ -1,14 +1,15 @@
-import { PerformedEvaluation } from './performed-evaluation'
-import { User } from './user'
+import { PerformedEvaluationType } from "./collection/PerformedEvaluation"
+import { UserType } from "./collection/User"
+
 
 export type Calibration = {
   id: number
-  performedEvaluation: PerformedEvaluation
+  performedEvaluation: PerformedEvaluationType
   originalGrade: number
   calibrationValue: number
   finalGrade: number
   comment: string
-  manager: User
+  manager: UserType
   createdAt: string
   updatedAt: string
 }
