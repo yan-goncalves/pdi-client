@@ -11,6 +11,7 @@ import {
 import { LocaleType, useLocale } from 'contexts/LocaleProvider'
 import { useSession } from 'next-auth/react'
 import reportConfig from '../../../config.json'
+import { useMemo } from 'react'
 
 export type NavLinkWrapperProps = {
   userSectionTitle: {
@@ -37,10 +38,13 @@ const NavLinkWrapper = () => {
     return <LoadingOverlay visible />
   }
 
-  // Check if user is from HR department
-  const userDepartmentKey = session.user?.department?.key?.toLowerCase()
   const hrDepartmentKeys = ['rh', 'recursos_humanos', 'human_resources']
-  const isHRUser = userDepartmentKey && hrDepartmentKeys.includes(userDepartmentKey)
+  const userDepartmentKey = useMemo(() => {
+    return session.user?.department?.key?.toLowerCase()
+  }, [session.user?.department?.key])
+  const isHRUser = useMemo(() =>{
+    return userDepartmentKey && hrDepartmentKeys.includes(userDepartmentKey)
+  }, [userDepartmentKey])
 
   return (
     <MantineNavbar.Section grow style={{ paddingBottom: 10 }}>
