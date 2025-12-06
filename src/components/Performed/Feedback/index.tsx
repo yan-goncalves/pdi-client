@@ -124,6 +124,7 @@ const PerformedFeedback = ({ feedback, performed, actor }: PerformedFeedbackProp
         </Grid.Col>
       )}
       <HistoricEvaluation
+        actor={actor}
         manager={{
           midYear: performedFeedback?.midReply || '',
           endYear: performedFeedback?.endReply || ''

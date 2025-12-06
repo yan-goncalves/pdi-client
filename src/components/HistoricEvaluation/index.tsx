@@ -17,6 +17,7 @@ import { useEvaluationApproval } from 'hooks/useEvaluationApproval'
 import { useEffect, useState } from 'react'
 
 export type HistoricEvaluationProps = {
+  actor: EVALUATION_ACTOR
   [EVALUATION_ACTOR.MANAGER]?: {
     midYear?: string
     endYear?: string
@@ -31,10 +32,10 @@ export type HistoricEvaluationProps = {
   }
 }
 
-const HistoricEvaluation = (props: HistoricEvaluationProps) => {
+const HistoricEvaluation = ({ actor, ...props }: HistoricEvaluationProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
-  const { appraisee, periodMode, mode, performedEvaluation, actor } = useEvaluation()
+  const { appraisee, periodMode, mode, performedEvaluation } = useEvaluation()
   const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.md}px)`, false)
   const [segmented, setSegmented] = useState<EVALUATION_ACTOR>(EVALUATION_ACTOR.MANAGER)
   const managerName = `${appraisee.manager.info.name} ${appraisee.manager.info.lastname}`

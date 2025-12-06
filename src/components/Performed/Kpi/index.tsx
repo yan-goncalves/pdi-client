@@ -334,6 +334,7 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider }: PerformedKpiPro
       )}
 
       <HistoricEvaluation
+        actor={actor}
         manager={{
           midYear: performedKpi?.midFeedbackManager || '',
           endYear: performedKpi?.endFeedbackManager || '',

@@ -242,6 +242,7 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
         </>
       )}
       <HistoricEvaluation
+        actor={actor}
         manager={{
           midYear: performed?.midFeedbackManager || '',
           endYear: performed?.endFeedbackManager || '',
