@@ -3,6 +3,7 @@ import NavItemSection from 'components/NavItemSection'
 import { ROLES } from 'constants/role'
 import {
   extraNavItemLinks,
+  hrNavItemLinks,
   managerNavItemLinks,
   navLinkWrapperTitles,
   userNavItemLinks
@@ -18,6 +19,9 @@ export type NavLinkWrapperProps = {
   managerSectionTitle: {
     [key in LocaleType]: string
   }
+  hrSectionTitle: {
+    [key in LocaleType]: string
+  }
   extraSectionTitle: {
     [key in LocaleType]: string
   }
@@ -26,11 +30,17 @@ export type NavLinkWrapperProps = {
 const NavLinkWrapper = () => {
   const { locale } = useLocale()
   const { data: session } = useSession()
-  const { userSectionTitle, managerSectionTitle, extraSectionTitle } = navLinkWrapperTitles
+  const { userSectionTitle, managerSectionTitle, hrSectionTitle, extraSectionTitle } =
+    navLinkWrapperTitles
 
   if (!session) {
     return <LoadingOverlay visible />
   }
+
+  // Check if user is from HR department
+  const userDepartmentKey = session.user?.department?.key?.toLowerCase()
+  const hrDepartmentKeys = ['rh', 'recursos_humanos', 'human_resources']
+  const isHRUser = userDepartmentKey && hrDepartmentKeys.includes(userDepartmentKey)
 
   return (
     <MantineNavbar.Section grow style={{ paddingBottom: 10 }}>
@@ -40,6 +50,7 @@ const NavLinkWrapper = () => {
       {session?.user?.role !== ROLES.USER && (
         <NavItemSection sectionTitle={managerSectionTitle[locale]} items={managerNavItemLinks} />
       )}
+      {isHRUser && <NavItemSection sectionTitle={hrSectionTitle[locale]} items={hrNavItemLinks} />}
       {reportConfig.report.users.includes(session.user.username) && (
         <NavItemSection sectionTitle={extraSectionTitle[locale]} items={extraNavItemLinks} />
       )}

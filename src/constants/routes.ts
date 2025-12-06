@@ -1,5 +1,6 @@
 import {
   IconChartInfographic,
+  IconClipboardCheck,
   IconReport,
   IconStars,
   IconTarget,
@@ -19,6 +20,11 @@ export const navLinkWrapperTitles: NavLinkWrapperProps = {
   managerSectionTitle: {
     br: 'Área do Gestor',
     en: 'Manager Area'
+  },
+
+  hrSectionTitle: {
+    br: 'Recursos Humanos',
+    en: 'Human Resources'
   },
 
   extraSectionTitle: {
@@ -95,6 +101,17 @@ export const managerNavItemLinks: NavItemLinkProps[] = [
     },
     href: '/manager/pdi',
     icon: IconTrendingUp
+  }
+]
+
+export const hrNavItemLinks: NavItemLinkProps[] = [
+  {
+    title: {
+      br: 'Aprovações de Avaliações',
+      en: 'Evaluation Approvals'
+    },
+    href: '/hr/approvals',
+    icon: IconClipboardCheck
   }
 ]
 

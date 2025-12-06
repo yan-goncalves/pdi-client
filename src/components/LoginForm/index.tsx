@@ -8,6 +8,7 @@ import { CommonConstants } from 'constants/common'
 import { ErrorsConstants } from 'constants/errors'
 import { ROLES } from 'constants/role'
 import { useLocale } from 'contexts/LocaleProvider'
+import { GET_REJECTED_EVALUATIONS_FOR_MANAGER } from 'graphql/queries/collection/EvaluationApproval'
 import { GET_EVALUATION_MODEL } from 'graphql/queries/collection/EvaluationModel'
 import { GET_EVALUATION_GOALS } from 'graphql/queries/collection/Goals'
 import { GET_TEAM_MEMBERS } from 'graphql/queries/collection/Team'
@@ -15,6 +16,7 @@ import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { EvaluationApproval } from 'types/evaluation-approval'
 import { GetEvaluationModelType } from 'types/collection/EvaluationModel'
 import { GetEvaluationGoalsType } from 'types/collection/Goal'
 import { GetTeamMembersType } from 'types/collection/Team'
@@ -56,6 +58,9 @@ const LoginForm = ({ usernameLabel, passwordLabel, button }: LoginFormProps) => 
   })
   const { refetch: fetchTeamMembers } = useQuery<GetTeamMembersType>(GET_TEAM_MEMBERS, { skip: true })
   const { refetch: fetchTeamGoals } = useQuery<GetEvaluationGoalsType>(GET_EVALUATION_GOALS, { skip: true })
+  const { refetch: fetchRejectedEvaluations } = useQuery<{
+    rejectedEvaluationsForManager: EvaluationApproval[]
+  }>(GET_REJECTED_EVALUATIONS_FOR_MANAGER, { skip: true })
 
   const username = watch('username')
   const password = watch('password')
@@ -186,6 +191,42 @@ const LoginForm = ({ usernameLabel, passwordLabel, button }: LoginFormProps) => 
                     })
                   })
                 }
+              }
+
+              // Check for rejected evaluations
+              const { data: dataRejectedEvaluations } = await fetchRejectedEvaluations()
+              if (dataRejectedEvaluations?.rejectedEvaluationsForManager?.length > 0) {
+                const count = dataRejectedEvaluations.rejectedEvaluationsForManager.length
+                const message =
+                  locale === 'br'
+                    ? `<strong>${name}</strong>, você tem ${count} avaliação${count > 1 ? 'ões' : ''} reprovada${count > 1 ? 's' : ''} pelo RH que precisa${count > 1 ? 'm' : ''} ser revisada${count > 1 ? 's' : ''}. <br/> <i>Ir para <a href="/manager/evaluation">Avaliações do Time</a>.</i>`
+                    : `<strong>${name}</strong>, you have ${count} evaluation${count > 1 ? 's' : ''} rejected by HR that need${count > 1 ? '' : 's'} to be reviewed. <br/> <i>Go to <a href="/manager/evaluation">Team Evaluations</a>.</i>`
+
+                notifications.showNotification({
+                  message: (
+                    <Text
+                      style={{ padding: 2 }}
+                      dangerouslySetInnerHTML={{
+                        __html: message
+                      }}
+                    />
+                  ),
+                  color: 'orange',
+                  radius: 'md',
+                  autoClose: false,
+                  styles: (theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.orange[1],
+                      borderColor: theme.colors.orange[1],
+
+                      '&::before': { backgroundColor: theme.colors.orange[9] }
+                    },
+                    closeButton: {
+                      color: theme.colors.orange[7],
+                      '&:hover': { backgroundColor: theme.colors.orange[2] }
+                    }
+                  })
+                })
               }
             }
           })
