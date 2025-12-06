@@ -12,7 +12,7 @@
     "graphql:generate": "yarn apollo codegen:generate --target=typescript --tagName=gql --includes='src/graphql/**/types.ts' --endpoint=http://localhost:1337/graphql --header='apollocodegen: true'"
   },
   "dependencies": {
-    "@apollo/client": "3.5.8",
+    "@apollo/client": "4.0.9",
     "@mantine/core": "4.1.4",
     "@mantine/dates": "4.1.4",
     "@mantine/hooks": "4.1.4",
@@ -57,7 +57,7 @@
     "@types/react": "17.0.38",
     "@typescript-eslint/eslint-plugin": "5.10.1",
     "@typescript-eslint/parser": "5.10.1",
-    "apollo": "^2.33.10",
+    "apollo": "^2.34.0",
     "babel-loader": "8.2.3",
     "eslint": "8.7.0",
     "eslint-config-prettier": "8.3.0",
