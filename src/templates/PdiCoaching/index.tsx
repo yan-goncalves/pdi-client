@@ -30,9 +30,10 @@ import {
 export type PdiCoachingProps = {
   actor: EVALUATION_ACTOR
   pdi?: PdiCoachingType[]
+  disabled?: boolean
 }
 
-const PdiCoaching = ({ actor, pdi }: PdiCoachingProps) => {
+const PdiCoaching = ({ actor, pdi, disabled = false }: PdiCoachingProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
   const { performedEvaluation, setPerformedEvaluation, mode, isSaving, setIsSaving } =
@@ -138,7 +139,7 @@ const PdiCoaching = ({ actor, pdi }: PdiCoachingProps) => {
   return (
     <Group p={10} direction={'column'}>
       <Title order={6}>{CommonConstants.pdiCoaching.title[locale]}</Title>
-      {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER && (
+      {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER && !disabled && (
         <Group mt={5} align={'flex-start'}>
           <TextInput
             disabled={isSaving}
@@ -177,7 +178,7 @@ const PdiCoaching = ({ actor, pdi }: PdiCoachingProps) => {
         <Group mt={20} spacing={5} direction={'column'} sx={{ width: 300 }}>
           {pdiCoachings.map((pdi) => (
             <React.Fragment key={pdi.id}>
-              {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER ? (
+              {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER && !disabled ? (
                 <Group
                   key={pdi.id}
                   onMouseEnter={() => edit?.id !== pdi.id && setHover(pdi.id)}

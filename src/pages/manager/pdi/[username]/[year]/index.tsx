@@ -19,11 +19,13 @@ import { GetUserType, UserType } from 'types/collection/User'
 const EvaluationPage = ({
   user,
   evaluation,
-  performed
+  performed,
+  canEdit
 }: {
   user: UserType
   evaluation: EvaluationModelType
   performed: PerformedEvaluationType
+  canEdit: boolean
 }) => {
   const { setEvaluationModel, setPerformedEvaluation, setAppraisee, setMode, setIsLocaleLoading } =
     useEvaluation()
@@ -37,7 +39,7 @@ const EvaluationPage = ({
   useEffect(() => {
     if (evaluation) {
       setEvaluationModel(evaluation)
-      setMode(EVALUATION_MODE.EDIT)
+      setMode(canEdit ? EVALUATION_MODE.EDIT : EVALUATION_MODE.VIEW)
       setIsLocaleLoading(false)
     }
   }, [evaluation])
@@ -48,7 +50,7 @@ const EvaluationPage = ({
     }
   }, [performed])
 
-  return <PdiManagementTemplate />
+  return <PdiManagementTemplate canEdit={canEdit} />
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, locale, params }) => {
@@ -74,6 +76,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
       notFound: true
     }
   }
+
+  // Verify if the logged user is the direct manager of the user
+  const isDirectManager = session?.user?.id === user.manager?.id
 
   const {
     data: { evaluation },
@@ -130,7 +135,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
     props: {
       user,
       evaluation,
-      performed
+      performed,
+      canEdit: isDirectManager
     }
   }
 }

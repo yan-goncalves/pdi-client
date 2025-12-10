@@ -35,6 +35,10 @@ export function CalibrationModal({
 
   const loading = creating || updating
 
+  // Calcula min e max baseado na nota original para garantir que a nota final fique entre 0.0 e 3.0
+  const minCalibration = -originalGrade // Para nota final = 0.0
+  const maxCalibration = 3.0 - originalGrade // Para nota final = 3.0
+
   useEffect(() => {
     if (calibration) {
       setCalibrationValue(calibration.calibrationValue)
@@ -63,7 +67,7 @@ export function CalibrationModal({
       return
     }
 
-    if (calibrationValue < -3.0 || calibrationValue > 3.0) {
+    if (calibrationValue < minCalibration || calibrationValue > maxCalibration) {
       notifications.showNotification({
         title: 'Erro',
         message: CALIBRATION_TRANSLATIONS.validationCalibrationRange[locale],
@@ -167,8 +171,8 @@ export function CalibrationModal({
             value={calibrationValue}
             onChange={(value) => setCalibrationValue(value || 0)}
             precision={2}
-            min={-3}
-            max={3}
+            min={minCalibration}
+            max={maxCalibration}
             step={0.1}
             required
           />

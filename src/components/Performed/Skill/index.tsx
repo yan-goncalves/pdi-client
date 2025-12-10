@@ -24,6 +24,7 @@ export type PerformedSkillProps = {
   skill: SkillType
   performed?: PerformedSkillType
   actor: EVALUATION_ACTOR
+  disabled?: boolean
 }
 
 export type PerformedSkillCommentType =
@@ -34,7 +35,7 @@ export type PerformedSkillCommentType =
 
 export type PerformedSkillRatingType = 'ratingUser' | 'ratingManager'
 
-const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
+const PerformedSkill = ({ skill, performed, actor, disabled = false }: PerformedSkillProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
   const {
@@ -68,10 +69,10 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
   })
 
   useLayoutEffect(() => {
-    if (mode === EVALUATION_MODE.VIEW) {
+    if (mode === EVALUATION_MODE.VIEW || disabled) {
       setIsDisabled(true)
     }
-  }, [actor, mode])
+  }, [actor, mode, disabled])
 
   useEffect(() => {
     if (periodMode && actor) {

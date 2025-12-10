@@ -10,7 +10,11 @@ import PdiCompetence from 'templates/PdiCompetence'
 import PdiQuality from 'templates/PdiQuality'
 import { useStyles } from './styles'
 
-const PdiManagementTemplate = () => {
+type PdiManagementTemplateProps = {
+  canEdit?: boolean
+}
+
+const PdiManagementTemplate = ({ canEdit = true }: PdiManagementTemplateProps) => {
   const theme = useMantineTheme()
   const { classes } = useStyles()
   const { locale } = useLocale()
@@ -56,7 +60,7 @@ const PdiManagementTemplate = () => {
       >
         <Tabs.Tab label={CommonConstants.pdiQuality.title[locale]}>
           <Group p={25}>
-            <PdiQuality actor={EVALUATION_ACTOR.MANAGER} pdi={performedEvaluation.pdiQuality} />
+            <PdiQuality actor={EVALUATION_ACTOR.MANAGER} pdi={performedEvaluation.pdiQuality} disabled={!canEdit} />
           </Group>
         </Tabs.Tab>
         <Tabs.Tab label={CommonConstants.pdiCompetence.title[locale]}>
@@ -64,12 +68,13 @@ const PdiManagementTemplate = () => {
             <PdiCompetence
               actor={EVALUATION_ACTOR.MANAGER}
               pdi={performedEvaluation.pdiCompetence}
+              disabled={!canEdit}
             />
           </Box>
         </Tabs.Tab>
         <Tabs.Tab label={CommonConstants.pdiCoaching.title[locale]}>
           <Group p={25}>
-            <PdiCoaching actor={EVALUATION_ACTOR.MANAGER} pdi={performedEvaluation.pdiCoaching} />
+            <PdiCoaching actor={EVALUATION_ACTOR.MANAGER} pdi={performedEvaluation.pdiCoaching} disabled={!canEdit} />
           </Group>
         </Tabs.Tab>
       </Tabs>

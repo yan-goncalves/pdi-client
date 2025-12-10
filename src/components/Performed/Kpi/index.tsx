@@ -28,6 +28,7 @@ export type PerformedKpiProps = {
   actor: EVALUATION_ACTOR
   performedGoal: PerformedGoalType
   hasDivider: boolean
+  disabled?: boolean
 }
 
 export type PerformedGoalCommentType =
@@ -39,7 +40,7 @@ export type PerformedGoalCommentType =
 export type PerformedGoalRatingType = 'ratingManager'
 export type PerformedGoalAchievedType = 'achieved'
 
-const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider }: PerformedKpiProps) => {
+const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider, disabled = false }: PerformedKpiProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
   const {
@@ -77,7 +78,7 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider }: PerformedKpiPro
   })
 
   useLayoutEffect(() => {
-    if (mode === EVALUATION_MODE.VIEW) {
+    if (mode === EVALUATION_MODE.VIEW || disabled) {
       setIsDisabled(true)
     }
   }, [actor, mode])

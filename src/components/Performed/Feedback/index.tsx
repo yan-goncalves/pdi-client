@@ -22,11 +22,12 @@ export type PerformedFeedbackProps = {
   feedback: FeedbackType
   performed?: PerformedFeedbackType
   actor: EVALUATION_ACTOR
+  disabled?: boolean
 }
 
 export type PerformedFeedbackCommentType = 'midReply' | 'endReply'
 
-const PerformedFeedback = ({ feedback, performed, actor }: PerformedFeedbackProps) => {
+const PerformedFeedback = ({ feedback, performed, actor, disabled = false }: PerformedFeedbackProps) => {
   const { locale } = useLocale()
   const { performedEvaluation, setPerformedEvaluation, periodMode, mode, setIsSaving } =
     useEvaluation()
@@ -45,10 +46,10 @@ const PerformedFeedback = ({ feedback, performed, actor }: PerformedFeedbackProp
   })
 
   useLayoutEffect(() => {
-    if (mode === EVALUATION_MODE.VIEW) {
+    if (mode === EVALUATION_MODE.VIEW || disabled) {
       setIsDisabled(true)
     }
-  }, [actor, mode])
+  }, [actor, mode, disabled])
 
   useEffect(() => {
     if (periodMode && actor) {

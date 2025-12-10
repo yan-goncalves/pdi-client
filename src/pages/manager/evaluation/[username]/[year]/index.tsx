@@ -1,4 +1,5 @@
 import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
+import { ROLES } from 'constants/role'
 import { initializeApollo } from 'graphql/client'
 import { CREATE_PERFORMED_EVALUATION } from 'graphql/mutations/collection/PerformedEvaluation'
 import { GET_EVALUATION_MODEL } from 'graphql/queries/collection/EvaluationModel'
@@ -24,12 +25,14 @@ const EvaluationPage = ({
   user,
   evaluation,
   performed,
-  ratings
+  ratings,
+  canOnlyCalibrate = false
 }: {
   user: UserType
   evaluation: EvaluationModelType
   performed: PerformedEvaluationType
   ratings: RatingType[]
+  canOnlyCalibrate?: boolean
 }) => {
   const {
     setEvaluationModel,
@@ -69,7 +72,7 @@ const EvaluationPage = ({
     }
   }, [ratings])
 
-  return <EvaluationTemplate actor={EVALUATION_ACTOR.MANAGER} />
+  return <EvaluationTemplate actor={EVALUATION_ACTOR.MANAGER} canOnlyCalibrate={canOnlyCalibrate} />
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, locale, params }) => {
@@ -93,6 +96,29 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
   if (userError || userErrors) {
     return {
       notFound: true
+    }
+  }
+
+  // Check if current user can access this evaluation
+  // Only allow if:
+  // 1. User is the direct manager of the employee
+  // 2. User is sabrinavelasques (can only calibrate, not edit)
+  // 3. User has DIRECTOR role (can only calibrate, not edit)
+  const isDirectManager = session?.user?.id === user.manager?.id
+  const isSabrina = session?.user?.username === 'sabrinavelasques'
+  const isDirector = session?.user?.role === ROLES.DIRECTOR
+
+  // Sabrina and DIRECTOR can access any evaluation, but only calibrate if not direct manager
+  const canAccess = isDirectManager || isSabrina || isDirector
+  const canOnlyCalibrate = !isDirectManager && (isSabrina || isDirector)
+
+  if (!canAccess) {
+    const rewriteLocale = locale === 'en' ? '/en' : ''
+    return {
+      redirect: {
+        destination: `${rewriteLocale}/manager/evaluation`,
+        permanent: false
+      }
     }
   }
 
@@ -184,7 +210,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
       user,
       evaluation,
       performed,
-      ratings
+      ratings,
+      canOnlyCalibrate // Pass flag to indicate if user can only calibrate (not edit)
     }
   }
 }

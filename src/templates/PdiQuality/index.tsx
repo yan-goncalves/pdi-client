@@ -30,9 +30,10 @@ import {
 export type PdiQualityProps = {
   actor: EVALUATION_ACTOR
   pdi?: PdiQualityType[]
+  disabled?: boolean
 }
 
-const PdiQuality = ({ pdi, actor }: PdiQualityProps) => {
+const PdiQuality = ({ pdi, actor, disabled = false }: PdiQualityProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
   const { mode, performedEvaluation, setPerformedEvaluation, isSaving, setIsSaving } =
@@ -205,8 +206,8 @@ const PdiQuality = ({ pdi, actor }: PdiQualityProps) => {
     <Grid p={10} gutter={50} sx={{ width: '100%' }}>
       <Grid.Col span={12} sm={6}>
         <Title order={6}>{CommonConstants.pdiQuality.strength[locale]}</Title>
-        {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER && (
-          <Group mt={20} align={'flex-start'}>
+        {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER && !disabled && (
+          <Group direction={'row'} mt={20} align={'flex-start'}>
             <TextInput
               disabled={isSaving}
               value={strengthValue || ''}
@@ -244,7 +245,7 @@ const PdiQuality = ({ pdi, actor }: PdiQualityProps) => {
           ) : (
             strength.map((pdi) => (
               <React.Fragment key={pdi.id}>
-                {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER ? (
+                {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER && !disabled ? (
                   <Group
                     key={pdi.id}
                     onMouseEnter={() => strengthEdit?.id !== pdi.id && setStrengthHover(pdi.id)}
@@ -306,8 +307,8 @@ const PdiQuality = ({ pdi, actor }: PdiQualityProps) => {
       </Grid.Col>
       <Grid.Col span={12} sm={6}>
         <Title order={6}>{CommonConstants.pdiQuality.weakness[locale]}</Title>
-        {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER && (
-          <Group mt={20} align={'flex-start'}>
+        {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER && !disabled && (
+          <Group direction={'row'} mt={20} align={'flex-start'}>
             <TextInput
               disabled={isSaving}
               value={weaknessValue}
@@ -345,7 +346,7 @@ const PdiQuality = ({ pdi, actor }: PdiQualityProps) => {
           ) : (
             weakness.map((pdi) => (
               <React.Fragment key={pdi.id}>
-                {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER ? (
+                {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER && !disabled ? (
                   <Group
                     key={pdi.id}
                     onMouseEnter={() => setWeaknessHover(pdi.id)}

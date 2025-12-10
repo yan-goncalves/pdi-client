@@ -20,9 +20,10 @@ export type PerformedGoalProps = {
   goal: GoalType
   performed?: PerformedGoalType
   actor: EVALUATION_ACTOR
+  disabled?: boolean
 }
 
-const PerformedGoal = ({ goal, performed, actor }: PerformedGoalProps) => {
+const PerformedGoal = ({ goal, performed, actor, disabled = false }: PerformedGoalProps) => {
   const theme = useMantineTheme()
   const { performedEvaluation } = useEvaluation()
   const { locale } = useLocale()
@@ -106,6 +107,7 @@ const PerformedGoal = ({ goal, performed, actor }: PerformedGoalProps) => {
               actor={actor}
               performedGoal={performedGoal}
               hasDivider={index < goal.kpis.length - 1}
+              disabled={disabled}
             />
           </React.Fragment>
         ))

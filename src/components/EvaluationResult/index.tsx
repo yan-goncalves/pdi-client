@@ -68,7 +68,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
     GET_CALIBRATION,
     {
       variables: { idPerformedEvaluation: performedEvaluation.id },
-      skip: !performedEvaluation.grade || actor !== EVALUATION_ACTOR.MANAGER || periodMode !== EVALUATION_PERIOD.END
+      skip: typeof performedEvaluation.grade !== 'number' || actor !== EVALUATION_ACTOR.MANAGER || periodMode !== EVALUATION_PERIOD.END
     }
   )
 
@@ -159,9 +159,12 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
 
   useEffect(() => {
     if (concepts.length && typeof performedEvaluation.grade === 'number') {
+      // Usa a nota final (com calibração) se existir, senão usa a nota original
+      const gradeToUse = calibration?.finalGrade ?? performedEvaluation.grade
+
       const concept = concepts.find((concept) => {
         const { min, max } = concept
-        const grade = performedEvaluation.grade || 0
+        const grade = gradeToUse || 0
         if (grade >= min && grade <= max) {
           return concept
         }
@@ -171,19 +174,19 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
         setAppraiseeConcept(concept)
       }
     }
-  }, [concepts, performedEvaluation.grade])
+  }, [concepts, performedEvaluation.grade, calibration])
 
   return (
     <Stack align="center" m={25} mt={50} spacing="md">
       <Card withBorder sx={{ width: !match ? '70%' : '100%' }}>
-        {performedEvaluation.endFinished && (
+        {(performedEvaluation.endFinished || (actor === EVALUATION_ACTOR.MANAGER && periodMode === EVALUATION_PERIOD.END && appraiseeConcept)) && (
           <>
             <Card.Section p={25} pt={5}>
               <Group position="apart" align="center">
                 <Text size={'xl'} weight={500}>
                   {CommonConstants.result.title[locale]}
                 </Text>
-                {!calibration && periodMode === EVALUATION_PERIOD.END && actor === EVALUATION_ACTOR.MANAGER && performedEvaluation.grade && canEditCalibration && (
+                {!calibration && periodMode === EVALUATION_PERIOD.END && actor === EVALUATION_ACTOR.MANAGER && appraiseeConcept && canEditCalibration && (
                   <Button
                     size="sm"
                     variant="light"

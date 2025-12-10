@@ -32,9 +32,10 @@ export type PerformedEvaluationFieldType = 'midFinished' | 'endFinished'
 
 export type EvaluationTemplateProps = {
   actor: EVALUATION_ACTOR
+  canOnlyCalibrate?: boolean
 }
 
-const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
+const EvaluationTemplate = ({ actor, canOnlyCalibrate = false }: EvaluationTemplateProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
   const {
@@ -87,7 +88,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
   }, [mode, periodMode])
 
   const handleFinish = async () => {
-    if (field && actor === EVALUATION_ACTOR.MANAGER) {
+    if (field && actor === EVALUATION_ACTOR.MANAGER && !canOnlyCalibrate) {
       setIsSaving(true)
       await update({
         variables: {
@@ -185,6 +186,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
                 performed={performedEvaluation.questions?.find(
                   (performed) => performed && performed.question.id === question.id
                 )}
+                disabled={canOnlyCalibrate}
               />
             </React.Fragment>
           ))}
@@ -204,6 +206,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
                 performed={performedEvaluation.skills?.find(
                   (performed) => performed && performed.skill.id === skill.id
                 )}
+                disabled={canOnlyCalibrate}
               />
             </React.Fragment>
           ))}
@@ -234,6 +237,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
                   performed={performedEvaluation.goals?.find(
                     (performed) => performed && performed.goal?.id === goal.id
                   )}
+                  disabled={canOnlyCalibrate}
                 />
               </React.Fragment>
             ))
@@ -256,6 +260,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
                   performed={performedEvaluation.feedbacks?.find(
                     (performed) => performed && performed.feedback.id === feedback.id
                   )}
+                  disabled={canOnlyCalibrate}
                 />
               </React.Fragment>
             ))}
@@ -271,7 +276,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
                 sectionColor={'indigo'}
                 sectionTitle={CommonConstants.pdiQuality.title[locale]}
               />
-              <PdiQuality actor={actor} pdi={performedEvaluation.pdiQuality} />
+              <PdiQuality actor={actor} pdi={performedEvaluation.pdiQuality} disabled={canOnlyCalibrate} />
             </React.Fragment>
 
             <React.Fragment>
@@ -279,7 +284,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
                 sectionColor={'indigo'}
                 sectionTitle={CommonConstants.pdiCompetence.title[locale]}
               />
-              <PdiCompetence actor={actor} pdi={performedEvaluation.pdiCompetence} />
+              <PdiCompetence actor={actor} pdi={performedEvaluation.pdiCompetence} disabled={canOnlyCalibrate} />
             </React.Fragment>
 
             <React.Fragment>
@@ -287,7 +292,7 @@ const EvaluationTemplate = ({ actor }: EvaluationTemplateProps) => {
                 sectionColor={'indigo'}
                 sectionTitle={CommonConstants.pdiCoaching.title[locale]}
               />
-              <PdiCoaching actor={actor} pdi={performedEvaluation.pdiCoaching} />
+              <PdiCoaching actor={actor} pdi={performedEvaluation.pdiCoaching} disabled={canOnlyCalibrate} />
             </React.Fragment>
           </StepperProgress.Step>
         )}
