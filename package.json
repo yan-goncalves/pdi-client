@@ -29,10 +29,10 @@
     "eslint-config-next": "^12.2.3",
     "file-saver": "^2.0.5",
     "force-resolutions": "^1.0.10",
-    "graphql": "15.7.2",
+    "graphql": "^16.12.0",
     "jose": "^4.8.3",
     "next": "12.0.8",
-    "next-auth": "^4.24.13",
+    "next-auth": "4.2.1",
     "next-redux-wrapper": "7.0.5",
     "react": "17.0.2",
     "react-countdown": "2.3.3",
@@ -70,8 +70,7 @@
     "typescript": "4.5.5"
   },
   "resolutions": {
-    "graphql": "15.7.2",
-    "@types/react": "17.0.38",
-    "@apollo/federation": "^2.0.0-alpha.1"
+    "graphql": "^16.12.0",
+    "@types/react": "17.0.38"
   }
 }
