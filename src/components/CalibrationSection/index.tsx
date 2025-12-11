@@ -117,7 +117,7 @@ export function CalibrationSection({
                     {CALIBRATION_TRANSLATIONS.originalGrade[locale]}
                   </Text>
                   <Text size="lg" weight={600}>
-                    {calibration.originalGrade.toFixed(1)}
+                    {calibration.originalGrade.toFixed(2)}
                   </Text>
                 </div>
 
@@ -131,7 +131,7 @@ export function CalibrationSection({
                     color={calibration.calibrationValue >= 0 ? 'green' : 'red'}
                   >
                     {calibration.calibrationValue >= 0 ? '+' : ''}
-                    {calibration.calibrationValue.toFixed(1)}
+                    {calibration.calibrationValue.toFixed(2)}
                   </Text>
                 </div>
 
@@ -140,7 +140,7 @@ export function CalibrationSection({
                     {CALIBRATION_TRANSLATIONS.finalGrade[locale]}
                   </Text>
                   <Text size="lg" weight={600} color="blue">
-                    {calibration.finalGrade.toFixed(1)}
+                    {calibration.finalGrade.toFixed(2)}
                   </Text>
                 </div>
               </Group>
