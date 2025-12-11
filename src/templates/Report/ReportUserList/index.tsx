@@ -304,7 +304,7 @@ const ReportUserListTemplate = ({ users, year }: ReportUserListProps) => {
             <Table.Body items={filteredUsers}>
               {(item) => (
                 <Table.Row>
-                  {(columnKey) => <Table.Cell>{renderCell(item, columnKey)}</Table.Cell>}
+                  {(columnKey: React.Key) => <Table.Cell>{renderCell(item, columnKey)}</Table.Cell>}
                 </Table.Row>
               )}
             </Table.Body>

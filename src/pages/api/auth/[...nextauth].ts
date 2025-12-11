@@ -23,7 +23,7 @@ export default NextAuth({
         const client = initializeApollo()
 
         const data = await client
-          .mutate<{ signin: JWT }>({
+          .mutate<{ signin: JWT & { user?: UserType } }>({
             mutation: LOGIN,
             variables: {
               identifier: credentials?.identifier,
@@ -32,7 +32,14 @@ export default NextAuth({
           })
           .then(({ data }) => data?.signin)
 
-        return { ...data }
+        if (!data) {
+          return null
+        }
+
+        return {
+          id: data.user?.id?.toString() ?? '',
+          ...data
+        }
       }
     })
   ],
