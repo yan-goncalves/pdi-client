@@ -37,7 +37,7 @@ const NavLinkWrapper = () => {
     return <LoadingOverlay visible />
   }
 
-  const hrDepartmentKeys = ['rh', 'recursos_humanos', 'human_resources']
+  const hrDepartmentKeys = ['rh', 'hr', 'recursos_humanos', 'human_resources']
   const userDepartmentKey = session.user?.department?.key?.toLowerCase()
   const isHRUser = userDepartmentKey && hrDepartmentKeys.includes(userDepartmentKey)
 

@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale }) =>
 
   // Check if user is from HR department
   const userDepartmentKey = session.user?.department?.key?.toLowerCase()
-  const hrDepartmentKeys = ['rh', 'recursos_humanos', 'human_resources']
+  const hrDepartmentKeys = ['rh', 'hr', 'recursos_humanos', 'human_resources']
 
   if (!userDepartmentKey || !hrDepartmentKeys.includes(userDepartmentKey)) {
     const rewriteLocale = locale === 'en' ? '/en' : ''
