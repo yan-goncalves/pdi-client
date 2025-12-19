@@ -64,11 +64,12 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
   const [modalOpened, setModalOpened] = useState(false)
 
   // Fetch calibration data
+  // Allow users to fetch calibration when evaluation is approved to show final grade
   const { data: calibrationData, loading: loadingCalibration, refetch: refetchCalibration } = useQuery<{ calibration: Calibration }>(
     GET_CALIBRATION,
     {
       variables: { idPerformedEvaluation: performedEvaluation.id },
-      skip: typeof performedEvaluation.grade !== 'number' || actor !== EVALUATION_ACTOR.MANAGER || periodMode !== EVALUATION_PERIOD.END
+      skip: typeof performedEvaluation.grade !== 'number' || periodMode !== EVALUATION_PERIOD.END || (actor === EVALUATION_ACTOR.USER && !isApproved)
     }
   )
 
