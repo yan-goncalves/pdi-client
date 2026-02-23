@@ -37,7 +37,7 @@ export function CalibrationModal({
 
   // Calcula min e max baseado na nota original para garantir que a nota final fique entre 0.0 e 3.0
   const minCalibration = -originalGrade // Para nota final = 0.0
-  const maxCalibration = 3.0 - originalGrade // Para nota final = 3.0
+  const maxCalibration = Math.round((3.0 - originalGrade) * 100) / 100 // Para nota final = 3.0
 
   useEffect(() => {
     if (calibration) {
