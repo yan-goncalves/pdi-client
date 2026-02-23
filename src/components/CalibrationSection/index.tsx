@@ -6,6 +6,7 @@ import {
   Card,
   Divider,
   Group,
+  Modal,
   Stack,
   Text,
   Tooltip
@@ -37,6 +38,7 @@ export function CalibrationSection({
   const notifications = useNotifications()
   const { periodMode } = useEvaluation()
   const [modalOpened, setModalOpened] = useState(false)
+  const [deleteConfirmOpened, setDeleteConfirmOpened] = useState(false)
 
   const { data, loading, refetch } = useQuery<{ calibration: Calibration | null }>(GET_CALIBRATION, {
     variables: { idPerformedEvaluation },
@@ -62,10 +64,6 @@ export function CalibrationSection({
   }
 
   const handleDelete = async () => {
-    if (!confirm(CALIBRATION_TRANSLATIONS.removeCalibration[locale] + '?')) {
-      return
-    }
-
     try {
       await deleteCalibration({
         variables: { idPerformedEvaluation }
@@ -77,6 +75,7 @@ export function CalibrationSection({
         color: 'green'
       })
 
+      setDeleteConfirmOpened(false)
       refetch()
     } catch (error: any) {
       notifications.showNotification({
@@ -177,7 +176,7 @@ export function CalibrationSection({
                         size="sm"
                         color="red"
                         variant="light"
-                        onClick={handleDelete}
+                        onClick={() => setDeleteConfirmOpened(true)}
                         loading={deleting}
                       >
                         <IconTrash size={16} />
@@ -217,6 +216,34 @@ export function CalibrationSection({
         calibration={calibration}
         onSuccess={() => refetch()}
       />
+
+      <Modal
+        opened={deleteConfirmOpened}
+        onClose={() => setDeleteConfirmOpened(false)}
+        title={<Text weight={700}>{CALIBRATION_TRANSLATIONS.removeCalibration[locale]}</Text>}
+        centered
+      >
+        <Stack spacing="lg">
+          <Text size="sm">
+            {CALIBRATION_TRANSLATIONS.confirmDelete[locale]}
+          </Text>
+          <Group position="right" spacing="sm">
+            <Button
+              variant="default"
+              onClick={() => setDeleteConfirmOpened(false)}
+            >
+              {CALIBRATION_TRANSLATIONS.cancel[locale]}
+            </Button>
+            <Button
+              color="red"
+              onClick={handleDelete}
+              loading={deleting}
+            >
+              {CALIBRATION_TRANSLATIONS.removeCalibration[locale]}
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </>
   )
 }

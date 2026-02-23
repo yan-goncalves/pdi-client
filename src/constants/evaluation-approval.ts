@@ -158,6 +158,42 @@ export const EVALUATION_APPROVAL_TRANSLATIONS = {
   evaluations: {
     br: 'avaliações',
     en: 'evaluations'
+  },
+  evaluationInfo: {
+    br: 'Informações da Avaliação',
+    en: 'Evaluation Information'
+  },
+  concept: {
+    br: 'Conceito',
+    en: 'Concept'
+  },
+  grade: {
+    br: 'Nota',
+    en: 'Grade'
+  },
+  finalGradeCalibrated: {
+    br: 'Nota final (calibrada)',
+    en: 'Final grade (calibrated)'
+  },
+  calibration: {
+    br: 'Calibração',
+    en: 'Calibration'
+  },
+  originalGrade: {
+    br: 'Nota Original',
+    en: 'Original Grade'
+  },
+  adjustment: {
+    br: 'Ajuste',
+    en: 'Adjustment'
+  },
+  finalGrade: {
+    br: 'Nota Final',
+    en: 'Final Grade'
+  },
+  calibrationComment: {
+    br: 'Comentário da Calibração',
+    en: 'Calibration Comment'
   }
 }
 

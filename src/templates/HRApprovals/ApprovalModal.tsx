@@ -28,6 +28,7 @@ import {
 import { GET_EVALUATION_APPROVALS } from 'graphql/queries/collection/EvaluationApproval'
 import { useState } from 'react'
 import { EvaluationApproval } from 'types/evaluation-approval'
+import ApprovalEvaluationInfo from './ApprovalEvaluationInfo'
 
 type ApprovalModalProps = {
   approval: EvaluationApproval
@@ -217,6 +218,8 @@ const ApprovalModal = ({ approval, opened, onClose }: ApprovalModalProps) => {
             </Text>
           )}
         </Box>
+
+        <ApprovalEvaluationInfo performedEvaluation={approval.performedEvaluation} />
 
         <Textarea
           label={EVALUATION_APPROVAL_TRANSLATIONS.comment[locale]}

@@ -1,4 +1,5 @@
 import { BaseType } from 'types/common'
+import { Calibration } from '../../calibration'
 import { EvaluationModelType } from '../EvaluationModel'
 import { PdiCoachingType } from '../PdiCoaching'
 import { PdiCompetenceType } from '../PdiCompetence'
@@ -16,6 +17,8 @@ export interface PerformedEvaluationType extends BaseType {
   grade?: number
   midFinished: boolean
   endFinished: boolean
+  isCalibrated?: boolean
+  calibration?: Calibration | null
   calibrationValue?: number
   calibrationJustification?: string
   questions: PerformedQuestionType[]

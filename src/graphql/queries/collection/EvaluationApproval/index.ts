@@ -14,6 +14,7 @@ const FRAGMENT_EVALUATION_APPROVAL_LIST = gql`
     performedEvaluation {
       id
       grade
+      isCalibrated
       midFinished
       endFinished
       user {

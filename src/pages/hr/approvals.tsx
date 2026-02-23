@@ -1,6 +1,7 @@
 import { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
 import HRApprovalsTemplate from 'templates/HRApprovals'
+import config from '../../../config.json'
 
 const HRApprovalsPage = () => {
   return <HRApprovalsTemplate />
@@ -19,11 +20,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale }) =>
     }
   }
 
-  // Check if user is from HR department
-  const userDepartmentKey = session.user?.department?.key?.toLowerCase()
-  const hrDepartmentKeys = ['rh', 'hr', 'recursos_humanos', 'human_resources']
-
-  if (!userDepartmentKey || !hrDepartmentKeys.includes(userDepartmentKey)) {
+  if (!config.approvals.users.includes(session.user.username)) {
     const rewriteLocale = locale === 'en' ? '/en' : ''
     return {
       redirect: {

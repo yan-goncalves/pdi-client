@@ -8,13 +8,14 @@ import {
   Group,
   Pagination,
   Select,
+  Skeleton,
   Stack,
   Text,
   TextInput,
   useMantineTheme
 } from '@mantine/core'
 import { useDebouncedValue, useMediaQuery } from '@mantine/hooks'
-import { IconCalendar, IconSearch, IconUser } from '@tabler/icons'
+import { IconSearch, IconUser } from '@tabler/icons'
 import Accordion from 'components/Accordion'
 import { FALLBACK_USER_PICTURE } from 'components/UserPicture'
 import {
@@ -32,6 +33,7 @@ import ApprovalModal from './ApprovalModal'
 type ApprovalsListProps = {
   approvals: EvaluationApproval[]
   status: EVALUATION_APPROVAL_STATUS
+  isLoading?: boolean
 }
 
 type GroupedApprovals = {
@@ -45,7 +47,7 @@ type GroupedApprovals = {
 
 const ITEMS_PER_PAGE = 10
 
-const ApprovalsList = ({ approvals, status }: ApprovalsListProps) => {
+const ApprovalsList = ({ approvals, status, isLoading }: ApprovalsListProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
   const match = useMediaQuery(`(max-width: ${theme.breakpoints.xs}px)`)
@@ -169,6 +171,54 @@ const ApprovalsList = ({ approvals, status }: ApprovalsListProps) => {
   useMemo(() => {
     setCurrentPage(1)
   }, [debouncedSearch, selectedYear, selectedPeriod])
+
+  if (isLoading) {
+    return (
+      <Box p={20}>
+        <Stack spacing="md">
+          {/* Filters skeleton */}
+          <Box p={20} pb={0}>
+            <Grid gutter="md">
+              <Grid.Col span={match ? 12 : 6}>
+                <Skeleton height={36} radius="md" />
+              </Grid.Col>
+              <Grid.Col span={match ? 6 : 3}>
+                <Skeleton height={36} radius="md" />
+              </Grid.Col>
+              <Grid.Col span={match ? 6 : 3}>
+                <Skeleton height={36} radius="md" />
+              </Grid.Col>
+            </Grid>
+            <Skeleton height={20} radius="md" mt="md" width="30%" />
+          </Box>
+
+          {/* Items skeleton */}
+          <Box p={20}>
+            <Stack spacing="md">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Card key={i} shadow="sm" p="md" withBorder>
+                  <Stack spacing="md">
+                    <Group position="apart">
+                      <Group spacing="md">
+                        <Skeleton circle height={40} width={40} />
+                        <Stack spacing={4} style={{ flex: 1 }}>
+                          <Skeleton height={16} width="60%" radius="md" />
+                          <Skeleton height={12} width="40%" radius="md" />
+                        </Stack>
+                      </Group>
+                      <Skeleton height={24} width={80} radius="md" />
+                    </Group>
+                    <Skeleton height={16} width="100%" radius="md" />
+                    <Skeleton height={36} width="100%" radius="md" />
+                  </Stack>
+                </Card>
+              ))}
+            </Stack>
+          </Box>
+        </Stack>
+      </Box>
+    )
+  }
 
   if (approvals.length === 0) {
     return (

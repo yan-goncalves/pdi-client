@@ -95,6 +95,7 @@ const HRApprovalsTemplate = () => {
             <ApprovalsList
               approvals={pendingData?.evaluationApprovals || []}
               status={EVALUATION_APPROVAL_STATUS.PENDING}
+              isLoading={pendingLoading}
             />
           </Tabs.Tab>
 
@@ -116,6 +117,7 @@ const HRApprovalsTemplate = () => {
             <ApprovalsList
               approvals={approvedData?.evaluationApprovals || []}
               status={EVALUATION_APPROVAL_STATUS.APPROVED}
+              isLoading={approvedLoading}
             />
           </Tabs.Tab>
 
@@ -137,6 +139,7 @@ const HRApprovalsTemplate = () => {
             <ApprovalsList
               approvals={rejectedData?.evaluationApprovals || []}
               status={EVALUATION_APPROVAL_STATUS.REJECTED}
+              isLoading={rejectedLoading}
             />
           </Tabs.Tab>
         </Tabs>

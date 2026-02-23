@@ -9,6 +9,7 @@ import {
   Divider,
   Grid,
   Group,
+  Modal,
   Skeleton,
   Stack,
   Text,
@@ -62,6 +63,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
 
   // Calibration state
   const [modalOpened, setModalOpened] = useState(false)
+  const [deleteConfirmOpened, setDeleteConfirmOpened] = useState(false)
 
   // Fetch calibration data
   // Allow users to fetch calibration when evaluation is approved to show final grade
@@ -96,9 +98,8 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
   })
 
   const handleDeleteCalibration = () => {
-    if (confirm(CALIBRATION_TRANSLATIONS.confirmDelete[locale])) {
-      deleteCalibration({ variables: { idPerformedEvaluation: performedEvaluation.id } })
-    }
+    deleteCalibration({ variables: { idPerformedEvaluation: performedEvaluation.id } })
+    setDeleteConfirmOpened(false)
   }
 
   const canEditCalibration = actor === EVALUATION_ACTOR.MANAGER && periodMode === EVALUATION_PERIOD.END
@@ -370,7 +371,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                                           size="sm"
                                           color="red"
                                           variant="light"
-                                          onClick={handleDeleteCalibration}
+                                          onClick={() => setDeleteConfirmOpened(true)}
                                           loading={deleting}
                                         >
                                           <IconTrash size={16} />
@@ -418,7 +419,34 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
           }}
         />
       )}
-    </Stack>
+      {/* Delete Confirmation Modal */}
+      <Modal
+        opened={deleteConfirmOpened}
+        onClose={() => setDeleteConfirmOpened(false)}
+        title={<Text weight={700}>{CALIBRATION_TRANSLATIONS.removeCalibration[locale]}</Text>}
+        centered
+      >
+        <Stack spacing="lg">
+          <Text size="sm">
+            {CALIBRATION_TRANSLATIONS.confirmDelete[locale]}
+          </Text>
+          <Group position="right" spacing="sm">
+            <Button
+              variant="default"
+              onClick={() => setDeleteConfirmOpened(false)}
+            >
+              {CALIBRATION_TRANSLATIONS.cancel[locale]}
+            </Button>
+            <Button
+              color="red"
+              onClick={handleDeleteCalibration}
+              loading={deleting}
+            >
+              {CALIBRATION_TRANSLATIONS.removeCalibration[locale]}
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>    </Stack>
   )
 }
 
