@@ -49,7 +49,7 @@ const HistoricEvaluation = ({ actor, ...props }: HistoricEvaluationProps) => {
   })
 
   // Check if evaluation is approved
-  const { isApproved } = useEvaluationApproval(performedEvaluation, periodMode)
+  const { isApproved } = useEvaluationApproval(periodMode, performedEvaluation)
 
   // Only show manager data if approved or if current actor is manager
   const shouldShowManagerData = actor === EVALUATION_ACTOR.MANAGER || isApproved
