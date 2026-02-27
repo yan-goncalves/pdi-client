@@ -11,16 +11,16 @@ export enum EVALUATION_APPROVAL_PERIOD {
 
 export const EVALUATION_APPROVAL_STATUS_LABEL = {
   [EVALUATION_APPROVAL_STATUS.PENDING]: {
-    br: 'Pendente',
-    en: 'Pending'
+    br: 'Avaliação pendente',
+    en: 'Evaluation pending'
   },
   [EVALUATION_APPROVAL_STATUS.APPROVED]: {
-    br: 'Aprovada',
-    en: 'Approved'
+    br: 'Avaliação aprovada',
+    en: 'Evaluation approved'
   },
   [EVALUATION_APPROVAL_STATUS.REJECTED]: {
-    br: 'Reprovada',
-    en: 'Rejected'
+    br: 'Avaliação reprovada',
+    en: 'Evaluation rejected'
   }
 }
 
@@ -194,6 +194,10 @@ export const EVALUATION_APPROVAL_TRANSLATIONS = {
   calibrationComment: {
     br: 'Comentário da Calibração',
     en: 'Calibration Comment'
+  },
+  statusLabel: {
+    br: 'Status',
+    en: 'Status'
   }
 }
 

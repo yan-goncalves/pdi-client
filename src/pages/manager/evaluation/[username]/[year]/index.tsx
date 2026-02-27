@@ -177,7 +177,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
     })
     .then(({ data: { performedEvaluation } }) => (performed = performedEvaluation))
     .catch(async () => {
-      const { data, errors } = await apolloClient.mutate<CreatePerformedEvaluationType>({
+      const { data } = await apolloClient.mutate<CreatePerformedEvaluationType>({
         mutation: CREATE_PERFORMED_EVALUATION,
         variables: {
           idEvaluation: evaluation.id,
@@ -185,7 +185,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
         }
       })
 
-      if (errors) {
+      if (!data?.created) {
         return {
           notFound: true
         }

@@ -29,3 +29,16 @@ export const GET_PERFORMED_EVALUATION_GRADE = gql`
     }
   }
 `
+export const GET_PERFORMED_EVALUATION_APPROVALS = gql`
+  query GetPerformedEvaluationApprovals($id: Int!) {
+    performedEvaluation: performedEvaluationApprovals(id: $id) {
+      id
+      approvals {
+        id
+        period
+        status
+        comment
+      }
+    }
+  }
+`

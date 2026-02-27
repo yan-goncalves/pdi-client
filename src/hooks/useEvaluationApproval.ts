@@ -1,10 +1,13 @@
-import { EVALUATION_APPROVAL_PERIOD, EVALUATION_APPROVAL_STATUS } from 'constants/evaluation-approval'
+import {
+  EVALUATION_APPROVAL_PERIOD,
+  EVALUATION_APPROVAL_STATUS
+} from 'constants/evaluation-approval'
 import { EVALUATION_PERIOD } from 'constants/evaluation'
 import { PerformedEvaluationType } from 'types/collection/PerformedEvaluation'
 
 export const useEvaluationApproval = (
-  performedEvaluation: PerformedEvaluationType,
-  periodMode: EVALUATION_PERIOD
+  periodMode: EVALUATION_PERIOD,
+  performedEvaluation?: PerformedEvaluationType
 ) => {
   if (!performedEvaluation?.approvals) {
     return {
@@ -36,4 +39,3 @@ export const useEvaluationApproval = (
     approval
   }
 }
-

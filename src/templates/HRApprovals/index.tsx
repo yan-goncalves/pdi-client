@@ -29,7 +29,8 @@ const HRApprovalsTemplate = () => {
       input: {
         status: EVALUATION_APPROVAL_STATUS.PENDING
       }
-    }
+    },
+    fetchPolicy: 'cache-and-network'
   })
 
   const { data: approvedData, loading: approvedLoading } = useQuery<{
@@ -39,7 +40,8 @@ const HRApprovalsTemplate = () => {
       input: {
         status: EVALUATION_APPROVAL_STATUS.APPROVED
       }
-    }
+    },
+    fetchPolicy: 'cache-and-network'
   })
 
   const { data: rejectedData, loading: rejectedLoading } = useQuery<{
@@ -49,7 +51,8 @@ const HRApprovalsTemplate = () => {
       input: {
         status: EVALUATION_APPROVAL_STATUS.REJECTED
       }
-    }
+    },
+    fetchPolicy: 'cache-and-network'
   })
 
   const isLoading = pendingLoading || approvedLoading || rejectedLoading

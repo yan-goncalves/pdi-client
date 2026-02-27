@@ -335,6 +335,11 @@ export const CommonConstants = {
       en: 'Grade'
     },
 
+    approval: {
+      br: 'Aprovação',
+      en: 'Approval'
+    },
+
     incomplete: {
       title: {
         br: 'Avaliação Incompleta',

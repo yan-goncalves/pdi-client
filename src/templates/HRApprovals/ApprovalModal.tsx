@@ -100,13 +100,6 @@ const ApprovalModal = ({ approval, opened, onClose }: ApprovalModalProps) => {
         }
       })
 
-      showNotification({
-        title: EVALUATION_APPROVAL_TRANSLATIONS.success[locale],
-        message: EVALUATION_APPROVAL_TRANSLATIONS.approveSuccess[locale],
-        color: 'green',
-        icon: <IconCheck />
-      })
-
       handleClose()
     } catch (error) {
       showNotification({
@@ -130,13 +123,6 @@ const ApprovalModal = ({ approval, opened, onClose }: ApprovalModalProps) => {
             comment: comment.trim()
           }
         }
-      })
-
-      showNotification({
-        title: EVALUATION_APPROVAL_TRANSLATIONS.success[locale],
-        message: EVALUATION_APPROVAL_TRANSLATIONS.rejectSuccess[locale],
-        color: 'orange',
-        icon: <IconX />
       })
 
       handleClose()
