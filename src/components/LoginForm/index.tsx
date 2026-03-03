@@ -90,7 +90,7 @@ const LoginForm = ({ usernameLabel, passwordLabel, button }: LoginFormProps) => 
         setError('password', { type: 'access_denied' })
 
         notifications.showNotification({
-          title: <Text p={2}>{ErrorsConstants.login.credentials.title[locale]} 😢</Text>,
+          title: <Text p={2}>{ErrorsConstants.login.credentials.title[locale]}</Text>,
           message: ErrorsConstants.login.credentials.message[locale],
           color: 'red',
           radius: 'md',
@@ -115,26 +115,6 @@ const LoginForm = ({ usernameLabel, passwordLabel, button }: LoginFormProps) => 
             const user = session?.user
             const info = user?.info
             const name = user?.role === ROLES.ADMIN ? 'Admin' : info?.name
-
-            notifications.showNotification({
-              message: (
-                <Text
-                  style={{ padding: 2 }}
-                  dangerouslySetInnerHTML={{
-                    __html: `${CommonConstants.welcome[locale](name)} 😎`
-                  }}
-                />
-              ),
-              color: 'green',
-              radius: 'md',
-              autoClose: 3000,
-              styles: (theme) => ({
-                root: {
-                  borderColor: theme.colors.green[6],
-                  '&::before': { backgroundColor: theme.colors.green[6] }
-                }
-              })
-            })
 
             if (user?.role !== ROLES.USER) {
               const { data: dataEvaluationModel } = await fetchEvaluationModel()
