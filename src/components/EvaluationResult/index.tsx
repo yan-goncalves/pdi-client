@@ -46,7 +46,7 @@ import {
 import { GET_CALIBRATION } from 'graphql/queries/calibration'
 import { DELETE_CALIBRATION } from 'graphql/mutations/calibration'
 import { useEvaluationApproval } from 'hooks/useEvaluationApproval'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   EvaluationResultConceptType,
   GetEvaluationResultConceptsType
@@ -109,6 +109,14 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
   })
 
   const calibration = calibrationData?.calibration
+  const grade = useMemo(() => {
+    const performedGrade = performedEvaluation.grade || 0
+    if (!calibration) {
+      return performedGrade
+    }
+
+    return performedGrade + (calibration.calibrationValue || 0)
+  }, [calibration, performedEvaluation.grade])
 
   // Delete calibration mutation
   const [deleteCalibration, { loading: deleting }] = useMutation(DELETE_CALIBRATION, {
@@ -180,6 +188,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
 
   useEffect(() => {
     refetchGrade()
+    refetchCalibration()
   }, [])
 
   useEffect(() => {
@@ -410,7 +419,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                           <Rating
                             readOnly
                             precision={0.1}
-                            value={calibration ? calibration.finalGrade : performedEvaluation.grade}
+                            value={grade}
                             max={ratings.length}
                             size={!match ? 'large' : 'medium'}
                           />
