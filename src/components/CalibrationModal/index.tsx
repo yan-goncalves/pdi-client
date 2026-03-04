@@ -1,6 +1,18 @@
 import { useMutation } from '@apollo/client'
-import { Box, Button, Group, Modal, NumberInput, Stack, Text, Textarea } from '@mantine/core'
+import {
+  Box,
+  Button,
+  Group,
+  Modal,
+  NumberInput,
+  Stack,
+  Text,
+  Textarea,
+  useMantineTheme
+} from '@mantine/core'
 import { useNotifications } from '@mantine/notifications'
+import { Typography } from '@mui/material'
+import { IconChecks, IconX } from '@tabler/icons'
 import { CALIBRATION_TRANSLATIONS } from 'constants/calibration'
 import { useLocale } from 'contexts/LocaleProvider'
 import { CREATE_CALIBRATION, UPDATE_CALIBRATION } from 'graphql/mutations/calibration'
@@ -24,6 +36,7 @@ export function CalibrationModal({
   calibration,
   onSuccess
 }: CalibrationModalProps) {
+  const theme = useMantineTheme()
   const { locale } = useLocale()
   const notifications = useNotifications()
   const [calibrationValue, setCalibrationValue] = useState<number>(0)
@@ -57,30 +70,60 @@ export function CalibrationModal({
   }, [calibrationValue, originalGrade])
 
   const handleSave = async () => {
-    // Validations
-    if (comment.length < 10) {
-      notifications.showNotification({
-        title: 'Erro',
-        message: CALIBRATION_TRANSLATIONS.validationMinComment[locale],
-        color: 'red'
-      })
-      return
-    }
-
     if (calibrationValue < minCalibration || calibrationValue > maxCalibration) {
       notifications.showNotification({
-        title: 'Erro',
-        message: CALIBRATION_TRANSLATIONS.validationCalibrationRange[locale],
-        color: 'red'
+        color: 'red',
+        message: (
+          <Group>
+            <IconX size={16} color={theme.colors.red[9]} />
+            <Typography py={0.5} color={theme.colors.red[9]} fontSize={15}>
+              {CALIBRATION_TRANSLATIONS.validationCalibrationRange[locale]}
+            </Typography>
+          </Group>
+        ),
+        radius: 'md',
+        autoClose: 850,
+        styles: {
+          root: {
+            backgroundColor: theme.colors.red[0],
+            borderColor: theme.colors.red[2],
+            alignItems: 'flex-start',
+            '&::before': { backgroundColor: theme.colors.red[9] }
+          },
+          closeButton: {
+            color: theme.colors.red[7],
+            '&:hover': { backgroundColor: theme.colors.red[2] }
+          }
+        }
       })
       return
     }
 
     if (finalGrade < 0.0 || finalGrade > 3.0) {
       notifications.showNotification({
-        title: 'Erro',
-        message: CALIBRATION_TRANSLATIONS.validationFinalGradeRange[locale],
-        color: 'red'
+        color: 'red',
+        message: (
+          <Group>
+            <IconX size={16} color={theme.colors.red[9]} />
+            <Typography py={0.5} color={theme.colors.red[9]} fontSize={15}>
+              {CALIBRATION_TRANSLATIONS.validationFinalGradeRange[locale]}
+            </Typography>
+          </Group>
+        ),
+        radius: 'md',
+        autoClose: 850,
+        styles: {
+          root: {
+            backgroundColor: theme.colors.red[0],
+            borderColor: theme.colors.red[2],
+            alignItems: 'flex-start',
+            '&::before': { backgroundColor: theme.colors.red[9] }
+          },
+          closeButton: {
+            color: theme.colors.red[7],
+            '&:hover': { backgroundColor: theme.colors.red[2] }
+          }
+        }
       })
       return
     }
@@ -111,18 +154,58 @@ export function CalibrationModal({
       }
 
       notifications.showNotification({
-        title: 'Sucesso',
-        message: CALIBRATION_TRANSLATIONS.calibrationSuccess[locale],
-        color: 'green'
+        color: 'green',
+        message: (
+          <Group>
+            <IconChecks size={16} color={theme.colors.green[9]} />
+            <Typography py={0.5} color={theme.colors.green[9]} fontSize={15}>
+              {CALIBRATION_TRANSLATIONS.calibrationSuccess[locale]}
+            </Typography>
+          </Group>
+        ),
+        radius: 'md',
+        autoClose: 1500,
+        styles: {
+          root: {
+            backgroundColor: theme.colors.green[0],
+            borderColor: theme.colors.green[2],
+            alignItems: 'flex-start',
+            '&::before': { backgroundColor: theme.colors.green[9] }
+          },
+          closeButton: {
+            color: theme.colors.green[7],
+            '&:hover': { backgroundColor: theme.colors.green[2] }
+          }
+        }
       })
 
       onSuccess?.()
       onClose()
     } catch (error: any) {
       notifications.showNotification({
-        title: 'Erro',
-        message: error?.message || CALIBRATION_TRANSLATIONS.calibrationError[locale],
-        color: 'red'
+        color: 'red',
+        message: (
+          <Group>
+            <IconX size={16} color={theme.colors.red[9]} />
+            <Typography py={0.5} color={theme.colors.red[9]} fontSize={15}>
+              {error?.message || CALIBRATION_TRANSLATIONS.calibrationError[locale]}
+            </Typography>
+          </Group>
+        ),
+        radius: 'md',
+        autoClose: 850,
+        styles: {
+          root: {
+            backgroundColor: theme.colors.red[0],
+            borderColor: theme.colors.red[2],
+            alignItems: 'flex-start',
+            '&::before': { backgroundColor: theme.colors.red[9] }
+          },
+          closeButton: {
+            color: theme.colors.red[7],
+            '&:hover': { backgroundColor: theme.colors.red[2] }
+          }
+        }
       })
     }
   }
@@ -153,9 +236,12 @@ export function CalibrationModal({
             <Box
               sx={(theme) => ({
                 padding: '8px 12px',
-                border: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4]}`,
+                border: `1px solid ${
+                  theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4]
+                }`,
                 borderRadius: theme.radius.sm,
-                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[1],
+                backgroundColor:
+                  theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[1],
                 textAlign: 'center'
               })}
             >
@@ -185,9 +271,12 @@ export function CalibrationModal({
             <Box
               sx={(theme) => ({
                 padding: '8px 12px',
-                border: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4]}`,
+                border: `1px solid ${
+                  theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4]
+                }`,
                 borderRadius: theme.radius.sm,
-                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[1],
+                backgroundColor:
+                  theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[1],
                 textAlign: 'center'
               })}
             >
@@ -205,14 +294,18 @@ export function CalibrationModal({
           onChange={(e) => setComment(e.currentTarget.value)}
           minRows={4}
           required
-          error={comment.length > 0 && comment.length < 10 ? CALIBRATION_TRANSLATIONS.validationMinComment[locale] : undefined}
+          error={
+            comment.length > 0 && comment.length < 10
+              ? CALIBRATION_TRANSLATIONS.validationMinComment[locale]
+              : undefined
+          }
         />
 
         <Group position="right" mt="md">
           <Button variant="subtle" onClick={onClose} disabled={loading}>
             {CALIBRATION_TRANSLATIONS.cancel[locale]}
           </Button>
-          <Button onClick={handleSave} loading={loading}>
+          <Button onClick={handleSave} disabled={loading || comment?.length < 10} loading={loading}>
             {CALIBRATION_TRANSLATIONS.save[locale]}
           </Button>
         </Group>
@@ -220,4 +313,3 @@ export function CalibrationModal({
     </Modal>
   )
 }
-

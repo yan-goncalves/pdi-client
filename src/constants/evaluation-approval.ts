@@ -1,7 +1,8 @@
 export enum EVALUATION_APPROVAL_STATUS {
   PENDING = 'PENDING',
   APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED'
+  REJECTED = 'REJECTED',
+  NOT_FINISHED = 'NOT_FINISHED'
 }
 
 export enum EVALUATION_APPROVAL_PERIOD {
@@ -21,6 +22,10 @@ export const EVALUATION_APPROVAL_STATUS_LABEL = {
   [EVALUATION_APPROVAL_STATUS.REJECTED]: {
     br: 'Avaliação reprovada',
     en: 'Evaluation rejected'
+  },
+  [EVALUATION_APPROVAL_STATUS.NOT_FINISHED]: {
+    br: 'Avaliação não finalizada',
+    en: 'Evaluation not finished'
   }
 }
 

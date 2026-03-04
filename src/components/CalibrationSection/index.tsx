@@ -9,10 +9,12 @@ import {
   Modal,
   Stack,
   Text,
-  Tooltip
+  Tooltip,
+  useMantineTheme
 } from '@mantine/core'
 import { useNotifications } from '@mantine/notifications'
-import { IconEdit, IconScale, IconTrash } from '@tabler/icons'
+import { Typography } from '@mui/material'
+import { IconChecks, IconEdit, IconScale, IconTrash, IconX } from '@tabler/icons'
 import { CalibrationModal } from 'components/CalibrationModal'
 import { CALIBRATION_TRANSLATIONS } from 'constants/calibration'
 import { EVALUATION_PERIOD } from 'constants/evaluation'
@@ -34,16 +36,20 @@ export function CalibrationSection({
   originalGrade,
   actor
 }: CalibrationSectionProps) {
+  const theme = useMantineTheme()
   const { locale } = useLocale()
   const notifications = useNotifications()
   const { periodMode } = useEvaluation()
   const [modalOpened, setModalOpened] = useState(false)
   const [deleteConfirmOpened, setDeleteConfirmOpened] = useState(false)
 
-  const { data, loading, refetch } = useQuery<{ calibration: Calibration | null }>(GET_CALIBRATION, {
-    variables: { idPerformedEvaluation },
-    skip: !idPerformedEvaluation
-  })
+  const { data, loading, refetch } = useQuery<{ calibration: Calibration | null }>(
+    GET_CALIBRATION,
+    {
+      variables: { idPerformedEvaluation },
+      skip: !idPerformedEvaluation
+    }
+  )
 
   const [deleteCalibration, { loading: deleting }] = useMutation(DELETE_CALIBRATION)
 
@@ -70,18 +76,58 @@ export function CalibrationSection({
       })
 
       notifications.showNotification({
-        title: 'Sucesso',
-        message: CALIBRATION_TRANSLATIONS.calibrationDeleteSuccess[locale],
-        color: 'green'
+        color: 'green',
+        message: (
+          <Group>
+            <IconChecks size={16} color={theme.colors.green[9]} />
+            <Typography py={0.5} color={theme.colors.green[9]} fontSize={15}>
+              {CALIBRATION_TRANSLATIONS.calibrationDeleteSuccess[locale]}
+            </Typography>
+          </Group>
+        ),
+        radius: 'md',
+        autoClose: 1500,
+        styles: {
+          root: {
+            backgroundColor: theme.colors.green[0],
+            borderColor: theme.colors.green[2],
+            alignItems: 'flex-start',
+            '&::before': { backgroundColor: theme.colors.green[9] }
+          },
+          closeButton: {
+            color: theme.colors.green[7],
+            '&:hover': { backgroundColor: theme.colors.green[2] }
+          }
+        }
       })
 
       setDeleteConfirmOpened(false)
       refetch()
     } catch (error: any) {
       notifications.showNotification({
-        title: 'Erro',
-        message: error?.message || CALIBRATION_TRANSLATIONS.calibrationDeleteError[locale],
-        color: 'red'
+        color: 'red',
+        message: (
+          <Group>
+            <IconX size={16} color={theme.colors.red[9]} />
+            <Typography py={0.5} color={theme.colors.red[9]} fontSize={15}>
+              {error?.message || CALIBRATION_TRANSLATIONS.calibrationDeleteError[locale]}
+            </Typography>
+          </Group>
+        ),
+        radius: 'md',
+        autoClose: 850,
+        styles: {
+          root: {
+            backgroundColor: theme.colors.red[0],
+            borderColor: theme.colors.red[2],
+            alignItems: 'flex-start',
+            '&::before': { backgroundColor: theme.colors.red[9] }
+          },
+          closeButton: {
+            color: theme.colors.red[7],
+            '&:hover': { backgroundColor: theme.colors.red[2] }
+          }
+        }
       })
     }
   }
@@ -98,9 +144,13 @@ export function CalibrationSection({
               </Text>
             </Group>
             {calibration ? (
-              <Badge size="sm" color="green">{CALIBRATION_TRANSLATIONS.calibrated[locale]}</Badge>
+              <Badge size="sm" color="green">
+                {CALIBRATION_TRANSLATIONS.calibrated[locale]}
+              </Badge>
             ) : (
-              <Badge size="sm" color="gray">{CALIBRATION_TRANSLATIONS.notCalibrated[locale]}</Badge>
+              <Badge size="sm" color="gray">
+                {CALIBRATION_TRANSLATIONS.notCalibrated[locale]}
+              </Badge>
             )}
           </Group>
         </Card.Section>
@@ -224,21 +274,12 @@ export function CalibrationSection({
         centered
       >
         <Stack spacing="lg">
-          <Text size="sm">
-            {CALIBRATION_TRANSLATIONS.confirmDelete[locale]}
-          </Text>
+          <Text size="sm">{CALIBRATION_TRANSLATIONS.confirmDelete[locale]}</Text>
           <Group position="right" spacing="sm">
-            <Button
-              variant="default"
-              onClick={() => setDeleteConfirmOpened(false)}
-            >
+            <Button variant="default" onClick={() => setDeleteConfirmOpened(false)}>
               {CALIBRATION_TRANSLATIONS.cancel[locale]}
             </Button>
-            <Button
-              color="red"
-              onClick={handleDelete}
-              loading={deleting}
-            >
+            <Button color="red" onClick={handleDelete} loading={deleting}>
               {CALIBRATION_TRANSLATIONS.removeCalibration[locale]}
             </Button>
           </Group>
@@ -247,4 +288,3 @@ export function CalibrationSection({
     </>
   )
 }
-

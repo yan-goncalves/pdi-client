@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client'
 import { Divider, Grid, Group, Loader, Text, Title, useMantineTheme } from '@mantine/core'
 import { useNotifications } from '@mantine/notifications'
-import { Rating } from '@mui/material'
+import { Rating, Typography } from '@mui/material'
 import { IconChecks, IconStar } from '@tabler/icons'
 import Comment from 'components/Comment'
 import HistoricEvaluation from 'components/HistoricEvaluation'
@@ -14,7 +14,7 @@ import {
   CREATE_PERFORMED_KPI,
   UPDATE_PERFORMED_KPI
 } from 'graphql/mutations/collection/PerformedKpi'
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { KpiType } from 'types/collection/Kpi'
 import { PerformedGoalType } from 'types/collection/PerformedGoal'
 import {
@@ -40,7 +40,13 @@ export type PerformedGoalCommentType =
 export type PerformedGoalRatingType = 'ratingManager'
 export type PerformedGoalAchievedType = 'achieved'
 
-const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider, disabled = false }: PerformedKpiProps) => {
+const PerformedKpi = ({
+  kpi,
+  actor,
+  performedGoal,
+  hasDivider,
+  disabled = false
+}: PerformedKpiProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
   const {
@@ -150,6 +156,7 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider, disabled = false 
     field: PerformedGoalCommentType | PerformedGoalRatingType | PerformedGoalAchievedType,
     value: number | string
   ) => {
+    setIsSaving(true)
     if (!performedKpi) {
       await create({
         variables: {
@@ -166,57 +173,15 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider, disabled = false 
         }
       })
     }
+    setIsSaving(false)
   }
 
   const handleChange = async (_: React.SyntheticEvent, newRating: number | null) => {
+    showNotificationOnSaving()
     setRating(newRating || -1)
     setHover(-1)
-    setIsSaving(true)
-
-    notifications.showNotification({
-      message: (
-        <Title order={5} p={2}>
-          <Group>
-            <Loader size={'sm'} />
-            {NotificationsConstants.saving.answer[locale]}
-          </Group>
-        </Title>
-      ),
-      radius: 'md',
-      autoClose: 850,
-      styles: {
-        root: {
-          borderColor: theme.colors.blue[6],
-          '&::before': { backgroundColor: theme.colors.blue[6] }
-        }
-      }
-    })
-    setTimeout(
-      async () =>
-        await handleSave(ratingField, newRating || -1).then(() => {
-          notifications.showNotification({
-            message: (
-              <Title order={5} p={2}>
-                <Group>
-                  <IconChecks size={22} color={theme.colors.green[9]} />
-                  {NotificationsConstants.saved.answer[locale]}
-                </Group>
-              </Title>
-            ),
-            color: 'green',
-            radius: 'md',
-
-            autoClose: 1500,
-            styles: (theme) => ({
-              root: {
-                borderColor: theme.colors.green[6],
-                '&::before': { backgroundColor: theme.colors.green[6] }
-              }
-            })
-          })
-        }),
-      1000
-    )
+    await handleSave(ratingField, newRating || -1)
+    showNotificationOnFinish()
   }
 
   const handleSaveComment = async () => {
@@ -249,9 +214,63 @@ const PerformedKpi = ({ kpi, actor, performedGoal, hasDivider, disabled = false 
     }))
 
     setPerformedKpi(kpi)
-
-    setIsSaving(false)
   }
+
+  const showNotificationOnSaving = useCallback(() => {
+    notifications.showNotification({
+      color: 'blue',
+      message: (
+        <Group>
+          <IconChecks size={16} color={theme.colors.blue[9]} />
+          <Typography py={0.5} color={theme.colors.blue[9]} fontSize={15}>
+            {NotificationsConstants.saving.answer[locale]}
+          </Typography>
+        </Group>
+      ),
+      radius: 'md',
+      autoClose: 850,
+      styles: {
+        root: {
+          backgroundColor: theme.colors.blue[0],
+          borderColor: theme.colors.blue[2],
+          alignItems: 'flex-start',
+          '&::before': { backgroundColor: theme.colors.blue[9] }
+        },
+        closeButton: {
+          color: theme.colors.blue[7],
+          '&:hover': { backgroundColor: theme.colors.blue[2] }
+        }
+      }
+    })
+  }, [notifications, theme, locale])
+
+  const showNotificationOnFinish = useCallback(() => {
+    notifications.showNotification({
+      color: 'green',
+      message: (
+        <Group>
+          <IconChecks size={16} color={theme.colors.green[9]} />
+          <Typography py={0.5} color={theme.colors.green[9]} fontSize={15}>
+            {NotificationsConstants.saved.answer[locale]}
+          </Typography>
+        </Group>
+      ),
+      radius: 'md',
+      autoClose: 1500,
+      styles: {
+        root: {
+          backgroundColor: theme.colors.green[0],
+          borderColor: theme.colors.green[2],
+          alignItems: 'flex-start',
+          '&::before': { backgroundColor: theme.colors.green[9] }
+        },
+        closeButton: {
+          color: theme.colors.green[7],
+          '&:hover': { backgroundColor: theme.colors.green[2] }
+        }
+      }
+    })
+  }, [notifications, theme, locale])
 
   return (
     <React.Fragment>

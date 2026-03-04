@@ -28,7 +28,8 @@ export const useEvaluationApproval = (
     return {
       isApproved: false,
       isPending: false,
-      isRejected: false
+      isRejected: false,
+      isNotFinished: true
     }
   }
 
@@ -36,6 +37,7 @@ export const useEvaluationApproval = (
     isApproved: approval.status === EVALUATION_APPROVAL_STATUS.APPROVED,
     isPending: approval.status === EVALUATION_APPROVAL_STATUS.PENDING,
     isRejected: approval.status === EVALUATION_APPROVAL_STATUS.REJECTED,
+    isNotFinished: approval.status === EVALUATION_APPROVAL_STATUS.NOT_FINISHED,
     approval
   }
 }

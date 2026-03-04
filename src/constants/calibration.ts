@@ -60,16 +60,16 @@ export const CALIBRATION_TRANSLATIONS = {
     en: 'Adjust the final grade by adding or subtracting a value between -3.0 and +3.0.'
   },
   calibrationSuccess: {
-    br: 'Calibração salva com sucesso!',
-    en: 'Calibration saved successfully!'
+    br: 'Calibração salva com sucesso',
+    en: 'Calibration saved successfully'
   },
   calibrationError: {
     br: 'Erro ao salvar calibração',
     en: 'Error saving calibration'
   },
   calibrationDeleteSuccess: {
-    br: 'Calibração removida com sucesso!',
-    en: 'Calibration removed successfully!'
+    br: 'Calibração removida com sucesso',
+    en: 'Calibration removed successfully'
   },
   calibrationDeleteError: {
     br: 'Erro ao remover calibração',
@@ -114,6 +114,10 @@ export const CALIBRATION_TRANSLATIONS = {
   confirmDelete: {
     br: 'Tem certeza que deseja remover a calibração?',
     en: 'Are you sure you want to remove the calibration?'
+  },
+  finalGradeModified: {
+    br: 'A nota final foi alterada, removendo calibração...',
+    en: 'Final grade was modified, removing calibration...'
   }
 }
 

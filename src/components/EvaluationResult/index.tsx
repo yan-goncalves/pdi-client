@@ -9,6 +9,7 @@ import {
   Divider,
   Grid,
   Group,
+  Loader,
   Modal,
   Skeleton,
   Stack,
@@ -22,6 +23,7 @@ import { Rating, Typography } from '@mui/material'
 import {
   IconAlertTriangle,
   IconCheck,
+  IconChecks,
   IconClock,
   IconEdit,
   IconScale,
@@ -31,7 +33,7 @@ import { CalibrationModal } from 'components/CalibrationModal'
 import { CALIBRATION_TRANSLATIONS } from 'constants/calibration'
 import { CommonConstants } from 'constants/common'
 import { EVALUATION_PERIOD } from 'constants/evaluation'
-import { EVALUATION_ACTOR, useEvaluation } from 'contexts/EvaluationProvider'
+import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import {
   EVALUATION_APPROVAL_STATUS,
@@ -46,7 +48,7 @@ import {
 import { GET_CALIBRATION } from 'graphql/queries/calibration'
 import { DELETE_CALIBRATION } from 'graphql/mutations/calibration'
 import { useEvaluationApproval } from 'hooks/useEvaluationApproval'
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   EvaluationResultConceptType,
   GetEvaluationResultConceptsType
@@ -71,9 +73,11 @@ export type EvaluationResultProps = {
 const EvaluationResult = ({ actor }: EvaluationResultProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
-  const { performedEvaluation, setPerformedEvaluation, ratings, periodMode } = useEvaluation()
+  const { performedEvaluation, setPerformedEvaluation, ratings, periodMode, mode } = useEvaluation()
   const [appraiseeConcept, setAppraiseeConcept] = useState<AppraiseeConceptType>()
   const [concepts, setConcepts] = useState<EvaluationResultConceptType[]>([])
+  const [calibration, setCalibration] = useState<Calibration | null>(null)
+  const [finalGradeModified, setFinalGradeModified] = useState(false)
   const match = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`, false)
 
   const { data: approvalData, refetch: refetchApproval } = useQuery<GetPerformedEvaluationType>(
@@ -87,7 +91,10 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
   )
 
   // Check if evaluation is approved and grab approval object
-  const { isApproved, approval } = useEvaluationApproval(periodMode, approvalData?.performedEvaluation)
+  const { isApproved, approval } = useEvaluationApproval(
+    periodMode,
+    approvalData?.performedEvaluation
+  )
   const shouldShowGrade = actor === EVALUATION_ACTOR.MANAGER || isApproved
 
   // Calibration state
@@ -108,7 +115,6 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
       (actor === EVALUATION_ACTOR.USER && !isApproved)
   })
 
-  const calibration = calibrationData?.calibration
   const grade = useMemo(() => {
     const performedGrade = performedEvaluation.grade || 0
     if (!calibration) {
@@ -121,13 +127,10 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
   // Delete calibration mutation
   const [deleteCalibration, { loading: deleting }] = useMutation(DELETE_CALIBRATION, {
     onCompleted: () => {
-      showNotification({
-        title: CALIBRATION_TRANSLATIONS.success.deleted[locale],
-        message: CALIBRATION_TRANSLATIONS.success.deletedMessage[locale],
-        color: 'green'
-      })
       refetchCalibration()
       refetchGrade()
+      setCalibration(null)
+      setFinalGradeModified(false)
     },
     onError: (error) => {
       showNotification({
@@ -140,13 +143,40 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
 
   const handleDeleteCalibration = () => {
     deleteCalibration({ variables: { idPerformedEvaluation: performedEvaluation.id } })
+    showNotification({
+      color: 'green',
+      message: (
+        <Group>
+          <IconChecks size={22} color={theme.colors.green[9]} />
+          <Typography py={0.5} color={theme.colors.green[9]} fontSize={'sm'}>
+            {CALIBRATION_TRANSLATIONS.success.deletedMessage[locale]}
+          </Typography>
+        </Group>
+      ),
+      radius: 'md',
+      autoClose: 1500,
+      styles: {
+        root: {
+          backgroundColor: theme.colors.green[0],
+          borderColor: theme.colors.green[2],
+          alignItems: 'flex-start',
+          '&::before': { backgroundColor: theme.colors.green[9] }
+        },
+        closeButton: {
+          color: theme.colors.green[7],
+          '&:hover': { backgroundColor: theme.colors.green[2] }
+        }
+      }
+    })
     setDeleteConfirmOpened(false)
   }
 
   const canEditCalibration =
-    actor === EVALUATION_ACTOR.MANAGER && periodMode === EVALUATION_PERIOD.END
+    actor === EVALUATION_ACTOR.MANAGER &&
+    periodMode === EVALUATION_PERIOD.END &&
+    mode === EVALUATION_MODE.EDIT
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status?: string) => {
     switch (status) {
       case EVALUATION_APPROVAL_STATUS.PENDING:
         return 'yellow'
@@ -156,6 +186,19 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
         return 'red'
       default:
         return 'gray'
+    }
+  }
+
+  const getStatusLabel = (status?: string) => {
+    switch (status) {
+      case EVALUATION_APPROVAL_STATUS.PENDING:
+        return EVALUATION_APPROVAL_STATUS.PENDING
+      case EVALUATION_APPROVAL_STATUS.APPROVED:
+        return EVALUATION_APPROVAL_STATUS.APPROVED
+      case EVALUATION_APPROVAL_STATUS.REJECTED:
+        return EVALUATION_APPROVAL_STATUS.REJECTED
+      default:
+        return EVALUATION_APPROVAL_STATUS.NOT_FINISHED
     }
   }
 
@@ -183,8 +226,30 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
   })
 
   useEffect(() => {
+    if (calibrationData && calibrationData.calibration) {
+      setCalibration(calibrationData.calibration)
+    }
+  }, [calibrationData])
+
+  useEffect(() => {
+    if (calibration && calibration.originalGrade !== performedEvaluation.grade) {
+      setFinalGradeModified(true)
+    }
+  }, [calibration, performedEvaluation.grade])
+
+  useEffect(() => {
+    if (canEditCalibration && finalGradeModified) {
+      const timeout = setTimeout(() => {
+        deleteCalibration({ variables: { idPerformedEvaluation: performedEvaluation.id } })
+      }, 2000)
+
+      return () => clearTimeout(timeout)
+    }
+  }, [canEditCalibration, finalGradeModified])
+
+  useEffect(() => {
     refetchApproval()
-  }, [calibration])
+  }, [calibration, performedEvaluation.endFinished, performedEvaluation.midFinished])
 
   useEffect(() => {
     refetchGrade()
@@ -238,6 +303,50 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
       }
     }
   }, [concepts, performedEvaluation.grade, calibration])
+
+  if (loading || loadingConcepts || loadingCalibration) {
+    return (
+      <Stack align="center" m={25} mt={50} spacing="md">
+        <Card withBorder sx={{ width: !match ? '90%' : '100%', height: 400 }}>
+          <>
+            <Card.Section p={25} pt={5}>
+              <Group position="apart" align="center">
+                <Text size={'xl'} weight={500}>
+                  {CommonConstants.result.title[locale]}
+                </Text>
+              </Group>
+            </Card.Section>
+            <Divider mx={-20} />
+          </>
+          <Card.Section p={25}>
+            <Grid justify="center" sx={{ width: '100%', marginTop: 20 }}>
+              {[0, 1, 2].map((index) => (
+                <React.Fragment key={index}>
+                  <Grid.Col span={3}>
+                    <Skeleton height={!match ? 40 : 20} radius={!match ? 'lg' : 'md'} />
+                    <Skeleton
+                      width={'100%'}
+                      mt={30}
+                      height={!match ? 150 : 100}
+                      radius={!match ? 'lg' : 'md'}
+                    />
+                  </Grid.Col>
+                  {index < 2 && (
+                    <Grid.Col
+                      span={1}
+                      sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                    >
+                      <Divider orientation={'vertical'} />
+                    </Grid.Col>
+                  )}
+                </React.Fragment>
+              ))}
+            </Grid>
+          </Card.Section>
+        </Card>
+      </Stack>
+    )
+  }
 
   return (
     <Stack align="center" m={25} mt={50} spacing="md">
@@ -331,9 +440,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                   {/* Concept Column */}
                   <Grid.Col
                     span={
-                      (approval || calibration) &&
-                      periodMode === EVALUATION_PERIOD.END &&
-                      actor === EVALUATION_ACTOR.MANAGER
+                      periodMode === EVALUATION_PERIOD.END && actor === EVALUATION_ACTOR.MANAGER
                         ? 4
                         : 5
                     }
@@ -387,7 +494,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                   </Grid.Col>
 
                   {/* Grade Column */}
-                  <Grid.Col span={approval && actor === EVALUATION_ACTOR.MANAGER ? 3 : 4}>
+                  <Grid.Col span={actor === EVALUATION_ACTOR.MANAGER ? 3 : 4}>
                     <Group
                       spacing={5}
                       direction={'column'}
@@ -424,8 +531,42 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                             size={!match ? 'large' : 'medium'}
                           />
 
+                          {finalGradeModified && (
+                            <Box
+                              mt={15}
+                              px={2.5}
+                              py={5}
+                              sx={(theme) => ({
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-around',
+                                border: `1px solid ${
+                                  theme.colorScheme === 'dark'
+                                    ? theme.colors.blue[4]
+                                    : theme.colors.blue[3]
+                                }`,
+                                borderRadius: theme.radius.md,
+                                backgroundColor:
+                                  theme.colorScheme === 'dark'
+                                    ? theme.colors.blue[1]
+                                    : theme.colors.blue[0],
+                                width: '100%'
+                              })}
+                            >
+                              <Loader size={'xs'} color={'blue'} />
+                              <Typography
+                                fontSize={13}
+                                fontStyle={'italic'}
+                                color={theme.colors.blue[7]}
+                              >
+                                {CALIBRATION_TRANSLATIONS.finalGradeModified[locale]}
+                              </Typography>
+                            </Box>
+                          )}
+
                           {/* Calibration box below grade */}
-                          {calibration &&
+                          {!finalGradeModified &&
+                            calibration &&
                             periodMode === EVALUATION_PERIOD.END &&
                             actor === EVALUATION_ACTOR.MANAGER && (
                               <Stack
@@ -455,7 +596,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                                       <span>{CALIBRATION_TRANSLATIONS.title[locale]}</span>
                                     </Group>
                                   </Badge>
-                                  {canEditCalibration && (
+                                  {canEditCalibration && !finalGradeModified && (
                                     <Group spacing={4} position="center">
                                       <Tooltip
                                         label={CALIBRATION_TRANSLATIONS.editCalibration[locale]}
@@ -509,7 +650,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                   </Grid.Col>
 
                   {/* show approval status and comment (if exists) */}
-                  {approval && actor === EVALUATION_ACTOR.MANAGER && (
+                  {actor === EVALUATION_ACTOR.MANAGER && (
                     <>
                       <Grid.Col
                         span={1}
@@ -557,12 +698,16 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                             </Text>
                             <Badge
                               size="lg"
-                              color={getStatusColor(approval.status)}
+                              color={getStatusColor(approval?.status)}
                               variant="light"
                             >
-                              {EVALUATION_APPROVAL_STATUS_LABEL[approval.status][locale]}
+                              {
+                                EVALUATION_APPROVAL_STATUS_LABEL[getStatusLabel(approval?.status)][
+                                  locale
+                                ]
+                              }
                             </Badge>
-                            {approval.comment && (
+                            {approval?.comment && (
                               <Box sx={{ width: '100%' }}>
                                 <Text size="sm" weight={600}>
                                   {EVALUATION_APPROVAL_TRANSLATIONS.comment[locale]}:
