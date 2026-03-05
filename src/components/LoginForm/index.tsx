@@ -61,7 +61,8 @@ const LoginForm = ({ usernameLabel, passwordLabel, button }: LoginFormProps) => 
     variables: {
       year: new Date().getFullYear()
     },
-    skip: true
+    skip: true,
+    errorPolicy: 'ignore'
   })
   const { refetch: fetchTeamMembers } = useQuery<GetTeamMembersType>(GET_TEAM_MEMBERS, {
     skip: true
