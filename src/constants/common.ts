@@ -335,6 +335,22 @@ export const CommonConstants = {
       en: 'Grade'
     },
 
+    approval: {
+      br: 'Aprovação',
+      en: 'Approval'
+    },
+
+    incomplete: {
+      title: {
+        br: 'Avaliação Incompleta',
+        en: 'Incomplete Evaluation'
+      },
+      message: {
+        br: 'Não foi possível definir o conceito e a nota final porque existem competências ou objetivos não avaliados',
+        en: 'Unable to determine concept and final grade because there are unrated skills or goals'
+      }
+    },
+
     finished: {
       title: {
         br: 'Avaliação finalizada!',

@@ -1,6 +1,19 @@
+import 'next-auth'
 import 'next-auth/core'
 import { NextAuthOptions as NextAuthOptionsDefault } from 'next-auth/core'
 import { UserType } from 'types/collection/User'
+
+declare module 'next-auth' {
+  interface User {
+    jwt?: string
+    user?: UserType
+  }
+
+  interface Session {
+    jwt: string
+    user: UserType
+  }
+}
 
 declare module 'next-auth/core' {
   interface Session {

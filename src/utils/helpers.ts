@@ -10,30 +10,24 @@ import { BaseType } from 'types/common'
 export const getMembersRecursively = async (
   member: UserType,
   apolloClient: ApolloClient<NormalizedCacheObject | null>,
-  team: UserType[]
-) => {
+  team: UserType[] = []
+): Promise<UserType[]> => { 
+  if (!team.some(({ id }) => id === member.id)) {
+    team.push(member)
+  }
+
   if (member.role !== ROLES.USER) {
     const { data } = await apolloClient.query<GetTeamMembersType>({
       query: GET_TEAM_MEMBERS,
-      variables: {
-        id: member.id
-      }
+      variables: { id: member.id }
     })
 
-    const ordered = await Promise.all(
-      data.team.map(
-        async (dataMember) => await getMembersRecursively(dataMember, apolloClient, team)
-      )
-    )
-
-    for (const teamMember of ordered) {
-      if (!team.some(({ id }) => teamMember.id === id)) {
-        team.push(...ordered)
-      }
+    for (const dataMember of data.team) {
+      await getMembersRecursively(dataMember, apolloClient, team)
     }
   }
 
-  return member
+  return team
 }
 
 export const orderMembersByDepartments = (team: UserType[], departments: DepartmentType[]) => {

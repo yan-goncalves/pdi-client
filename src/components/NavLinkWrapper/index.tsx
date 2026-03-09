@@ -3,19 +3,23 @@ import NavItemSection from 'components/NavItemSection'
 import { ROLES } from 'constants/role'
 import {
   extraNavItemLinks,
+  hrNavItemLinks,
   managerNavItemLinks,
   navLinkWrapperTitles,
   userNavItemLinks
 } from 'constants/routes'
 import { LocaleType, useLocale } from 'contexts/LocaleProvider'
 import { useSession } from 'next-auth/react'
-import reportConfig from '../../../config.json'
+import config from '../../../config.json'
 
 export type NavLinkWrapperProps = {
   userSectionTitle: {
     [key in LocaleType]: string
   }
   managerSectionTitle: {
+    [key in LocaleType]: string
+  }
+  hrSectionTitle: {
     [key in LocaleType]: string
   }
   extraSectionTitle: {
@@ -26,7 +30,8 @@ export type NavLinkWrapperProps = {
 const NavLinkWrapper = () => {
   const { locale } = useLocale()
   const { data: session } = useSession()
-  const { userSectionTitle, managerSectionTitle, extraSectionTitle } = navLinkWrapperTitles
+  const { userSectionTitle, managerSectionTitle, hrSectionTitle, extraSectionTitle } =
+    navLinkWrapperTitles
 
   if (!session) {
     return <LoadingOverlay visible />
@@ -40,7 +45,10 @@ const NavLinkWrapper = () => {
       {session?.user?.role !== ROLES.USER && (
         <NavItemSection sectionTitle={managerSectionTitle[locale]} items={managerNavItemLinks} />
       )}
-      {reportConfig.report.users.includes(session.user.username) && (
+      {config.approvals.users.includes(session.user.username) && (
+        <NavItemSection sectionTitle={hrSectionTitle[locale]} items={hrNavItemLinks} />
+      )}
+      {config.report.users.includes(session.user.username) && (
         <NavItemSection sectionTitle={extraSectionTitle[locale]} items={extraNavItemLinks} />
       )}
     </MantineNavbar.Section>

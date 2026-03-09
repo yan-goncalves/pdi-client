@@ -1,4 +1,5 @@
 import { BaseType } from 'types/common'
+import { Calibration } from '../../calibration'
 import { EvaluationModelType } from '../EvaluationModel'
 import { PdiCoachingType } from '../PdiCoaching'
 import { PdiCompetenceType } from '../PdiCompetence'
@@ -8,6 +9,7 @@ import { PerformedGoalType } from '../PerformedGoal'
 import { PerformedQuestionType } from '../PerformedQuestion'
 import { PerformedSkillType } from '../PerformedSkill'
 import { UserType } from '../User'
+import { EvaluationApproval } from '../../evaluation-approval'
 
 export interface PerformedEvaluationType extends BaseType {
   evaluation: EvaluationModelType
@@ -15,6 +17,10 @@ export interface PerformedEvaluationType extends BaseType {
   grade?: number
   midFinished: boolean
   endFinished: boolean
+  isCalibrated?: boolean
+  calibration?: Calibration | null
+  calibrationValue?: number
+  calibrationJustification?: string
   questions: PerformedQuestionType[]
   skills: PerformedSkillType[]
   goals: PerformedGoalType[]
@@ -22,6 +28,7 @@ export interface PerformedEvaluationType extends BaseType {
   pdiCoaching: PdiCoachingType[]
   pdiCompetence: PdiCompetenceType[]
   pdiQuality: PdiQualityType[]
+  approvals?: EvaluationApproval[]
 }
 
 export type GetPerformedEvaluationType = {

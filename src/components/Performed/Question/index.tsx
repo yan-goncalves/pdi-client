@@ -22,9 +22,10 @@ export type PerformedQuestionProps = {
   question: QuestionType
   performed?: PerformedQuestionType
   actor: EVALUATION_ACTOR
+  disabled?: boolean
 }
 
-const PerformedQuestion = ({ question, performed, actor }: PerformedQuestionProps) => {
+const PerformedQuestion = ({ question, performed, actor, disabled = false }: PerformedQuestionProps) => {
   const { locale } = useLocale()
   const { performedEvaluation, setPerformedEvaluation, mode } = useEvaluation()
   const { classes } = useStyles({ actor, mode })
@@ -45,7 +46,7 @@ const PerformedQuestion = ({ question, performed, actor }: PerformedQuestionProp
   })
 
   useLayoutEffect(() => {
-    if (actor === EVALUATION_ACTOR.MANAGER || mode === EVALUATION_MODE.VIEW) {
+    if (actor === EVALUATION_ACTOR.MANAGER || mode === EVALUATION_MODE.VIEW || disabled) {
       setIsDisabled(true)
     }
   }, [actor, mode])

@@ -1,4 +1,5 @@
 import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
+import { ROLES } from 'constants/role'
 import { initializeApollo } from 'graphql/client'
 import { CREATE_PERFORMED_EVALUATION } from 'graphql/mutations/collection/PerformedEvaluation'
 import { GET_EVALUATION_MODEL } from 'graphql/queries/collection/EvaluationModel'
@@ -19,17 +20,22 @@ import {
 } from 'types/collection/PerformedEvaluation'
 import { GetRatings, RatingType } from 'types/collection/Rating'
 import { GetUserType, UserType } from 'types/collection/User'
+import { GET_TEAM_MEMBERS } from 'graphql/queries/collection/Team'
+import { GetTeamMembersType } from 'types/collection/Team'
+import { getMembersRecursively } from 'utils/helpers'
 
 const EvaluationPage = ({
   user,
   evaluation,
   performed,
-  ratings
+  ratings,
+  canOnlyCalibrate = false
 }: {
   user: UserType
   evaluation: EvaluationModelType
   performed: PerformedEvaluationType
   ratings: RatingType[]
+  canOnlyCalibrate?: boolean
 }) => {
   const {
     setEvaluationModel,
@@ -69,7 +75,7 @@ const EvaluationPage = ({
     }
   }, [ratings])
 
-  return <EvaluationTemplate actor={EVALUATION_ACTOR.MANAGER} />
+  return <EvaluationTemplate actor={EVALUATION_ACTOR.MANAGER} canOnlyCalibrate={canOnlyCalibrate} />
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, locale, params }) => {
@@ -93,6 +99,32 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
   if (userError || userErrors) {
     return {
       notFound: true
+    }
+  }
+
+  const { data } = await apolloClient.query<GetTeamMembersType>({
+    query: GET_TEAM_MEMBERS
+  })
+  const team = data.team
+  for (const member of team) {
+    await getMembersRecursively(member, apolloClient, team)
+  }
+
+  const isDirectManager = team.some((member) => member.id === user.id)
+  const isSabrina = session?.user?.username === 'sabrinavelasques'
+  const isDirector = session?.user?.role === ROLES.DIRECTOR
+
+  // Sabrina and DIRECTOR can access any evaluation, but only calibrate if not direct manager
+  const canAccess = isDirectManager || isSabrina || isDirector
+  const canOnlyCalibrate = !isDirectManager && (isSabrina || isDirector)
+  
+  if (!canAccess) {
+    const rewriteLocale = locale === 'en' ? '/en' : ''
+    return {
+      redirect: {
+        destination: `${rewriteLocale}/manager/evaluation`,
+        permanent: false
+      }
     }
   }
 
@@ -151,7 +183,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
     })
     .then(({ data: { performedEvaluation } }) => (performed = performedEvaluation))
     .catch(async () => {
-      const { data, errors } = await apolloClient.mutate<CreatePerformedEvaluationType>({
+      const { data } = await apolloClient.mutate<CreatePerformedEvaluationType>({
         mutation: CREATE_PERFORMED_EVALUATION,
         variables: {
           idEvaluation: evaluation.id,
@@ -159,7 +191,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
         }
       })
 
-      if (errors) {
+      if (!data?.created) {
         return {
           notFound: true
         }
@@ -184,7 +216,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, locale, para
       user,
       evaluation,
       performed,
-      ratings
+      ratings,
+      canOnlyCalibrate // Pass flag to indicate if user can only calibrate (not edit)
     }
   }
 }

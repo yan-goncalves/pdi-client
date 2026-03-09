@@ -261,6 +261,7 @@ export const FRAGMENT_PERFORMED_EVALUATION = gql`
     grade
     midFinished
     endFinished
+    isCalibrated
     questions {
       ...FragmentPerformedQuestion
     }
@@ -282,6 +283,14 @@ export const FRAGMENT_PERFORMED_EVALUATION = gql`
     pdiQuality {
       ...FragmentPdiQuality
     }
+    approvals {
+      id
+      period
+      status
+      comment
+      createdAt
+      updatedAt
+    }
   }
 `
 
@@ -293,5 +302,24 @@ export const FRAGMENT_EVALUATION_RESULT_CONCEPT = gql`
     color
     min
     max
+  }
+`
+
+export const FRAGMENT_EVALUATION_APPROVAL = gql`
+  ${FRAGMENT_USER_MODEL}
+  ${FRAGMENT_PERFORMED_EVALUATION}
+  fragment FragmentEvaluationApproval on EvaluationApprovalModel {
+    id
+    period
+    status
+    comment
+    createdAt
+    updatedAt
+    performedEvaluation {
+      ...FragmentPerformedEvaluation
+    }
+    hrUser {
+      ...FragmentUserModel
+    }
   }
 `

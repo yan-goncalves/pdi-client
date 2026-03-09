@@ -1,5 +1,8 @@
 {
   "report": {
     "users": ["sabrinavelasques"]
+  },
+  "approvals": {
+    "users": ["marcomarelli","sabrinavelasques"]
   }
 }

@@ -1,18 +1,20 @@
 import { useMutation } from '@apollo/client'
-import { Grid, Group, Text, Title, useMantineTheme } from '@mantine/core'
-import { Rating } from '@mui/material'
-import { IconStar } from '@tabler/icons'
+import { Grid, Group, Loader, Text, Title, useMantineTheme } from '@mantine/core'
+import { useNotifications } from '@mantine/notifications'
+import { Rating, Typography } from '@mui/material'
+import { IconChecks, IconStar } from '@tabler/icons'
 import Comment from 'components/Comment'
 import HistoricEvaluation from 'components/HistoricEvaluation'
 import { CommonConstants } from 'constants/common'
 import { EVALUATION_PERIOD } from 'constants/evaluation'
+import { NotificationsConstants } from 'constants/notifications'
 import { EVALUATION_ACTOR, EVALUATION_MODE, useEvaluation } from 'contexts/EvaluationProvider'
 import { useLocale } from 'contexts/LocaleProvider'
 import {
   CREATE_PERFORMED_SKILL,
   UPDATE_PERFORMED_SKILL
 } from 'graphql/mutations/collection/PerformedSkill'
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import {
   CreatePerformedSkillType,
   PerformedSkillType,
@@ -24,6 +26,7 @@ export type PerformedSkillProps = {
   skill: SkillType
   performed?: PerformedSkillType
   actor: EVALUATION_ACTOR
+  disabled?: boolean
 }
 
 export type PerformedSkillCommentType =
@@ -34,7 +37,7 @@ export type PerformedSkillCommentType =
 
 export type PerformedSkillRatingType = 'ratingUser' | 'ratingManager'
 
-const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
+const PerformedSkill = ({ skill, performed, actor, disabled = false }: PerformedSkillProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
   const {
@@ -56,22 +59,23 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
   const [labels, setLabels] = useState<string[]>()
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [isRated, setIsRated] = useState<boolean>(false)
+  const notifications = useNotifications()
 
   // queries/mutations
   const [create] = useMutation<CreatePerformedSkillType>(CREATE_PERFORMED_SKILL, {
-    onCompleted: ({ created }) => updatePerformedEvaluation(created),
+    onCompleted: async ({ created }) => updatePerformedEvaluation(created),
     onError: (e) => console.log('ERROR ON CREATING PERFORMED SKILL', { ...e })
   })
   const [update] = useMutation<UpdatePerformedSkillType>(UPDATE_PERFORMED_SKILL, {
-    onCompleted: ({ updated }) => updatePerformedEvaluation(updated),
+    onCompleted: async ({ updated }) => updatePerformedEvaluation(updated),
     onError: (e) => console.log('ERROR ON UPDATING PERFORMED SKILL', { ...e })
   })
 
   useLayoutEffect(() => {
-    if (mode === EVALUATION_MODE.VIEW) {
+    if (mode === EVALUATION_MODE.VIEW || disabled) {
       setIsDisabled(true)
     }
-  }, [actor, mode])
+  }, [actor, mode, disabled])
 
   useEffect(() => {
     if (periodMode && actor) {
@@ -147,6 +151,7 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
     value: number | string
   ) => {
     setIsSaving(true)
+
     await handleCreateUpdate(field, value)
   }
 
@@ -173,14 +178,72 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
   }
 
   const handleChange = async (_: React.SyntheticEvent, newRating: number | null) => {
+    showNotificationOnSaving()
     setRating(newRating || -1)
     setHover(-1)
     await handleSave(ratingField, newRating || -1)
+    showNotificationOnFinish()
   }
 
   const handleSaveComment = async () => {
     await handleSave(commentField, comment || '')
   }
+
+  const showNotificationOnSaving = useCallback(() => {
+    notifications.showNotification({
+      color: 'blue',
+      message: (
+        <Group>
+          <IconChecks size={16} color={theme.colors.blue[9]} />
+          <Typography py={0.5} color={theme.colors.blue[9]} fontSize={15}>
+            {NotificationsConstants.saving.answer[locale]}
+          </Typography>
+        </Group>
+      ),
+      radius: 'md',
+      autoClose: 850,
+      styles: {
+        root: {
+          backgroundColor: theme.colors.blue[0],
+          borderColor: theme.colors.blue[2],
+          alignItems: 'flex-start',
+          '&::before': { backgroundColor: theme.colors.blue[9] }
+        },
+        closeButton: {
+          color: theme.colors.blue[7],
+          '&:hover': { backgroundColor: theme.colors.blue[2] }
+        }
+      }
+    })
+  }, [notifications, theme, locale])
+
+  const showNotificationOnFinish = useCallback(() => {
+    notifications.showNotification({
+      color: 'green',
+      message: (
+        <Group>
+          <IconChecks size={16} color={theme.colors.green[9]} />
+          <Typography py={0.5} color={theme.colors.green[9]} fontSize={15}>
+            {NotificationsConstants.saved.answer[locale]}
+          </Typography>
+        </Group>
+      ),
+      radius: 'md',
+      autoClose: 1500,
+      styles: {
+        root: {
+          backgroundColor: theme.colors.green[0],
+          borderColor: theme.colors.green[2],
+          alignItems: 'flex-start',
+          '&::before': { backgroundColor: theme.colors.green[9] }
+        },
+        closeButton: {
+          color: theme.colors.green[7],
+          '&:hover': { backgroundColor: theme.colors.green[2] }
+        }
+      }
+    })
+  }, [notifications, theme, locale])
 
   return (
     <Grid p={10}>
@@ -242,6 +305,7 @@ const PerformedSkill = ({ skill, performed, actor }: PerformedSkillProps) => {
         </>
       )}
       <HistoricEvaluation
+        actor={actor}
         manager={{
           midYear: performed?.midFeedbackManager || '',
           endYear: performed?.endFeedbackManager || '',

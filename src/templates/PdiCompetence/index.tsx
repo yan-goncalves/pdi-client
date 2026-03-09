@@ -30,9 +30,10 @@ import {
 export type PdiCompetenceProps = {
   actor: EVALUATION_ACTOR
   pdi?: PdiCompetenceType[]
+  disabled?: boolean
 }
 
-const PdiCompetence = ({ actor, pdi }: PdiCompetenceProps) => {
+const PdiCompetence = ({ actor, pdi, disabled = false }: PdiCompetenceProps) => {
   const theme = useMantineTheme()
   const { locale } = useLocale()
   const { performedEvaluation, setPerformedEvaluation, mode, isLocaleLoading, isSaving } =
@@ -194,7 +195,7 @@ const PdiCompetence = ({ actor, pdi }: PdiCompetenceProps) => {
           <Text size={!match ? 'lg' : 'md'} sx={{ color: theme.colors.gray[3] }}>
             {CommonConstants.pdiCompetence.empty[locale]}
           </Text>
-          {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER && (
+          {mode === EVALUATION_MODE.EDIT && actor === EVALUATION_ACTOR.MANAGER && !disabled && (
             <Button loading={isLocaleLoading} onClick={() => setOpenCompetenceModal(true)}>
               {!isLocaleLoading ? CommonConstants.create[locale] : CommonConstants.loading[locale]}
             </Button>
@@ -237,7 +238,7 @@ const PdiCompetence = ({ actor, pdi }: PdiCompetenceProps) => {
                     {new Date(pdiCompetence.deadline).toLocaleDateString('pt-BR')}
                   </Table.Cell>
                   <Table.Cell>
-                    {actor === EVALUATION_ACTOR.MANAGER && mode === EVALUATION_MODE.EDIT && (
+                    {actor === EVALUATION_ACTOR.MANAGER && mode === EVALUATION_MODE.EDIT && !disabled && (
                       <Group sx={{ justifyContent: 'end' }}>
                         <Tooltip color={'cyan'} label={CommonConstants.edit[locale]}>
                           <ActionIcon

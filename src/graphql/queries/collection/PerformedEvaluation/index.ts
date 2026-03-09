@@ -25,6 +25,20 @@ export const GET_PERFORMED_EVALUATION_GRADE = gql`
   query GetPerformedEvaluationGrade($id: Int!) {
     performedEvaluation: performedEvaluationGrade(id: $id) {
       grade
+      isCalibrated
+    }
+  }
+`
+export const GET_PERFORMED_EVALUATION_APPROVALS = gql`
+  query GetPerformedEvaluationApprovals($id: Int!) {
+    performedEvaluation: performedEvaluationApprovals(id: $id) {
+      id
+      approvals {
+        id
+        period
+        status
+        comment
+      }
     }
   }
 `

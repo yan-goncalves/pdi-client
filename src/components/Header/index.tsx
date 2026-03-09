@@ -42,28 +42,9 @@ const Header = () => {
     await push('/').then(async () => {
       notifications.clean()
       notifications.cleanQueue()
-      await signOut({ redirect: false })
-        .then(() => dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: false })))
-        .finally(() => {
-          notifications.showNotification({
-            message: (
-              <Text
-                dangerouslySetInnerHTML={{
-                  __html: `${CommonConstants.bye[locale](name)} 👋`
-                }}
-              />
-            ),
-            color: 'primary',
-            radius: 'md',
-            autoClose: 1500,
-            styles: {
-              root: {
-                borderColor: theme.colors.blue[6],
-                '&::before': { backgroundColor: theme.colors.blue[6] }
-              }
-            }
-          })
-        })
+      await signOut({ redirect: false }).then(() =>
+        dispatch(setLoadingOverlayVisibility({ loadingOverlayVisible: false }))
+      )
     })
   }
 
