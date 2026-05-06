@@ -585,7 +585,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                                       : theme.colors.gray[0],
                                   width: '100%',
                                   maxWidth: 240,
-                                  height: 100
+                                  height: 'fit-content'
                                 })}
                               >
                                 <Group sx={{ width: '100%', justifyContent: 'space-between' }}>
@@ -640,6 +640,25 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                                     {calibration.calibrationValue.toFixed(2)}
                                   </Typography>
                                 </Group>
+
+                                <Box sx={{ width: '100%' }}>
+                                  <Text size="sm" weight={600}>
+                                    {CALIBRATION_TRANSLATIONS.comment[locale]}:
+                                  </Text>
+                                  <Text
+                                    mt={5}
+                                    py={5}
+                                    px={15}
+                                    sx={{
+                                      width: '100%',
+                                      borderRadius: theme.radius.md,
+                                      border: `1px solid ${theme.colors.gray[3]}`,
+                                      backgroundColor: theme.white
+                                    }}
+                                  >
+                                    {calibration.comment}
+                                  </Text>
+                                </Box>
                                 {/* </Badge> */}
                               </Stack>
                             )}
