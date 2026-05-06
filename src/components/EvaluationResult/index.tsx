@@ -111,7 +111,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
     variables: { idPerformedEvaluation: performedEvaluation.id },
     skip:
       typeof performedEvaluation.grade !== 'number' ||
-      periodMode !== EVALUATION_PERIOD.END ||
+      periodMode === EVALUATION_PERIOD.MID ||
       (actor === EVALUATION_ACTOR.USER && !isApproved)
   })
 
@@ -441,8 +441,8 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                   <Grid.Col
                     span={
                       periodMode === EVALUATION_PERIOD.END && actor === EVALUATION_ACTOR.MANAGER
-                        ? 4
-                        : 5
+                        ? 3
+                        : 4
                     }
                   >
                     <Group
@@ -567,7 +567,6 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                           {/* Calibration box below grade */}
                           {!finalGradeModified &&
                             calibration &&
-                            periodMode === EVALUATION_PERIOD.END &&
                             actor === EVALUATION_ACTOR.MANAGER && (
                               <Stack
                                 spacing={16}
