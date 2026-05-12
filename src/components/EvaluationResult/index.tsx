@@ -111,7 +111,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
     variables: { idPerformedEvaluation: performedEvaluation.id },
     skip:
       typeof performedEvaluation.grade !== 'number' ||
-      periodMode !== EVALUATION_PERIOD.END ||
+      periodMode === EVALUATION_PERIOD.MID ||
       (actor === EVALUATION_ACTOR.USER && !isApproved)
   })
 
@@ -441,8 +441,8 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                   <Grid.Col
                     span={
                       periodMode === EVALUATION_PERIOD.END && actor === EVALUATION_ACTOR.MANAGER
-                        ? 4
-                        : 5
+                        ? 3
+                        : 4
                     }
                   >
                     <Group
@@ -567,7 +567,6 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                           {/* Calibration box below grade */}
                           {!finalGradeModified &&
                             calibration &&
-                            periodMode === EVALUATION_PERIOD.END &&
                             actor === EVALUATION_ACTOR.MANAGER && (
                               <Stack
                                 spacing={16}
@@ -586,7 +585,7 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                                       : theme.colors.gray[0],
                                   width: '100%',
                                   maxWidth: 240,
-                                  height: 100
+                                  height: 'fit-content'
                                 })}
                               >
                                 <Group sx={{ width: '100%', justifyContent: 'space-between' }}>
@@ -641,6 +640,25 @@ const EvaluationResult = ({ actor }: EvaluationResultProps) => {
                                     {calibration.calibrationValue.toFixed(2)}
                                   </Typography>
                                 </Group>
+
+                                <Box sx={{ width: '100%' }}>
+                                  <Text size="sm" weight={600}>
+                                    {CALIBRATION_TRANSLATIONS.comment[locale]}:
+                                  </Text>
+                                  <Text
+                                    mt={5}
+                                    py={5}
+                                    px={15}
+                                    sx={{
+                                      width: '100%',
+                                      borderRadius: theme.radius.md,
+                                      border: `1px solid ${theme.colors.gray[3]}`,
+                                      backgroundColor: theme.white
+                                    }}
+                                  >
+                                    {calibration.comment}
+                                  </Text>
+                                </Box>
                                 {/* </Badge> */}
                               </Stack>
                             )}
